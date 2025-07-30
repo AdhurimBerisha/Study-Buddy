@@ -1,9 +1,10 @@
 import { NavLink } from "react-router-dom";
+import Logo from "../assets/Logo.svg";
 
 const Navbar = () => {
   return (
     <div className="relative flex items-center justify-start text-sm py-4 mb-5 border-b border-b-gray-400">
-      <div className="text-xl font-bold w-40 pl-4">StudyBuddy</div>
+      <img className="ml-3 w-[200px] h-auto" src={Logo} alt="StudyBuddy" />
 
       <ul className="absolute left-1/2 transform -translate-x-1/2 flex gap-6 font-medium">
         <li>
