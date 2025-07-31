@@ -13,7 +13,7 @@ const Navbar = () => {
             className={({ isActive }) =>
               isActive
                 ? "text-blue-600 font-semibold"
-                : "text-gray-700 hover:text-blue-500"
+                : "text-white-700 hover:text-blue-500"
             }
           >
             Home
@@ -25,7 +25,7 @@ const Navbar = () => {
             className={({ isActive }) =>
               isActive
                 ? "text-blue-600 font-semibold"
-                : "text-gray-700 hover:text-blue-500"
+                : "text-white-700 hover:text-blue-500"
             }
           >
             Courses
@@ -37,7 +37,7 @@ const Navbar = () => {
             className={({ isActive }) =>
               isActive
                 ? "text-blue-600 font-semibold"
-                : "text-gray-700 hover:text-blue-500"
+                : "text-white-700 hover:text-blue-500"
             }
           >
             Groups
@@ -49,7 +49,7 @@ const Navbar = () => {
             className={({ isActive }) =>
               isActive
                 ? "text-blue-600 font-semibold"
-                : "text-gray-700 hover:text-blue-500"
+                : "text-white-700 hover:text-blue-500"
             }
           >
             About
@@ -61,7 +61,7 @@ const Navbar = () => {
             className={({ isActive }) =>
               isActive
                 ? "text-blue-600 font-semibold"
-                : "text-gray-700 hover:text-blue-500"
+                : "text-white-700 hover:text-blue-500"
             }
           >
             Contact

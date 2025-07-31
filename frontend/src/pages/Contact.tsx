@@ -1,4 +1,10 @@
+import Hero from "../components/Hero";
+
 const Contact = () => {
-  return <div>Contact</div>;
+  return (
+    <div>
+      <Hero />
+    </div>
+  );
 };
 export default Contact;

@@ -1,4 +1,10 @@
+import Hero from "../components/Hero";
+
 const Courses = () => {
-  return <div>Courses</div>;
+  return (
+    <div>
+      <Hero />
+    </div>
+  );
 };
 export default Courses;
