@@ -1,5 +1,6 @@
 import Button from "./Button";
 import LanguageCard from "./LanguageCard";
+import { FaPlus } from "react-icons/fa6";
 
 const languages = [
   {
@@ -51,7 +52,10 @@ const LanguageGrid = () => {
         </div>
       </section>
       <div className="flex justify-center mt-6 mb-6">
-        <Button />
+        <Button>
+          <FaPlus />
+          Show All
+        </Button>
       </div>
     </>
   );
