@@ -56,7 +56,7 @@ const features = [
 
 const HowItWorks = () => {
   return (
-    <section className="max-w-7xl mx-auto px-6 border-b border-gray-300 pb-8 mb-8 py-20">
+    <section className="max-w-7xl mx-auto px-6 border-b border-gray-300 pb-8 mb-8 py-10">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
         <div>
           <h2 className="text-4xl font-bold mb-4">How it all works</h2>

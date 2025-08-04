@@ -50,13 +50,13 @@ const LanguageGrid = () => {
             <LanguageCard key={lang.category} {...lang} />
           ))}
         </div>
+        <div className="flex justify-center mt-12 mb-6">
+          <Button>
+            <FaPlus />
+            Show All
+          </Button>
+        </div>
       </section>
-      <div className="flex justify-center mt-6 mb-6">
-        <Button>
-          <FaPlus />
-          Show All
-        </Button>
-      </div>
     </>
   );
 };
