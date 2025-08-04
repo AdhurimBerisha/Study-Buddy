@@ -4,12 +4,20 @@ import coursesBg from "../assets/coursesBg.webp";
 import groupsBg from "../assets/groupsBg.webp";
 import contactBg from "../assets/contactBg.webp";
 import aboutBg from "../assets/aboutBg.webp";
+import tutorBg from "../assets/tutorBg.webp";
 
-type RoutePath = "/" | "/courses" | "/groups" | "/contact" | "/about";
+type RoutePath =
+  | "/"
+  | "/courses"
+  | "/tutors"
+  | "/groups"
+  | "/contact"
+  | "/about";
 
 const backgroundMap: Record<RoutePath, string> = {
   "/": bg,
   "/courses": coursesBg,
+  "/tutors": tutorBg,
   "/groups": groupsBg,
   "/contact": contactBg,
   "/about": aboutBg,
@@ -24,6 +32,10 @@ const textMap: Record<RoutePath, { sub: string; title: string }> = {
   "/courses": {
     sub: "Browse through all our courses",
     title: "Find your perfect course and start learning today",
+  },
+  "/tutors": {
+    sub: "Find the best tutors",
+    title: "Connect with experienced tutors to boost your learning",
   },
   "/groups": {
     sub: "Join a study group",
