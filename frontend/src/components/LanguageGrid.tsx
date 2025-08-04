@@ -1,3 +1,4 @@
+import Button from "./Button";
 import LanguageCard from "./LanguageCard";
 
 const languages = [
@@ -41,13 +42,18 @@ const languages = [
 
 const LanguageGrid = () => {
   return (
-    <section className="max-w-6xl mx-auto -mt-24 relative z-10 px-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6  py-10 px-6 rounded-xl shadow-xl ">
-        {languages.map((lang) => (
-          <LanguageCard key={lang.category} {...lang} />
-        ))}
+    <>
+      <section className="max-w-6xl mx-auto -mt-24 relative z-10 px-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6  py-10 px-6 rounded-xl shadow-xl ">
+          {languages.map((lang) => (
+            <LanguageCard key={lang.category} {...lang} />
+          ))}
+        </div>
+      </section>
+      <div className="flex justify-center mt-6 mb-6">
+        <Button />
       </div>
-    </section>
+    </>
   );
 };
 

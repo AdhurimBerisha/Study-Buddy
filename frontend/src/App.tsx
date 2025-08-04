@@ -9,7 +9,7 @@ import Groups from "./pages/Groups";
 
 function App() {
   return (
-    <div className="bg-gray-100">
+    <div>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
