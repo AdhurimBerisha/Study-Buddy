@@ -1,4 +1,5 @@
 import Hero from "../components/Hero";
+import HowItWorks from "../components/HowItWorks";
 import LanguageGrid from "../components/LanguageGrid";
 
 const Home = () => {
@@ -6,6 +7,7 @@ const Home = () => {
     <div>
       <Hero />
       <LanguageGrid />
+      <HowItWorks />
     </div>
   );
 };
