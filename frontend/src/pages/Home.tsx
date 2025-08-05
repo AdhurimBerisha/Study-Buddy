@@ -11,7 +11,6 @@ const Home = () => {
       <LanguageGrid />
       <HowItWorks />
       <WhyUs />
-      <Banner />
     </div>
   );
 };
