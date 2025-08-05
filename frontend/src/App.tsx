@@ -8,6 +8,7 @@ import Courses from "./pages/Courses";
 import Groups from "./pages/Groups";
 import Tutors from "./pages/Tutors";
 import Footer from "./components/Footer";
+import Banner from "./components/Banner";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
       </Routes>
+      <Banner />
       <Footer />
     </div>
   );
