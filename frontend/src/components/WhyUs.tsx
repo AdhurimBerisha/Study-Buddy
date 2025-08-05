@@ -47,7 +47,8 @@ const WhyUs = () => {
         <div className="flex-1 p-6 rounded-xl">
           <h2 className="text-xl font-thin mb-2">About Us</h2>
           <h1 className="text-5xl font-bold mt-4 mb-4">
-            "We prepare you to achieve your goals with professional tutors."
+            "Our skilled tutors guide you every step of the way to help you
+            reach your goals"
           </h1>
           <p className="mb-4">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit
