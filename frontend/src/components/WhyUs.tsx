@@ -20,7 +20,7 @@ const WhyUs = () => {
           <div>
             <h2 className="text-xl font-semibold mb-2">Customized learning</h2>
             <p className="flex items-start gap-2">
-              <FaArrowRight className="mt-1 text-blue-600" />
+              <FaArrowRight className="mt-1 text-blue-600 text-2xl" />
               Lorem ipsum dolor sit amet consectetur, adipisicing elit.
               Perspiciatis vitae delectus accusamus dolore architecto? Corporis.
             </p>
@@ -29,7 +29,7 @@ const WhyUs = () => {
               Get expert help when you need it
             </h2>
             <p className="flex items-start gap-2">
-              <FaArrowRight className="mt-1 text-blue-600" />
+              <FaArrowRight className="mt-1 text-blue-600 text-2xl" />
               Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempora
               neque vitae voluptatum pariatur aliquid maxime!
             </p>
@@ -38,7 +38,7 @@ const WhyUs = () => {
               Learn anytime, Practice anywhere
             </h2>
             <p className="flex items-start gap-2">
-              <FaArrowRight className="mt-1 text-blue-600" />
+              <FaArrowRight className="mt-1 text-blue-600 text-2xl" />
               Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempora
               neque vitae voluptatum pariatur aliquid maxime!
             </p>
