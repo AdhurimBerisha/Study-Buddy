@@ -1,3 +1,4 @@
+import Banner from "../components/Banner";
 import Hero from "../components/Hero";
 import HowItWorks from "../components/HowItWorks";
 import LanguageGrid from "../components/LanguageGrid";
@@ -10,6 +11,7 @@ const Home = () => {
       <LanguageGrid />
       <HowItWorks />
       <WhyUs />
+      <Banner />
     </div>
   );
 };
