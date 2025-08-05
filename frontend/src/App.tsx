@@ -7,6 +7,7 @@ import Navbar from "./components/Navbar";
 import Courses from "./pages/Courses";
 import Groups from "./pages/Groups";
 import Tutors from "./pages/Tutors";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
       </Routes>
+      <Footer />
     </div>
   );
 }

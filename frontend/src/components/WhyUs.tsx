@@ -5,7 +5,6 @@ const WhyUs = () => {
   return (
     <section className="max-w-7xl mx-auto px-6 border-b border-gray-300 pb-8 mb-8 py-10">
       <div className="flex flex-col lg:flex-row gap-12">
-        {/* Left Section - Why Choose Us */}
         <div className="flex-1 p-6">
           <h2 className="text-xl font-thin mb-2">Why Choose Us?</h2>
           <h1 className="text-2xl font-bold mt-6 mb-2">
@@ -45,7 +44,6 @@ const WhyUs = () => {
           </div>
         </div>
 
-        {/* Right Section - About Us */}
         <div className="flex-1 p-6 rounded-xl">
           <h2 className="text-xl font-thin mb-2">About Us</h2>
           <h1 className="text-5xl font-bold mt-4 mb-4">
