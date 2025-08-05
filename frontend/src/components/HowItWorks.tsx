@@ -63,7 +63,7 @@ const HowItWorks = () => {
           <p className="text-gray-600 mb-6">
             Donec sagittis sagittis vestibulum. Morbi vestibulum neque.
           </p>
-          <div className="w-10 h-1 bg-gray-400" />
+          <div className="w-10 h-0.5 bg-gray-400" />
         </div>
 
         <div className="relative">
@@ -76,7 +76,7 @@ const HowItWorks = () => {
             <div
               key={step.number}
               className="absolute left-full -ml-6"
-              style={{ top: `${(idx + 1) * 100 - 50}px` }}
+              style={{ top: `${(idx + 1) * 100 - -43}px` }}
             >
               <div className="w-12 h-12 rounded-full bg-white border-4 border-blue-500 flex items-center justify-center text-blue-600 font-bold text-xl shadow-md">
                 {step.number}
