@@ -10,7 +10,7 @@ import Tutors from "./pages/Tutors";
 
 function App() {
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-300 via-white to-blue-100 bg-[length:200%_200%] animate-gradient-x">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
