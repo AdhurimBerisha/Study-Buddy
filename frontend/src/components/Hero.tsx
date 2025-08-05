@@ -23,31 +23,68 @@ const backgroundMap: Record<RoutePath, string> = {
   "/about": aboutBg,
 };
 
-const textMap: Record<RoutePath, { sub: string; title: string }> = {
+const textMap: Record<RoutePath, { sub: string; title: React.ReactNode }> = {
   "/": {
     sub: "Looking to develop your future?",
-    title: `Start learning a new language today 
-            with the best online tutors!`,
+    title: (
+      <>
+        Start your{" "}
+        <span className="underline decoration-blue-500">new career</span> today
+        with the{" "}
+        <span className="underline decoration-blue-500">
+          best online tutors
+        </span>
+        !
+      </>
+    ),
   },
   "/courses": {
     sub: "Browse through all our courses",
-    title: "Find your perfect course and start learning today",
+    title: (
+      <>
+        Find your{" "}
+        <span className="underline decoration-blue-500">perfect course</span>{" "}
+        and start learning today
+      </>
+    ),
   },
   "/tutors": {
     sub: "Find the best tutors",
-    title: "Connect with experienced tutors to boost your learning",
+    title: (
+      <>
+        Connect with{" "}
+        <span className="underline decoration-blue-500">skilled tutors</span> to
+        boost your learning
+      </>
+    ),
   },
   "/groups": {
     sub: "Join a study group",
-    title: "Learn together with peers around the world",
+    title: (
+      <>
+        Learn <span className="underline decoration-blue-500">with others</span>{" "}
+        with peers around the world
+      </>
+    ),
   },
   "/contact": {
     sub: "Need help or have questions?",
-    title: "Get in touch with our support team",
+    title: (
+      <>
+        Get in touch with our{" "}
+        <span className="underline decoration-blue-500">assistance team</span>
+      </>
+    ),
   },
   "/about": {
     sub: "Who we are",
-    title: "Learn more about our mission and vision",
+    title: (
+      <>
+        Learn more about our{" "}
+        <span className="underline decoration-blue-500">mission</span> and{" "}
+        <span className="underline decoration-blue-500">vision</span>
+      </>
+    ),
   },
 };
 
@@ -64,8 +101,8 @@ const Hero = () => {
     >
       <div className="absolute inset-0 bg-black/50" />
       <div className="relative z-10 px-6">
-        <p className="text-sm mb-2">{text.sub}</p>
-        <h1 className="text-5xl font-light leading-tight whitespace-pre-line">
+        <p className="text-sm mb-2 ">{text.sub}</p>
+        <h1 className="text-5xl  font-light leading-tight whitespace-pre-line">
           {text.title}
         </h1>
         <div className="mt-6 text-xl animate-bounce">↓</div>
