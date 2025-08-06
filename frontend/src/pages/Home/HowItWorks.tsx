@@ -1,4 +1,4 @@
-import howItWorks from "../assets/howItWorks.webp";
+import howItWorks from "../../assets/howItWorks.webp";
 import {
   FaGraduationCap,
   FaUsers,
