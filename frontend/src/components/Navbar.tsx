@@ -11,57 +11,65 @@ const Navbar = () => {
           <NavLink
             to="/"
             className={({ isActive }) =>
-              isActive
-                ? "text-blue-600 font-semibold"
-                : "text-white-700 hover:text-blue-500"
+              isActive ? "text-blue-600 font-semibold" : "hover:text-blue-500"
             }
           >
             Home
           </NavLink>
         </li>
+
         <li>
           <NavLink
             to="/courses"
             className={({ isActive }) =>
-              isActive
-                ? "text-blue-600 font-semibold"
-                : "text-white-700 hover:text-blue-500"
+              isActive ? "text-blue-600 font-semibold" : "hover:text-blue-500"
             }
           >
             Courses
           </NavLink>
         </li>
+
         <li>
           <NavLink
             to="/tutors"
             className={({ isActive }) =>
-              isActive
-                ? "text-blue-600 font-semibold"
-                : "text-white-700 hover:text-blue-500"
+              isActive ? "text-blue-600 font-semibold" : "hover:text-blue-500"
             }
           >
             Tutors
           </NavLink>
         </li>
-        <li>
-          <NavLink
-            to="/groups"
-            className={({ isActive }) =>
-              isActive
-                ? "text-blue-600 font-semibold"
-                : "text-white-700 hover:text-blue-500"
-            }
-          >
-            Groups
-          </NavLink>
+
+        <li className="relative group">
+          <div className="cursor-pointer hover:text-blue-500 inline-block">
+            Groups ▾
+          </div>
+
+          <ul className="absolute left-0 top-full w-40 bg-white text-black rounded-md shadow-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+            <li>
+              <NavLink
+                to="/groups/study"
+                className="block px-4 py-2 hover:bg-gray-100 w-full"
+              >
+                View All Groups
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/groups/language"
+                className="block px-4 py-2 hover:bg-gray-100 w-full"
+              >
+                Your Group
+              </NavLink>
+            </li>
+          </ul>
         </li>
+
         <li>
           <NavLink
             to="/about"
             className={({ isActive }) =>
-              isActive
-                ? "text-blue-600 font-semibold"
-                : "text-white-700 hover:text-blue-500"
+              isActive ? "text-blue-600 font-semibold" : "hover:text-blue-500"
             }
           >
             About
@@ -71,9 +79,7 @@ const Navbar = () => {
           <NavLink
             to="/contact"
             className={({ isActive }) =>
-              isActive
-                ? "text-blue-600 font-semibold"
-                : "text-white-700 hover:text-blue-500"
+              isActive ? "text-blue-600 font-semibold" : "hover:text-blue-500"
             }
           >
             Contact
