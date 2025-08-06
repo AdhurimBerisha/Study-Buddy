@@ -1,13 +1,19 @@
-import bannerImage from "../assets/bannerBg.webp";
 import Button from "./Button";
 
-const Banner = () => {
+interface BannerProps {
+  imageSrc: string;
+  title?: string;
+  subtitle?: string;
+  buttonText?: string;
+}
+
+const Banner = ({ imageSrc, title, subtitle, buttonText }: BannerProps) => {
   return (
     <div className="px-6 py-14">
       <div className="max-w-7xl mx-auto border-b border-gray-300 pb-8 mb-8">
         <div className="relative w-full min-h-[650px] rounded-2xl overflow-hidden shadow-xl">
           <img
-            src={bannerImage}
+            src={imageSrc}
             alt="Banner"
             className="w-full h-full object-cover absolute inset-0 z-0"
           />
@@ -15,15 +21,17 @@ const Banner = () => {
           <div className="absolute inset-0 bg-black bg-opacity-50 z-10" />
 
           <div className="relative z-20 text-white text-center py-52 px-8">
-            <p className="text-sm mb-4">Choose a teacher for 1-on-1 lessons</p>
-            <h1 className="text-4xl sm:text-5xl font-light leading-tight">
-              <span className="font-thin">Start</span> learning a new language{" "}
-              <br />
-              <span className="font-thin">today!</span>
-            </h1>
-            <div className="mt-8 flex justify-center">
-              <Button>Sign Up</Button>
-            </div>
+            {subtitle && <p className="text-sm mb-4">{subtitle}</p>}
+            {title && (
+              <h1 className="text-4xl sm:text-5xl font-light leading-tight">
+                {title}
+              </h1>
+            )}
+            {buttonText && (
+              <div className="mt-8 flex justify-center">
+                <Button>{buttonText}</Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
