@@ -1,4 +1,4 @@
-import Button from "./Button";
+import Button from "../../components/Button";
 import LanguageCard from "./CoursesCard";
 import { FaPlus, FaUsers, FaClock, FaStar } from "react-icons/fa";
 
