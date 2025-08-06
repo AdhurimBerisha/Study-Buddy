@@ -16,8 +16,7 @@ type CardProps = {
   tutors: number;
 };
 
-// Icon mapping for different languages/technologies
-const languageIcons: Record<string, React.ReactNode> = {
+const coursesIcons: Record<string, React.ReactNode> = {
   html: <FaHtml5 className="text-4xl text-orange-500" />,
   css: <FaHtml5 className="text-4xl text-orange-500" />,
   javascript: <FaHtml5 className="text-4xl text-orange-500" />,
@@ -32,15 +31,15 @@ const languageIcons: Record<string, React.ReactNode> = {
   cisco: <FaNetworkWired className="text-4xl text-blue-500" />,
 };
 
-const getLanguageIcon = (language: string): React.ReactNode => {
-  const lowerLang = language.toLowerCase();
+const getCoursesIcon = (courses: string): React.ReactNode => {
+  const lowerLang = courses.toLowerCase();
 
-  const matchedLanguage = Object.keys(languageIcons).find((key) =>
+  const matchedCourses = Object.keys(coursesIcons).find((key) =>
     lowerLang.includes(key)
   );
 
-  return matchedLanguage ? (
-    languageIcons[matchedLanguage]
+  return matchedCourses ? (
+    coursesIcons[matchedCourses]
   ) : (
     <FaCode className="text-4xl text-gray-600" />
   );
@@ -66,7 +65,7 @@ const getCategoryColor = (category: string): string => {
   return matchedCategory ? categoryColors[matchedCategory] : "bg-gray-500";
 };
 
-const LanguageCard = ({ category, language, tutors }: CardProps) => {
+const CoursesCard = ({ category, language, tutors }: CardProps) => {
   const colorClass = getCategoryColor(category);
 
   return (
@@ -77,9 +76,7 @@ const LanguageCard = ({ category, language, tutors }: CardProps) => {
         {category}
       </div>
 
-      <div className="mb-4 flex justify-center">
-        {getLanguageIcon(language)}
-      </div>
+      <div className="mb-4 flex justify-center">{getCoursesIcon(language)}</div>
 
       <Link to="/courses" className="block mb-4">
         <h3 className="text-lg font-bold text-gray-800 leading-tight min-h-[4rem] flex items-center justify-center px-2">
@@ -105,4 +102,4 @@ const LanguageCard = ({ category, language, tutors }: CardProps) => {
   );
 };
 
-export default LanguageCard;
+export default CoursesCard;
