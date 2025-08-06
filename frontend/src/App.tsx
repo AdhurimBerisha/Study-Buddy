@@ -6,6 +6,7 @@ import Login from "./pages/Auth/Login";
 import Navbar from "./components/Navbar";
 import Courses from "./pages/Courses/Courses";
 import Groups from "./pages/Groups/Groups";
+import MyGroup from "./pages/Groups/MyGroup";
 import Tutors from "./pages/Tutors/Tutors";
 import Footer from "./components/Footer";
 
@@ -18,6 +19,7 @@ function App() {
         <Route path="/courses" element={<Courses />} />
         <Route path="/tutors" element={<Tutors />} />
         <Route path="/groups" element={<Groups />} />
+        <Route path="/groups/mGroup" element={<MyGroup />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
