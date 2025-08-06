@@ -1,8 +1,10 @@
 import Hero from "../../components/Hero";
 import HowItWorks from "./HowItWorks";
 import CoursesGrid from "../Courses/CoursesGrid";
-import WhyUs from "./WhyUs";
+import WhyUs from "../../components/WhyUs";
 import Features from "../../components/Features";
+import Banner from "../../components/Banner";
+import bannerBg from "../../assets/bannerBg.webp";
 
 const Home = () => {
   return (
@@ -12,6 +14,12 @@ const Home = () => {
       <HowItWorks />
       <Features />
       <WhyUs />
+      <Banner
+        imageSrc={bannerBg}
+        title="Start learning a new language today!"
+        subtitle="Choose a teacher for 1-on-1 lessons"
+        buttonText="Sign Up"
+      />
     </div>
   );
 };

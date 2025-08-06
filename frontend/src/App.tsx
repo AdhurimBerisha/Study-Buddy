@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home/Home";
-import About from "./pages/About";
+import About from "./pages/About/About";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Navbar from "./components/Navbar";
@@ -8,7 +8,6 @@ import Courses from "./pages/Courses/Courses";
 import Groups from "./pages/Groups";
 import Tutors from "./pages/Tutors/Tutors";
 import Footer from "./components/Footer";
-import Banner from "./components/Banner";
 
 function App() {
   return (
@@ -23,7 +22,6 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
       </Routes>
-      <Banner />
       <Footer />
     </div>
   );
