@@ -1,6 +1,6 @@
 import Hero from "../../components/Hero";
 import HowItWorks from "./HowItWorks";
-import LanguageGrid from "../../components/CoursesGrid";
+import CoursesGrid from "../Courses/CoursesGrid";
 import WhyUs from "./WhyUs";
 import Features from "../../components/Features";
 
@@ -8,7 +8,7 @@ const Home = () => {
   return (
     <div>
       <Hero />
-      <LanguageGrid />
+      <CoursesGrid />
       <HowItWorks />
       <Features />
       <WhyUs />

@@ -1,12 +1,12 @@
 import Features from "../../components/Features";
 import Hero from "../../components/Hero";
-import LanguageGrid from "../../components/CoursesGrid";
+import CoursesGrid from "./CoursesGrid";
 
 const Courses = () => {
   return (
     <div>
       <Hero />
-      <LanguageGrid showExtras={false} />
+      <CoursesGrid showExtras={false} />
       <Features />
     </div>
   );

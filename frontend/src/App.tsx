@@ -6,7 +6,7 @@ import Login from "./pages/Login";
 import Navbar from "./components/Navbar";
 import Courses from "./pages/Courses/Courses";
 import Groups from "./pages/Groups";
-import Tutors from "./pages/Tutors";
+import Tutors from "./pages/Tutors/Tutors";
 import Footer from "./components/Footer";
 import Banner from "./components/Banner";
 
