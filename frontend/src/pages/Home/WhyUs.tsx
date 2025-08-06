@@ -1,5 +1,5 @@
 import { FaArrowRight } from "react-icons/fa6";
-import Button from "./Button";
+import Button from "../../components/Button";
 
 const WhyUs = () => {
   return (
