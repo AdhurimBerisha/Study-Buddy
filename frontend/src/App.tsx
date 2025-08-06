@@ -19,7 +19,7 @@ function App() {
         <Route path="/courses" element={<Courses />} />
         <Route path="/tutors" element={<Tutors />} />
         <Route path="/groups" element={<Groups />} />
-        <Route path="/groups/mGroup" element={<MyGroup />} />
+        <Route path="/groups/:groupId" element={<MyGroup />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
