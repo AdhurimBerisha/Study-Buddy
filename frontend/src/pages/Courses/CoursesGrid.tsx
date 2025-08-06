@@ -87,10 +87,10 @@ const CoursesGrid = ({ showExtras = true }: CoursesGridProps) => {
                 <FaPlus className="mr-2" />
                 Explore All Courses
               </Button>
-              <button className="bg-transparent border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-xl hover:bg-blue-600 hover:text-white transition-all duration-300 flex items-center gap-2 font-semibold">
+              <Button variant="outline">
                 <FaUsers className="text-sm" />
                 Meet Our Tutors
-              </button>
+              </Button>
             </div>
           </div>
         </>
