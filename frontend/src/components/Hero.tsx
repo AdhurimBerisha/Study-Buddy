@@ -11,6 +11,7 @@ type RoutePath =
   | "/courses"
   | "/tutors"
   | "/groups"
+  | "/groups/my-group"
   | "/contact"
   | "/about";
 
@@ -19,6 +20,7 @@ const backgroundMap: Record<RoutePath, string> = {
   "/courses": coursesBg,
   "/tutors": tutorBg,
   "/groups": groupsBg,
+  "/groups/my-group": groupsBg,
   "/contact": contactBg,
   "/about": aboutBg,
 };
@@ -59,6 +61,15 @@ const textMap: Record<RoutePath, { sub: string; title: React.ReactNode }> = {
     ),
   },
   "/groups": {
+    sub: "Join a study group",
+    title: (
+      <>
+        Learn <span className="underline decoration-blue-500">with others</span>{" "}
+        with peers around the world
+      </>
+    ),
+  },
+  "/groups/my-group": {
     sub: "Join a study group",
     title: (
       <>
