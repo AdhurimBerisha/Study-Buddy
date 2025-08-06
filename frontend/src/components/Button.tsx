@@ -2,12 +2,16 @@ type ButtonProps = {
   children: React.ReactNode;
   variant?: "primary" | "outline";
   className?: string;
+  type?: "button" | "submit" | "reset";
+  disabled?: boolean;
 };
 
 const Button = ({
   children,
   variant = "primary",
   className = "",
+  type = "button",
+  disabled = false,
 }: ButtonProps) => {
   const baseStyles =
     "px-10 py-3 rounded-3xl flex items-center gap-2 transition-all duration-300 font-semibold";
@@ -19,7 +23,13 @@ const Button = ({
   };
 
   return (
-    <button className={`${baseStyles} ${variants[variant]} ${className}`}>
+    <button
+      type={type}
+      disabled={disabled}
+      className={`${baseStyles} ${variants[variant]} ${className} ${
+        disabled ? "opacity-50 cursor-not-allowed" : ""
+      }`}
+    >
       {children}
     </button>
   );
