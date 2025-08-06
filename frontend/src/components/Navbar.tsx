@@ -1,12 +1,24 @@
 import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
 import Logo from "../assets/Logo.svg";
 
 const Navbar = () => {
-  return (
-    <div className="absolute top-0 left-0 w-full z-20 flex items-center justify-start text-sm py-4">
-      <img className="ml-3 w-[200px] h-auto" src={Logo} alt="StudyBuddy" />
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-      <ul className="absolute left-1/2 transform -translate-x-1/2 flex gap-6 font-medium text-white">
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  return (
+    <div className="absolute top-0 left-0 w-full z-20 flex items-center tracking-wide justify-between text-sm py-4 px-3">
+      <img
+        className="w-[150px] md:w-[200px] h-auto"
+        src={Logo}
+        alt="StudyBuddy"
+      />
+
+      <ul className="hidden lg:flex gap-6 font-medium text-white ">
         <li>
           <NavLink
             to="/"
@@ -86,6 +98,132 @@ const Navbar = () => {
           </NavLink>
         </li>
       </ul>
+
+      <div className="hidden lg:flex items-center gap-3">
+        <NavLink
+          to="/login"
+          className="px-4 py-2 text-white hover:text-blue-200 transition-colors duration-200"
+        >
+          Sign In
+        </NavLink>
+        <NavLink
+          to="/register"
+          className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-500 transition-all duration-200 font-medium"
+        >
+          Sign Up
+        </NavLink>
+      </div>
+
+      <button
+        onClick={toggleMenu}
+        className="lg:hidden text-white text-xl p-2"
+        aria-label="Toggle menu"
+      >
+        {isMenuOpen ? <FaTimes /> : <FaBars />}
+      </button>
+
+      {isMenuOpen && (
+        <div className="absolute top-full left-0 w-full bg-black bg-opacity-90 backdrop-blur-sm lg:hidden">
+          <ul className="flex flex-col items-center py-6 space-y-4 text-white font-medium">
+            <li>
+              <NavLink
+                to="/"
+                onClick={toggleMenu}
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-blue-400 font-semibold"
+                    : "hover:text-blue-300"
+                }
+              >
+                Home
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/courses"
+                onClick={toggleMenu}
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-blue-400 font-semibold"
+                    : "hover:text-blue-300"
+                }
+              >
+                Courses
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/tutors"
+                onClick={toggleMenu}
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-blue-400 font-semibold"
+                    : "hover:text-blue-300"
+                }
+              >
+                Tutors
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/groups"
+                onClick={toggleMenu}
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-blue-400 font-semibold"
+                    : "hover:text-blue-300"
+                }
+              >
+                Groups
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/about"
+                onClick={toggleMenu}
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-blue-400 font-semibold"
+                    : "hover:text-blue-300"
+                }
+              >
+                About
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/contact"
+                onClick={toggleMenu}
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-blue-400 font-semibold"
+                    : "hover:text-blue-300"
+                }
+              >
+                Contact
+              </NavLink>
+            </li>
+            <li className="pt-4 border-t border-gray-600 w-full text-center">
+              <div className="flex flex-col items-center space-y-3">
+                <NavLink
+                  to="/login"
+                  onClick={toggleMenu}
+                  className="px-4 py-2 text-white hover:text-blue-200 transition-colors duration-200"
+                >
+                  Sign In
+                </NavLink>
+                <NavLink
+                  to="/register"
+                  onClick={toggleMenu}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-500 transition-all duration-200 font-medium"
+                >
+                  Sign Up
+                </NavLink>
+              </div>
+            </li>
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
