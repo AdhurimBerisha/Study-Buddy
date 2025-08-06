@@ -9,7 +9,7 @@ import {
   FaPhone,
 } from "react-icons/fa";
 import { useState } from "react";
-import AuthLayout from "../../components/AuthLayout";
+import AuthLayout from "./AuthLayout";
 import FormInput from "../../components/FormInput";
 import Button from "../../components/Button";
 
@@ -66,7 +66,6 @@ const Register = () => {
       linkLabel="Sign in"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Name Fields */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormInput
             label="First Name"
@@ -107,7 +106,6 @@ const Register = () => {
           />
         </div>
 
-        {/* Email Input */}
         <FormInput
           label="Email Address"
           type="email"
@@ -124,7 +122,6 @@ const Register = () => {
           })}
         />
 
-        {/* Phone Input (Optional) */}
         <FormInput
           label="Phone Number"
           type="tel"
@@ -133,13 +130,12 @@ const Register = () => {
           error={errors.phone?.message}
           register={register("phone", {
             pattern: {
-              value: /^[\+]?[1-9][\d]{0,15}$/,
+              value: /^[+]?[\d]{1,16}$/,
               message: "Please enter a valid phone number",
             },
           })}
         />
 
-        {/* Password Input */}
         <div className="flex flex-col w-full">
           <label className="font-semibold text-sm mb-2 text-gray-700">
             Password <span className="text-red-500">*</span>
@@ -188,7 +184,6 @@ const Register = () => {
           )}
         </div>
 
-        {/* Confirm Password Input */}
         <div className="flex flex-col w-full">
           <label className="font-semibold text-sm mb-2 text-gray-700">
             Confirm Password <span className="text-red-500">*</span>
@@ -230,7 +225,6 @@ const Register = () => {
           )}
         </div>
 
-        {/* Terms and Conditions */}
         <div className="space-y-3">
           <label className="flex items-start">
             <input
@@ -276,7 +270,6 @@ const Register = () => {
           </label>
         </div>
 
-        {/* Submit Button */}
         <Button
           type="submit"
           disabled={isSubmitting}
@@ -285,7 +278,6 @@ const Register = () => {
           {isSubmitting ? "Creating Account..." : "Create Account"}
         </Button>
 
-        {/* Divider */}
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300" />
@@ -295,7 +287,6 @@ const Register = () => {
           </div>
         </div>
 
-        {/* Social Registration Buttons */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <button
             type="button"

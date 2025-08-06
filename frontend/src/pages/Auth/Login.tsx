@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useState } from "react";
-import AuthLayout from "../../components/AuthLayout";
+import AuthLayout from "./AuthLayout";
 import FormInput from "../../components/FormInput";
 import Button from "../../components/Button";
 
@@ -50,7 +50,6 @@ const Login = () => {
       linkLabel="Sign up"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Email Input */}
         <FormInput
           label="Email Address"
           type="email"
@@ -67,7 +66,6 @@ const Login = () => {
           })}
         />
 
-        {/* Password Input */}
         <div className="flex flex-col w-full">
           <label className="font-semibold text-sm mb-2 text-gray-700">
             Password <span className="text-red-500">*</span>
@@ -111,7 +109,6 @@ const Login = () => {
           )}
         </div>
 
-        {/* Remember Me & Forgot Password */}
         <div className="flex items-center justify-between">
           <label className="flex items-center">
             <input
@@ -129,7 +126,6 @@ const Login = () => {
           </Link>
         </div>
 
-        {/* Submit Button */}
         <Button
           type="submit"
           disabled={isSubmitting}
@@ -138,7 +134,6 @@ const Login = () => {
           {isSubmitting ? "Signing in..." : "Sign In"}
         </Button>
 
-        {/* Divider */}
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300" />
@@ -150,7 +145,6 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Social Login Buttons */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <button
             type="button"

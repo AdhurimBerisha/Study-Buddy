@@ -21,9 +21,7 @@ const AuthLayout = ({
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-8 pt-24">
       <div className="max-w-md w-full mx-auto">
-        {/* Auth Card */}
         <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
-          {/* Header */}
           <div className="text-center mb-6 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
               {title}
@@ -31,10 +29,8 @@ const AuthLayout = ({
             <p className="text-gray-600 text-sm sm:text-base">{subtitle}</p>
           </div>
 
-          {/* Form Content */}
           {children}
 
-          {/* Footer Link */}
           <div className="text-center mt-6 pt-6 border-t border-gray-200">
             <p className="text-gray-600">
               {linkText}{" "}
@@ -48,7 +44,6 @@ const AuthLayout = ({
           </div>
         </div>
 
-        {/* Back to Home */}
         <div className="text-center mt-6">
           <Link
             to="/"

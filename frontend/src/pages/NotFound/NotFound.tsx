@@ -6,15 +6,12 @@ const NotFound = () => {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-8 pt-24">
       <div className="max-w-md w-full mx-auto text-center">
-        {/* 404 Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          {/* Large 404 Number */}
           <div className="mb-6">
             <h1 className="text-8xl font-bold text-blue-600 mb-2">404</h1>
             <div className="w-16 h-1 bg-blue-600 mx-auto rounded-full"></div>
           </div>
 
-          {/* Error Message */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-3">
               Page Not Found
@@ -25,7 +22,6 @@ const NotFound = () => {
             </p>
           </div>
 
-          {/* Action Buttons */}
           <div className="space-y-4">
             <Link to="/" className="block">
               <Button className="w-full justify-center">
@@ -43,7 +39,6 @@ const NotFound = () => {
             </button>
           </div>
 
-          {/* Helpful Links */}
           <div className="mt-8 pt-6 border-t border-gray-200">
             <p className="text-sm text-gray-500 mb-4">
               Or try one of these pages:
@@ -83,7 +78,6 @@ const NotFound = () => {
           </div>
         </div>
 
-        {/* Additional Help Text */}
         <div className="mt-6 text-white text-sm">
           <p>
             Need help?{" "}
