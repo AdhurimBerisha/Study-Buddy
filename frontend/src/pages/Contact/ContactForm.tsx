@@ -18,13 +18,8 @@ const ContactForm = () => {
 
   const onSubmit = async (data: ContactFormData) => {
     try {
-      // Simulate form submission
       console.log("Form submitted:", data);
 
-      // Here you would typically send the data to your backend
-      // await submitContactForm(data);
-
-      // Reset form after successful submission
       reset();
       alert("Message sent successfully!");
     } catch (error) {

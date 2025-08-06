@@ -40,16 +40,10 @@ const Register = () => {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      // Simulate registration process
       console.log("Registration submitted:", data);
 
-      // Here you would typically send the data to your backend
-      // const response = await registerUser(data);
-
-      // Simulate loading
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Navigate to login or dashboard on success
       navigate("/login");
     } catch (error) {
       console.error("Registration error:", error);
