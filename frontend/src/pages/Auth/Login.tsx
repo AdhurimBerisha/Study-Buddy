@@ -5,9 +5,9 @@ import { useState } from "react";
 import AuthLayout from "./AuthLayout";
 import FormInput from "../../components/FormInput";
 import Button from "../../components/Button";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../../store/slice/authSlice";
-import type { AppDispatch } from "../../store/store";
+import type { RootState, AppDispatch } from "../../store/store";
 
 interface LoginFormData {
   email: string;
@@ -19,6 +19,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const users = useSelector((state: RootState) => state.auth.users);
 
   const {
     register,
@@ -27,16 +28,15 @@ const Login = () => {
   } = useForm<LoginFormData>();
 
   const onSubmit = async (data: LoginFormData) => {
-    try {
-      console.log("Login submitted:", data);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      dispatch(loginSuccess({ email: data.email }));
+    const foundUser = users.find((u) => u.email === data.email);
 
-      navigate("/");
-    } catch (error) {
-      console.error("Login error:", error);
-      alert("Login failed. Please check your credentials and try again.");
+    if (!foundUser) {
+      alert("Invalid email or password");
+      return;
     }
+
+    dispatch(loginSuccess(foundUser));
+    navigate("/");
   };
 
   return (

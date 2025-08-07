@@ -12,6 +12,9 @@ import { useState } from "react";
 import AuthLayout from "./AuthLayout";
 import FormInput from "../../components/FormInput";
 import Button from "../../components/Button";
+import { useDispatch } from "react-redux";
+import { register as registerUser } from "../../store/slice/authSlice";
+import type { AppDispatch } from "../../store/store";
 
 interface RegisterFormData {
   firstName: string;
@@ -28,6 +31,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const {
     register,
@@ -40,7 +44,14 @@ const Register = () => {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      console.log("Registration submitted:", data);
+      dispatch(
+        registerUser({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          phone: data.phone,
+        })
+      );
 
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
