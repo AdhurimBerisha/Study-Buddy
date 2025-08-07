@@ -113,18 +113,29 @@ const Navbar = () => {
 
       <div className="hidden lg:flex items-center gap-3 text-white">
         {isAuthenticated ? (
-          <>
-            <span className="text-sm">
-              Welcome, {user?.firstName} {user?.lastName}
-            </span>
-            <Button
-              variant="outline"
-              className="!text-white !border-white !hover:bg-white !hover:text-blue-600"
-              onClick={() => dispatch(logout())}
-            >
-              Logout
-            </Button>
-          </>
+          <div className="relative group">
+            <button className="flex items-center gap-2 text-sm hover:text-blue-400 focus:outline-none">
+              Welcome, {user?.firstName} {user?.lastName} ▾
+            </button>
+            <ul className="absolute right-0 mt-2 w-40 bg-white text-black rounded-md shadow-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <li>
+                <NavLink
+                  to="/profile"
+                  className="block px-4 py-2 hover:bg-gray-100 w-full"
+                >
+                  Profile
+                </NavLink>
+              </li>
+              <li>
+                <button
+                  onClick={() => dispatch(logout())}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                >
+                  Logout
+                </button>
+              </li>
+            </ul>
+          </div>
         ) : (
           <>
             <NavLink
