@@ -12,7 +12,7 @@ import { logout } from "../store/slice/authSlice";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const userEmail = useSelector((state: RootState) => state.auth.user?.email);
+  const user = useSelector((state: RootState) => state.auth.currentUser);
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
@@ -114,7 +114,9 @@ const Navbar = () => {
       <div className="hidden lg:flex items-center gap-3 text-white">
         {isAuthenticated ? (
           <>
-            <span className="text-sm">Welcome, {userEmail}</span>
+            <span className="text-sm">
+              Welcome, {user?.firstName} {user?.lastName}
+            </span>
             <Button
               variant="outline"
               className="!text-white !border-white !hover:bg-white !hover:text-blue-600"
