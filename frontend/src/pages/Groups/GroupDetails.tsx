@@ -2,6 +2,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import Hero from "../../components/Hero";
 import Button from "../../components/Button";
 import { FaUsers, FaStar, FaClock } from "react-icons/fa";
+import bannerBg from "../../assets/bannerBg.webp";
+import Banner from "../../components/Banner";
 
 const dummyGroups = [
   {
@@ -89,6 +91,12 @@ const GroupDetails = () => {
           </Button>
         </div>
       </div>
+      <Banner
+        imageSrc={bannerBg}
+        title="Start learning a new language today!"
+        subtitle="Choose a teacher for 1-on-1 lessons"
+        buttonText="Sign Up"
+      />
     </div>
   );
 };
