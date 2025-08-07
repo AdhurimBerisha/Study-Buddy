@@ -4,6 +4,8 @@ import Button from "../../components/Button";
 import GroupCard from "./GroupCard";
 import type { RootState } from "../../store/store";
 import { Link } from "react-router-dom";
+import Banner from "../../components/Banner";
+import bannerBg from "../../assets/bannerBg.webp";
 
 const MyGroup = () => {
   const { isAuthenticated, currentUser } = useSelector(
@@ -107,6 +109,12 @@ const MyGroup = () => {
           </>
         )}
       </div>
+      <Banner
+        imageSrc={bannerBg}
+        title="Start learning a new language today!"
+        subtitle="Choose a teacher for 1-on-1 lessons"
+        buttonText="Sign Up"
+      />
     </div>
   );
 };
