@@ -4,6 +4,7 @@ type ButtonProps = {
   className?: string;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
+  onClick?: () => void;
 };
 
 const Button = ({
@@ -12,6 +13,7 @@ const Button = ({
   className = "",
   type = "button",
   disabled = false,
+  onClick,
 }: ButtonProps) => {
   const baseStyles =
     "px-10 py-3 rounded-3xl flex items-center gap-2 transition-all duration-300 font-semibold";
@@ -26,6 +28,7 @@ const Button = ({
     <button
       type={type}
       disabled={disabled}
+      onClick={onClick} // ✅ forward it here
       className={`${baseStyles} ${variants[variant]} ${className} ${
         disabled ? "opacity-50 cursor-not-allowed" : ""
       }`}

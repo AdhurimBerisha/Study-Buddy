@@ -5,6 +5,9 @@ import { useState } from "react";
 import AuthLayout from "./AuthLayout";
 import FormInput from "../../components/FormInput";
 import Button from "../../components/Button";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../../store/slice/authSlice";
+import type { AppDispatch } from "../../store/store";
 
 interface LoginFormData {
   email: string;
@@ -15,6 +18,7 @@ interface LoginFormData {
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const {
     register,
@@ -24,16 +28,10 @@ const Login = () => {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      // Simulate login process
       console.log("Login submitted:", data);
-
-      // Here you would typically send the data to your backend
-      // const response = await loginUser(data);
-
-      // Simulate loading
       await new Promise((resolve) => setTimeout(resolve, 1000));
+      dispatch(loginSuccess({ email: data.email }));
 
-      // Navigate to dashboard or home on success
       navigate("/");
     } catch (error) {
       console.error("Login error:", error);

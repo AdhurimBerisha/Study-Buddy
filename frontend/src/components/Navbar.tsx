@@ -2,9 +2,21 @@ import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import Logo from "../assets/Logo.svg";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store/store";
+import Button from "./Button";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../store/store";
+import { logout } from "../store/slice/authSlice";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const userEmail = useSelector((state: RootState) => state.auth.user?.email);
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
+  const dispatch = useDispatch<AppDispatch>();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -99,19 +111,34 @@ const Navbar = () => {
         </li>
       </ul>
 
-      <div className="hidden lg:flex items-center gap-3">
-        <NavLink
-          to="/login"
-          className="px-4 py-2 text-white hover:text-blue-200 transition-colors duration-200"
-        >
-          Sign In
-        </NavLink>
-        <NavLink
-          to="/register"
-          className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-500 transition-all duration-200 font-medium"
-        >
-          Sign Up
-        </NavLink>
+      <div className="hidden lg:flex items-center gap-3 text-white">
+        {isAuthenticated ? (
+          <>
+            <span className="text-sm">Welcome, {userEmail}</span>
+            <Button
+              variant="outline"
+              className="!text-white !border-white !hover:bg-white !hover:text-blue-600"
+              onClick={() => dispatch(logout())}
+            >
+              Logout
+            </Button>
+          </>
+        ) : (
+          <>
+            <NavLink
+              to="/login"
+              className="px-4 py-2 hover:text-blue-200 transition-colors duration-200"
+            >
+              Sign In
+            </NavLink>
+            <NavLink
+              to="/register"
+              className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-500 transition-all duration-200 font-medium"
+            >
+              Sign Up
+            </NavLink>
+          </>
+        )}
       </div>
 
       <button
