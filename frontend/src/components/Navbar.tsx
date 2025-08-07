@@ -7,6 +7,7 @@ import type { RootState } from "../store/store";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../store/store";
 import { logout } from "../store/slice/authSlice";
+import { FaUserCircle } from "react-icons/fa";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -116,8 +117,20 @@ const Navbar = () => {
         {isAuthenticated ? (
           <div className="relative group">
             <button className="flex items-center gap-2 text-sm hover:text-blue-400 focus:outline-none">
-              Welcome, {user?.firstName} {user?.lastName} ▾
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt="User Avatar"
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+              ) : (
+                <FaUserCircle className="text-2xl" />
+              )}
+              <span>
+                {user?.firstName} {user?.lastName} ▾
+              </span>
             </button>
+
             <ul className="absolute right-0 mt-2 w-40 bg-white text-black rounded-md shadow-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
               <li>
                 <NavLink
