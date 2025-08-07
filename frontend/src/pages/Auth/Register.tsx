@@ -76,7 +76,7 @@ const Register = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormInput
             label="First Name"
-            placeholder="Enter your first name"
+            placeholder="First name"
             required
             icon={<FaUser />}
             error={errors.firstName?.message}
@@ -95,7 +95,7 @@ const Register = () => {
 
           <FormInput
             label="Last Name"
-            placeholder="Enter your last name"
+            placeholder="Last name"
             required
             icon={<FaUser />}
             error={errors.lastName?.message}

@@ -85,7 +85,7 @@ const Navbar = () => {
                 to="/groups/my-group"
                 className="block px-4 py-2 hover:bg-gray-100 w-full"
               >
-                Your Group
+                Your Groups
               </NavLink>
             </li>
           </ul>
