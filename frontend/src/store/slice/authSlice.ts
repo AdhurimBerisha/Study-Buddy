@@ -31,8 +31,10 @@ const authSlice = createSlice({
         action.payload.avatar = null;
       }
       state.users.push(action.payload);
-      state.currentUser = action.payload;
-      state.isAuthenticated = true;
+
+      // ----> Auto Login
+      // state.currentUser = action.payload;
+      // state.isAuthenticated = true;
     },
     loginSuccess: (state, action: PayloadAction<User>) => {
       state.currentUser = action.payload;
