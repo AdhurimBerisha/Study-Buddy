@@ -11,6 +11,7 @@ import MyGroup from "./pages/Groups/MyGroup";
 import Tutors from "./pages/Tutors/Tutors";
 import Footer from "./components/Footer";
 import NotFound from "./pages/NotFound/NotFound";
+import MyProfile from "./pages/Profile/MyProfile";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/groups/:groupId" element={<MyGroup />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/profile/:userId" element={<MyProfile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
