@@ -4,7 +4,6 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import Logo from "../assets/Logo.svg";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
-import Button from "./Button";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../store/store";
 import { logout } from "../store/slice/authSlice";

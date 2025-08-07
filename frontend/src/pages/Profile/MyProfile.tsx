@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
-import type { RootState, AppDispatch } from "../../store/store";
+import type { RootState } from "../../store/store";
 import FormInput from "../../components/FormInput";
 import { FaUser, FaEnvelope, FaPhone, FaUserCircle } from "react-icons/fa";
 import Button from "../../components/Button";
