@@ -2,10 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface User {
+  id: string;
   email: string;
   firstName: string;
   lastName: string;
   phone?: string;
+  avatar?: string | null;
 }
 
 interface AuthState {
@@ -25,6 +27,9 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     register: (state, action: PayloadAction<User>) => {
+      if (!action.payload.avatar) {
+        action.payload.avatar = null;
+      }
       state.users.push(action.payload);
       state.currentUser = action.payload;
       state.isAuthenticated = true;

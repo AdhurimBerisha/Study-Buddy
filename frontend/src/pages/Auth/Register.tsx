@@ -46,10 +46,12 @@ const Register = () => {
     try {
       dispatch(
         registerUser({
+          id: crypto.randomUUID(),
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email,
           phone: data.phone,
+          avatar: null,
         })
       );
 
