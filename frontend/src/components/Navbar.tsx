@@ -23,11 +23,13 @@ const Navbar = () => {
 
   return (
     <div className="absolute top-0 left-0 w-full z-20 flex items-center tracking-wide justify-between text-sm py-4 px-3">
-      <img
-        className="w-[150px] md:w-[200px] h-auto"
-        src={Logo}
-        alt="StudyBuddy"
-      />
+      <a href="/">
+        <img
+          className="w-[150px] md:w-[200px] h-auto"
+          src={Logo}
+          alt="StudyBuddy"
+        />
+      </a>
 
       <ul className="hidden lg:flex gap-6 font-medium text-white ">
         <li>
