@@ -18,6 +18,7 @@ type GroupCardProps = {
   onView?: () => void;
   onJoin?: () => void;
   onLeave?: () => void;
+  actions?: React.ReactNode;
 };
 
 const GroupCard = ({
@@ -26,6 +27,7 @@ const GroupCard = ({
   onView,
   onJoin,
   onLeave,
+  actions,
 }: GroupCardProps) => {
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow">
@@ -114,8 +116,11 @@ const GroupCard = ({
         </div>
 
         {/* Action Buttons */}
+        {/* Action Buttons */}
         <div className="mt-6">
-          {variant === "all" ? (
+          {actions ? (
+            actions
+          ) : variant === "all" ? (
             <Button variant="primary" className="w-full" onClick={onJoin}>
               Join Group
             </Button>

@@ -71,8 +71,23 @@ const MyGroup = () => {
                     key={group.id}
                     group={group}
                     variant="my"
-                    onView={() => handleViewGroup(group.id)}
                     onLeave={() => handleLeaveGroup(group.id)}
+                    actions={
+                      <div className="flex space-x-4">
+                        <Link to={`/groups/${group.id}`} className="flex-1">
+                          <Button variant="primary" className="w-full">
+                            View Group
+                          </Button>
+                        </Link>
+                        <Button
+                          variant="outline"
+                          className="flex-1"
+                          onClick={() => handleLeaveGroup(group.id)}
+                        >
+                          Leave Group
+                        </Button>
+                      </div>
+                    }
                   />
                 ))}
               </div>

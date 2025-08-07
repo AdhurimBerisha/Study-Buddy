@@ -12,6 +12,7 @@ import Tutors from "./pages/Tutors/Tutors";
 import Footer from "./components/Footer";
 import NotFound from "./pages/NotFound/NotFound";
 import MyProfile from "./pages/Profile/MyProfile";
+import GroupDetails from "./pages/Groups/GroupDetails";
 
 function App() {
   return (
@@ -22,7 +23,8 @@ function App() {
         <Route path="/courses" element={<Courses />} />
         <Route path="/tutors" element={<Tutors />} />
         <Route path="/groups" element={<AllGroups />} />
-        <Route path="/groups/:groupId" element={<MyGroup />} />
+        <Route path="/groups/my" element={<MyGroup />} />
+        <Route path="/groups/:id" element={<GroupDetails />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/profile/:userId" element={<MyProfile />} />
