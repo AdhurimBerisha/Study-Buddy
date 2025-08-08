@@ -1,6 +1,6 @@
 # StudyBuddy — Your Pathway to a Tech Career
 
-![StudyBuddy Website](./frontend/public/StudyBuddyWebsite.png)
+![StudyBuddy Website](./StudyBuddy.png)
 
 StudyBuddy is a modern e-learning platform built for aspiring tech professionals. It offers expert-led courses, collaborative group learning, personalized study paths, real-time support, and career-focused resources, making it easier than ever to gain skills, connect with peers, and launch your tech career with confidence.
 
