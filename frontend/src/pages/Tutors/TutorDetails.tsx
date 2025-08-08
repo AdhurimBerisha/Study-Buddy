@@ -93,7 +93,24 @@ const TutorDetails = () => {
                 <div className="text-gray-500 uppercase text-xs">Trial</div>
                 <div className="font-semibold">{tutor.trialRate}</div>
               </div>
-              <Button fullWidth>Book Trial</Button>
+              <Link
+                to="/checkout"
+                state={{
+                  type: "tutor",
+                  tutor: {
+                    name: tutor.name,
+                    trialRate: parseFloat(
+                      tutor.trialRate.replace(/[^0-9.]/g, "")
+                    ),
+                    hourlyRate: parseFloat(
+                      tutor.hourlyRate.replace(/[^0-9.]/g, "")
+                    ),
+                  },
+                  booking: { isTrial: true },
+                }}
+              >
+                <Button fullWidth>Book Trial</Button>
+              </Link>
             </div>
           </aside>
         </div>

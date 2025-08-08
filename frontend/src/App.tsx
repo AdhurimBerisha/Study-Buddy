@@ -20,6 +20,7 @@ import GroupDetails from "./pages/Groups/GroupDetails";
 import ChatLayout from "./components/ChatLayout";
 import ChatPage from "./pages/Groups/ChatPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Checkout from "./pages/Payments/Checkout";
 
 function App() {
   const location = useLocation();
@@ -51,6 +52,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/profile/:userId" element={<MyProfile />} />
+        <Route path="/checkout" element={<Checkout />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
