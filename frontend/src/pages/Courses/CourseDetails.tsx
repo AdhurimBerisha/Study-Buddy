@@ -1,7 +1,14 @@
 import { Link, useParams } from "react-router-dom";
-import { FaUsers, FaArrowLeft, FaStar, FaBook } from "react-icons/fa";
+import {
+  FaUsers,
+  FaArrowLeft,
+  FaStar,
+  FaBook,
+  FaUserCircle,
+} from "react-icons/fa";
 import Button from "../../components/Button";
 import { findCourseBySlug } from "./data";
+import { tutors as allTutors, toTutorSlug } from "../Tutors/data";
 
 const CourseDetails = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -77,11 +84,6 @@ const CourseDetails = () => {
                 Next steps
               </h3>
               <div className="space-y-3">
-                <Link to="/tutors">
-                  <Button className="mb-3" fullWidth>
-                    Find a tutor
-                  </Button>
-                </Link>
                 <Link to="/groups">
                   <Button fullWidth variant="secondary">
                     Join a study group
@@ -89,6 +91,55 @@ const CourseDetails = () => {
                 </Link>
               </div>
             </aside>
+          </div>
+
+          <div className="mt-10 bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              Featured tutors
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {allTutors.slice(0, 2).map((tutor) => (
+                <div
+                  key={tutor.id}
+                  className="rounded-xl border border-gray-200 shadow-sm p-5 flex gap-4 items-start"
+                >
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center bg-gray-200 text-gray-500 text-3xl">
+                    <FaUserCircle />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 leading-tight">
+                          {tutor.name}
+                        </h3>
+                        <p className="text-sm text-gray-600 line-clamp-2">
+                          {tutor.headline}
+                        </p>
+                      </div>
+                      <div className="text-sm text-gray-700 flex items-center gap-1">
+                        <FaStar className="text-yellow-500" />{" "}
+                        {tutor.rating.toFixed(1)}
+                      </div>
+                    </div>
+                    <div className="mt-3 text-sm text-gray-600">
+                      <span className="mr-3">{tutor.lessons} lessons</span>
+                      <span className="mr-3">Hourly: {tutor.hourlyRate}</span>
+                      <span>Trial: {tutor.trialRate}</span>
+                    </div>
+                    <div className="mt-4 flex gap-3">
+                      <Link to={`/tutors/${toTutorSlug(tutor.name)}`}>
+                        <Button size="sm">View Profile</Button>
+                      </Link>
+                      <Link to={`/tutors/${toTutorSlug(tutor.name)}`}>
+                        <Button size="sm" variant="secondary">
+                          Book Trial
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
