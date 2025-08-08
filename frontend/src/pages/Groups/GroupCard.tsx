@@ -13,6 +13,7 @@ type GroupCardProps = {
     lastActivity?: string;
     unreadMessages?: number;
     pendingTasks?: number;
+    isMember?: boolean;
   };
   variant: "all" | "my";
   onView?: () => void;
@@ -32,7 +33,6 @@ const GroupCard = ({
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow">
       <div className="p-6">
-        {/* Header Section */}
         <div className="flex justify-between items-start">
           <div>
             <h2 className="text-xl font-bold text-gray-800">{group.name}</h2>
@@ -43,21 +43,17 @@ const GroupCard = ({
           </span>
         </div>
 
-        {/* Description (for All Groups) */}
         {variant === "all" && group.description && (
           <p className="mt-3 text-gray-700">{group.description}</p>
         )}
 
-        {/* Members Count */}
         <div className="flex items-center mt-4 text-gray-600">
           <FaUsers className="mr-2" />
           <span>{group.members} members</span>
         </div>
 
-        {/* Additional Info Section */}
         <div className="mt-4">
           {variant === "all" ? (
-            // All Groups variant
             group.upcomingEvent && (
               <div className="flex items-start">
                 <FaCalendarAlt className="text-green-500 mt-1 mr-2 flex-shrink-0" />
@@ -67,7 +63,6 @@ const GroupCard = ({
               </div>
             )
           ) : (
-            // My Groups variant
             <div className="grid grid-cols-2 gap-4">
               {group.upcomingEvent && (
                 <div className="flex items-center">
@@ -115,15 +110,19 @@ const GroupCard = ({
           )}
         </div>
 
-        {/* Action Buttons */}
-        {/* Action Buttons */}
         <div className="mt-6">
           {actions ? (
             actions
           ) : variant === "all" ? (
-            <Button variant="primary" className="w-full" onClick={onJoin}>
-              Join Group
-            </Button>
+            group.isMember ? (
+              <Button variant="outline" className="w-full" onClick={onLeave}>
+                Leave Group
+              </Button>
+            ) : (
+              <Button variant="primary" className="w-full" onClick={onJoin}>
+                Join Group
+              </Button>
+            )
           ) : (
             <div className="flex space-x-4">
               <Button variant="primary" className="flex-1" onClick={onView}>
