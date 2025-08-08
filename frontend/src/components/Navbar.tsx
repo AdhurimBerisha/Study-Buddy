@@ -11,7 +11,6 @@ import { FaUserCircle } from "react-icons/fa";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isGroupsDropdownOpen, setIsGroupsDropdownOpen] = useState(false);
   const [isMobileGroupsDropdownOpen, setIsMobileGroupsDropdownOpen] =
     useState(false);
   const location = useLocation();
@@ -65,18 +64,47 @@ const Navbar = () => {
                 Home
               </NavLink>
 
-              <NavLink
-                to="/courses"
-                className={({ isActive }) =>
-                  `px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                    isActive
+              <div className="relative group">
+                <button
+                  type="button"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center ${
+                    location.pathname.startsWith("/courses")
                       ? "text-blue-600 font-semibold"
                       : "text-gray-900 hover:text-blue-500"
-                  }`
-                }
-              >
-                Courses
-              </NavLink>
+                  }`}
+                >
+                  Courses
+                  <svg
+                    className="ml-1 h-4 w-4 transition-transform duration-200 group-hover:rotate-180"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+                <div className="absolute left-0 mt-2 w-52 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="py-1">
+                    <NavLink
+                      to="/courses"
+                      className="block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 transition-colors duration-200"
+                    >
+                      All Courses
+                    </NavLink>
+                    <NavLink
+                      to="/learning"
+                      className="block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 transition-colors duration-200"
+                    >
+                      My Learning
+                    </NavLink>
+                  </div>
+                </div>
+              </div>
 
               <NavLink
                 to="/tutors"
@@ -286,6 +314,19 @@ const Navbar = () => {
               }
             >
               Courses
+            </NavLink>
+            <NavLink
+              to="/learning"
+              onClick={toggleMenu}
+              className={({ isActive }) =>
+                `block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+                  isActive
+                    ? "text-blue-400 font-semibold"
+                    : "text-white hover:text-blue-300"
+                }`
+              }
+            >
+              My Learning
             </NavLink>
 
             <NavLink
