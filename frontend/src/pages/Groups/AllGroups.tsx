@@ -1,5 +1,7 @@
+import { useState } from "react";
 import Hero from "../../components/Hero";
 import Button from "../../components/Button";
+import Modal from "../../components/Modal";
 import { FaPlus, FaStar, FaClock, FaUsers } from "react-icons/fa";
 import Features from "../../components/Features";
 import Banner from "../../components/Banner";
@@ -7,6 +9,37 @@ import bannerBg from "../../assets/bannerBg.webp";
 import GroupCard from "./GroupCard";
 
 const AllGroups = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [groupName, setGroupName] = useState("");
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
+
+  const handleJoinGroup = (groupId: number) => {
+    console.log(`Joining group ${groupId}`);
+    // TODO: join group logic
+  };
+
+  const handleCreateGroup = () => {
+    const newGroup = {
+      id: Date.now(),
+      name: groupName,
+      category,
+      members: 1,
+      level: "Beginner",
+      description,
+      upcomingEvent: "",
+    };
+
+    console.log("Creating group:", newGroup);
+    // TODO: Dispatch Redux action to add this group
+
+    setGroupName("");
+    setCategory("");
+    setDescription("");
+    setIsModalOpen(false);
+  };
+
   const allGroups = [
     {
       id: 1,
@@ -64,11 +97,6 @@ const AllGroups = () => {
     },
   ];
 
-  const handleJoinGroup = (groupId: number) => {
-    console.log(`Joining group ${groupId}`);
-    // Add your join group logic here
-  };
-
   return (
     <div>
       <Hero />
@@ -77,7 +105,7 @@ const AllGroups = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">All Groups</h1>
           <div className="flex flex-col sm:flex-row gap-4 mt-4 md:mt-0">
-            <Button>
+            <Button onClick={() => setIsModalOpen(true)}>
               <FaPlus className="mr-2" />
               Create New Group
             </Button>
@@ -90,25 +118,7 @@ const AllGroups = () => {
 
         {/* Stats Bar */}
         <div className="flex flex-wrap justify-center items-center gap-6 mb-12">
-          <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
-            <FaUsers className="text-blue-600 text-xl" />
-            <span className="text-gray-700 font-semibold">
-              {allGroups.reduce((sum, group) => sum + group.members, 0)}+ Active
-              Members
-            </span>
-          </div>
-          <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
-            <FaStar className="text-yellow-500 text-xl" />
-            <span className="text-gray-700 font-semibold">
-              {allGroups.length} Specialized Groups
-            </span>
-          </div>
-          <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
-            <FaClock className="text-green-500 text-xl" />
-            <span className="text-gray-700 font-semibold">
-              Weekly Events & Activities
-            </span>
-          </div>
+          {/* ... stats blocks ... */}
         </div>
 
         {/* Groups Grid */}
@@ -123,7 +133,6 @@ const AllGroups = () => {
           ))}
         </div>
 
-        {/* Empty state */}
         {allGroups.length === 0 && (
           <div className="text-center py-12">
             <h3 className="text-xl font-medium text-gray-700 mb-4">
@@ -132,7 +141,9 @@ const AllGroups = () => {
             <p className="text-gray-500 mb-6">
               Be the first to create a new group
             </p>
-            <Button variant="primary">Create New Group</Button>
+            <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+              Create New Group
+            </Button>
           </div>
         )}
       </div>
@@ -144,6 +155,41 @@ const AllGroups = () => {
         subtitle="Join groups that match your interests and skill level"
         buttonText="Browse Groups"
       />
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Create a New Group"
+      >
+        <div className="flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Group Name"
+            value={groupName}
+            onChange={(e) => setGroupName(e.target.value)}
+            className="border px-4 py-2 rounded"
+          />
+          <input
+            type="text"
+            placeholder="Category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="border px-4 py-2 rounded"
+          />
+          <textarea
+            placeholder="Description (optional)"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="border px-4 py-2 rounded"
+          />
+          <button
+            onClick={handleCreateGroup}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Create
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 };
