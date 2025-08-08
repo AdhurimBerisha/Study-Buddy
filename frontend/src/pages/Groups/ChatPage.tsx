@@ -76,8 +76,8 @@ const ChatPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-64px)]  bg-blue-50">
-      <aside className="w-72 border-r border-gray-200 overflow-y-auto p-4 ">
+    <div className="flex h-[calc(100vh-80px)]  bg-gray-100">
+      <aside className="w-72 border-r border-b border-gray-300 overflow-y-auto p-4 ">
         <h1 className="text-2xl font-bold mb-6">Your Groups</h1>
         <div className="space-y-3">
           {groups.map((group) => {
@@ -90,10 +90,10 @@ const ChatPage: React.FC = () => {
                   setIsMinimized(false);
                   setMessages(dummyMessages);
                 }}
-                className={`cursor-pointer rounded-md p-3 border ${
+                className={`cursor-pointer rounded-md  p-3 border border-gray-400  ${
                   isSelected
-                    ? "border-blue-500 bg-blue-50 ring-2 ring-blue-400"
-                    : "border-transparent hover:border-gray-300 hover:bg-gray-50"
+                    ? "border-blue-500 bg-gray-100 border ring-2 ring-blue-400"
+                    : "border-transparent hover:border-gray-300  hover:bg-gray-50"
                 } transition-colors duration-200`}
               >
                 <div className="flex justify-between items-center">
@@ -159,7 +159,7 @@ const ChatPage: React.FC = () => {
               ))}
             </div>
 
-            <div className="border-t border-gray-300 px-4 py-3 flex items-center space-x-3">
+            <div className="border-t border-b border-gray-300 px-4 py-3 flex items-center space-x-3">
               <input
                 type="text"
                 placeholder="Type your message..."
