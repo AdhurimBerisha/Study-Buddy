@@ -55,7 +55,7 @@ const dummyMessages = [
 ];
 
 export default function RightSideChat() {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState(groups[0]);
   const [messages, setMessages] = useState(dummyMessages);
   const [newMessage, setNewMessage] = useState("");
