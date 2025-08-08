@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { FaChevronDown, FaChevronUp, FaTimes, FaUsers } from "react-icons/fa";
+import {
+  FaChevronDown,
+  FaChevronUp,
+  FaTimes,
+  FaUsers,
+  FaPaperPlane,
+} from "react-icons/fa";
 import Button from "./Button";
 
 type Group = {
@@ -84,27 +90,29 @@ export default function RightSideChat() {
 
   return (
     <div
-      className={`fixed bottom-0 right-2 z-50 flex flex-col transition-all duration-300
-    bg-white border border-gray-200 shadow-lg overflow-hidden
-    ${isOpen ? "w-[580px] h-[600px] rounded-t-xl" : "w-72 h-14 rounded-t-xl"}`}
+      className={`fixed bottom-0 right-2 sm:right-4 lg:right-6 z-50 flex flex-col transition-all duration-300
+    bg-white border border-gray-200 shadow-xl overflow-hidden
+    ${
+      isOpen
+        ? "w-[320px] sm:w-[400px] md:w-[500px] lg:w-[580px] h-[400px] sm:h-[500px] md:h-[600px] rounded-t-xl"
+        : "w-64 sm:w-72 h-14 rounded-t-xl"
+    }`}
     >
       {/* Header */}
       <div
-        className="flex items-center justify-between px-4 py-3 bg-gray-100 border-b border-gray-300 cursor-pointer select-none"
+        className="flex items-center justify-between px-3 sm:px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white cursor-pointer select-none"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="flex items-center space-x-2">
-          <FaUsers className="text-gray-600" />
-          <span className="font-semibold text-gray-800 truncate max-w-[320px]">
-            {selectedGroup.name}
-          </span>
+        <div className="flex items-center space-x-2 min-w-0 flex-1">
+          <FaUsers className="text-white flex-shrink-0" />
+          <span className="font-semibold truncate">{selectedGroup.name}</span>
           {selectedGroup.unreadMessages ? (
-            <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">
+            <span className="bg-white text-blue-600 text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0">
               {selectedGroup.unreadMessages}
             </span>
           ) : null}
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2">
           {isOpen ? (
             <button
               onClick={(e) => {
@@ -112,9 +120,9 @@ export default function RightSideChat() {
                 setIsOpen(false);
               }}
               aria-label="Minimize chat"
-              className="hover:bg-gray-200 p-1 rounded"
+              className="hover:bg-blue-400 p-1 rounded transition-colors duration-200"
             >
-              <FaChevronDown />
+              <FaChevronDown className="text-sm" />
             </button>
           ) : (
             <button
@@ -123,9 +131,9 @@ export default function RightSideChat() {
                 setIsOpen(true);
               }}
               aria-label="Maximize chat"
-              className="hover:bg-gray-200 p-1 rounded"
+              className="hover:bg-blue-400 p-1 rounded transition-colors duration-200"
             >
-              <FaChevronUp />
+              <FaChevronUp className="text-sm" />
             </button>
           )}
           <button
@@ -134,9 +142,9 @@ export default function RightSideChat() {
               alert("Close chat (implement your logic)");
             }}
             aria-label="Close chat"
-            className="hover:bg-gray-200 p-1 rounded"
+            className="hover:bg-blue-400 p-1 rounded transition-colors duration-200"
           >
-            <FaTimes />
+            <FaTimes className="text-sm" />
           </button>
         </div>
       </div>
@@ -145,25 +153,27 @@ export default function RightSideChat() {
       {isOpen && (
         <div className="flex flex-1 overflow-hidden">
           {/* Left Sidebar */}
-          <div className="w-64 border-r border-gray-200 bg-gray-50 overflow-y-auto">
+          <div className="w-1/3 sm:w-64 border-r border-gray-200 bg-gray-50 overflow-y-auto">
             {groups.map((group) => (
               <button
                 key={group.id}
-                className={`w-full px-4 py-3 text-left cursor-pointer truncate border-l-4 transition-colors duration-150
+                className={`w-full px-3 sm:px-4 py-3 text-left cursor-pointer truncate border-l-4 transition-all duration-200
         ${
           group.id === selectedGroup.id
-            ? "bg-white border-blue-500 text-blue-700 font-semibold"
+            ? "bg-white border-blue-500 text-blue-700 font-semibold shadow-sm"
             : "border-transparent hover:bg-gray-100 hover:border-gray-300 text-gray-700"
         }`}
                 onClick={() => selectGroup(group)}
               >
-                {group.name}
-                {group.unreadMessages ? (
-                  <span className="ml-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">
-                    {group.unreadMessages}
-                  </span>
-                ) : null}
-                <div className="text-xs text-gray-400 mt-0.5">
+                <div className="flex items-center justify-between">
+                  <span className="truncate">{group.name}</span>
+                  {group.unreadMessages ? (
+                    <span className="ml-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0">
+                      {group.unreadMessages}
+                    </span>
+                  ) : null}
+                </div>
+                <div className="text-xs text-gray-400 mt-1 truncate">
                   {group.category}
                 </div>
               </button>
@@ -173,24 +183,32 @@ export default function RightSideChat() {
           {/* Chat Area */}
           <div className="flex flex-col flex-1">
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-5 bg-white">
+            <div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 space-y-3 sm:space-y-4 bg-white">
               {messages.length === 0 && (
-                <p className="text-gray-400 text-center mt-10 select-none">
-                  No messages yet
-                </p>
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-gray-400 text-center text-sm sm:text-base">
+                    No messages yet
+                  </p>
+                </div>
               )}
               {messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`max-w-[70%] p-4 rounded-lg ${
+                  className={`max-w-[85%] sm:max-w-[70%] p-3 sm:p-4 rounded-lg shadow-sm ${
                     msg.sender === "You"
-                      ? "bg-blue-100 text-blue-900 self-end ml-auto"
-                      : "bg-gray-200 text-gray-900"
+                      ? "bg-blue-500 text-white ml-auto"
+                      : "bg-gray-100 text-gray-900"
                   }`}
                 >
-                  <p className="font-semibold text-sm">{msg.sender}</p>
-                  <p className="mt-1">{msg.content}</p>
-                  <p className="text-xs text-gray-500 mt-2 text-right">
+                  <p className="font-semibold text-xs sm:text-sm mb-1">
+                    {msg.sender}
+                  </p>
+                  <p className="text-sm sm:text-base">{msg.content}</p>
+                  <p
+                    className={`text-xs mt-2 text-right ${
+                      msg.sender === "You" ? "text-blue-100" : "text-gray-500"
+                    }`}
+                  >
                     {msg.timestamp}
                   </p>
                 </div>
@@ -198,11 +216,11 @@ export default function RightSideChat() {
             </div>
 
             {/* Message Input */}
-            <div className="border-t border-gray-200 p-4 flex items-center space-x-3 bg-gray-50">
+            <div className="border-t border-gray-200 p-3 sm:p-4 flex items-center space-x-2 sm:space-x-3 bg-gray-50">
               <input
                 type="text"
-                placeholder="Type a message"
-                className="flex-1 rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Type a message..."
+                className="flex-1 rounded-lg border border-gray-300 px-3 sm:px-4 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyDown={(e) => {
@@ -212,16 +230,20 @@ export default function RightSideChat() {
                   }
                 }}
               />
-              <Button variant="primary" onClick={handleSendMessage}>
-                Send
-              </Button>
+              <button
+                onClick={handleSendMessage}
+                disabled={!newMessage.trim()}
+                className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white p-2 sm:p-3 rounded-lg transition-colors duration-200 flex items-center justify-center"
+              >
+                <FaPaperPlane className="text-xs sm:text-sm" />
+              </button>
             </div>
           </div>
         </div>
       )}
 
       {!isOpen && (
-        <div className="flex items-center justify-center h-full text-gray-500 italic select-none">
+        <div className="flex items-center justify-center h-full text-gray-500 italic text-xs sm:text-sm px-3">
           Chat minimized. Click header to expand.
         </div>
       )}
