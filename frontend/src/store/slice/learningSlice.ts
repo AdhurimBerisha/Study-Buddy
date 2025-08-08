@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { getCurriculumBySlug } from "../../pages/Courses/curriculum";
 
 type CourseProgress = {
   completedLessonIds: string[];
@@ -12,6 +13,7 @@ export interface LearningState {
   wishlist: string[];
   following: string[];
   purchasedCourseSlugs: string[];
+  completedCourseSlugs: string[];
 }
 
 const LOCAL_STORAGE_KEY = "studybuddy_learning_state_v1";
@@ -27,6 +29,7 @@ function loadInitialState(): LearningState {
         wishlist: parsed.wishlist || [],
         following: parsed.following || [],
         purchasedCourseSlugs: parsed.purchasedCourseSlugs || [],
+        completedCourseSlugs: parsed.completedCourseSlugs || [],
       };
     }
   } catch {}
@@ -36,6 +39,7 @@ function loadInitialState(): LearningState {
     wishlist: [],
     following: [],
     purchasedCourseSlugs: [],
+    completedCourseSlugs: [],
   };
 }
 
@@ -87,6 +91,24 @@ const learningSlice = createSlice({
       const idx = progress.completedLessonIds.indexOf(lessonId);
       if (idx >= 0) progress.completedLessonIds.splice(idx, 1);
       else progress.completedLessonIds.push(lessonId);
+
+      // Check if course is now complete
+      const curriculum = getCurriculumBySlug(slug);
+      const totalLessons = curriculum.length;
+      const completedCount = progress.completedLessonIds.length;
+
+      if (completedCount === totalLessons && totalLessons > 0) {
+        // Course is complete - add to completedCourseSlugs if not already there
+        if (!state.completedCourseSlugs.includes(slug)) {
+          state.completedCourseSlugs.push(slug);
+        }
+      } else {
+        // Course is not complete - remove from completedCourseSlugs if it's there
+        state.completedCourseSlugs = state.completedCourseSlugs.filter(
+          (s) => s !== slug
+        );
+      }
+
       persist(state);
     },
     clearCourseProgress: (state, action: PayloadAction<string>) => {

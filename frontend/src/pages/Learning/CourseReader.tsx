@@ -10,6 +10,14 @@ import {
   toggleLessonComplete,
   setLastLesson,
 } from "../../store/slice/learningSlice";
+import {
+  FaArrowLeft,
+  FaArrowRight,
+  FaCheck,
+  FaCheckCircle,
+  FaPlay,
+  FaTrophy,
+} from "react-icons/fa";
 
 // Dummy curriculum for all courses (can be specialized per course later)
 const curriculum = [
@@ -22,9 +30,8 @@ const curriculum = [
 const CourseReader = () => {
   const { slug } = useParams<{ slug: string }>();
   const dispatch = useDispatch();
-  const { enrolledCourseSlugs, progressByCourseSlug } = useSelector(
-    (s: RootState) => s.learning
-  );
+  const { enrolledCourseSlugs, progressByCourseSlug, completedCourseSlugs } =
+    useSelector((s: RootState) => s.learning);
 
   const course = useMemo(
     () => courses.find((c) => toCourseSlug(c.language) === slug),
@@ -51,6 +58,7 @@ const CourseReader = () => {
     100,
     Math.round((completedCount / totalCount) * 100)
   );
+  const isCompleted = completedCourseSlugs.includes(slug);
 
   const initialSelectedId = progress.lastLessonId || (lessons[0]?.id ?? "");
   const [selectedLessonId, setSelectedLessonId] =
@@ -134,16 +142,33 @@ const CourseReader = () => {
           )}
         </div>
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-1 text-sm text-gray-600">
-            <span>Progress</span>
-            <span>{percent}%</span>
-          </div>
-          <div className="h-2 bg-gray-200 rounded-full">
-            <div
-              className="h-2 bg-blue-500 rounded-full"
-              style={{ width: `${percent}%` }}
-            />
-          </div>
+          {isCompleted ? (
+            <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
+              <div className="flex items-center text-green-700 mb-2">
+                <FaTrophy className="mr-2" />
+                <span className="font-semibold">Congratulations!</span>
+              </div>
+              <p className="text-green-600 text-sm">
+                You have successfully completed this course. All lessons are
+                done!
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center justify-between mb-1 text-sm text-gray-600">
+                <span>Progress</span>
+                <span>{percent}%</span>
+              </div>
+              <div className="h-2 bg-gray-200 rounded-full">
+                <div
+                  className={`h-2 rounded-full ${
+                    isCompleted ? "bg-green-500" : "bg-blue-500"
+                  }`}
+                  style={{ width: `${percent}%` }}
+                />
+              </div>
+            </>
+          )}
         </div>
         {selectedLesson && (
           <>
