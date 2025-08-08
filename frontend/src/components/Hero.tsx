@@ -31,9 +31,11 @@ const textMap: Record<RoutePath, { sub: string; title: React.ReactNode }> = {
     title: (
       <>
         Start your{" "}
-        <span className="underline decoration-blue-500">new career</span> today
-        with the{" "}
-        <span className="underline decoration-blue-500">
+        <span className="underline decoration-blue-500 decoration-2 underline-offset-4">
+          new career
+        </span>{" "}
+        today with the{" "}
+        <span className="underline decoration-blue-500 decoration-2 underline-offset-4">
           best online tutors
         </span>
         !
@@ -45,7 +47,9 @@ const textMap: Record<RoutePath, { sub: string; title: React.ReactNode }> = {
     title: (
       <>
         Find your{" "}
-        <span className="underline decoration-blue-500">perfect course</span>{" "}
+        <span className="underline decoration-blue-500 decoration-2 underline-offset-4">
+          perfect course
+        </span>{" "}
         and start learning today
       </>
     ),
@@ -55,8 +59,10 @@ const textMap: Record<RoutePath, { sub: string; title: React.ReactNode }> = {
     title: (
       <>
         Connect with{" "}
-        <span className="underline decoration-blue-500">skilled tutors</span> to
-        boost your learning
+        <span className="underline decoration-blue-500 decoration-2 underline-offset-4">
+          skilled tutors
+        </span>{" "}
+        to boost your learning
       </>
     ),
   },
@@ -64,7 +70,10 @@ const textMap: Record<RoutePath, { sub: string; title: React.ReactNode }> = {
     sub: "Join a study group",
     title: (
       <>
-        Learn <span className="underline decoration-blue-500">with others</span>{" "}
+        Learn{" "}
+        <span className="underline decoration-blue-500 decoration-2 underline-offset-4">
+          with others
+        </span>{" "}
         with peers around the world
       </>
     ),
@@ -73,7 +82,10 @@ const textMap: Record<RoutePath, { sub: string; title: React.ReactNode }> = {
     sub: "Join a study group",
     title: (
       <>
-        Learn <span className="underline decoration-blue-500">with others</span>{" "}
+        Learn{" "}
+        <span className="underline decoration-blue-500 decoration-2 underline-offset-4">
+          with others
+        </span>{" "}
         with peers around the world
       </>
     ),
@@ -83,7 +95,9 @@ const textMap: Record<RoutePath, { sub: string; title: React.ReactNode }> = {
     title: (
       <>
         Get in touch with our{" "}
-        <span className="underline decoration-blue-500">assistance team</span>
+        <span className="underline decoration-blue-500 decoration-2 underline-offset-4">
+          assistance team
+        </span>
       </>
     ),
   },
@@ -92,8 +106,13 @@ const textMap: Record<RoutePath, { sub: string; title: React.ReactNode }> = {
     title: (
       <>
         Learn more about our{" "}
-        <span className="underline decoration-blue-500">mission</span> and{" "}
-        <span className="underline decoration-blue-500">vision</span>
+        <span className="underline decoration-blue-500 decoration-2 underline-offset-4">
+          mission
+        </span>{" "}
+        and{" "}
+        <span className="underline decoration-blue-500 decoration-2 underline-offset-4">
+          vision
+        </span>
       </>
     ),
   },
@@ -107,16 +126,32 @@ const Hero = () => {
 
   return (
     <section
-      className="relative h-[91vh] flex items-center justify-center text-center text-white bg-cover bg-center"
+      className="relative min-h-[91vh] flex items-center justify-center text-center text-white bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: `url(${bgImage})` }}
     >
       <div className="absolute inset-0 bg-black/50" />
-      <div className="relative z-10 px-6">
-        <p className="text-sm mb-2 ">{text.sub}</p>
-        <h1 className="text-5xl  font-light leading-tight whitespace-pre-line">
+      <div className="relative z-10 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+        <p className="text-sm sm:text-base lg:text-lg mb-2 sm:mb-4 font-medium text-gray-200">
+          {text.sub}
+        </p>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light leading-tight sm:leading-tight md:leading-tight lg:leading-tight xl:leading-tight px-2 sm:px-4">
           {text.title}
         </h1>
-        <div className="mt-6 text-xl animate-bounce">↓</div>
+        <div className="mt-4 sm:mt-6 lg:mt-8 text-lg sm:text-xl lg:text-2xl animate-bounce">
+          <svg
+            className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 mx-auto"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
+        </div>
       </div>
     </section>
   );

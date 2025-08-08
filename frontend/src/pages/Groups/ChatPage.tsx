@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaBars, FaTimes, FaPaperPlane } from "react-icons/fa";
 import Button from "../../components/Button";
 
 const groups = [
@@ -56,9 +56,9 @@ const dummyMessages: Message[] = [
 
 const ChatPage: React.FC = () => {
   const [selectedGroup, setSelectedGroup] = useState(groups[0]);
-  const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<Message[]>(dummyMessages);
   const [newMessage, setNewMessage] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleSendMessage = () => {
     if (newMessage.trim() === "") return;
@@ -75,117 +75,178 @@ const ChatPage: React.FC = () => {
     setNewMessage("");
   };
 
+  const selectGroup = (group: (typeof groups)[0]) => {
+    setSelectedGroup(group);
+    setMessages(dummyMessages);
+    // Close sidebar on mobile after selecting a group
+    if (window.innerWidth < 768) {
+      setIsSidebarOpen(false);
+    }
+  };
+
   return (
-    <div className="flex h-[calc(100vh-80px)]  bg-gray-100">
-      <aside className="w-72 border-r border-b border-gray-300 overflow-y-auto p-4 ">
-        <h1 className="text-2xl font-bold mb-6">Your Groups</h1>
-        <div className="space-y-3">
-          {groups.map((group) => {
-            const isSelected = selectedGroup.id === group.id;
-            return (
-              <div
-                key={group.id}
-                onClick={() => {
-                  setSelectedGroup(group);
-                  setIsMinimized(false);
-                  setMessages(dummyMessages);
-                }}
-                className={`cursor-pointer rounded-md  p-3 border border-gray-400  ${
-                  isSelected
-                    ? "border-blue-500 bg-gray-100 border ring-2 ring-blue-400"
-                    : "border-transparent hover:border-gray-300  hover:bg-gray-50"
-                } transition-colors duration-200`}
-              >
-                <div className="flex justify-between items-center">
-                  <h2
-                    className={`text-lg font-semibold truncate ${
-                      isSelected ? "text-blue-700" : "text-gray-900"
+    <div className="flex h-[calc(100vh-80px)] bg-gray-50">
+      {/* Sidebar */}
+      <aside
+        className={`fixed lg:static inset-y-0 left-0 z-30 w-80 lg:w-96 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:transform-none ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        }`}
+      >
+        <div className="h-full flex flex-col">
+          {/* Sidebar Header */}
+          <div className="p-4 sm:p-6 border-b border-gray-200">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+              Your Groups
+            </h1>
+            <p className="text-sm text-gray-600 mt-1">
+              Select a group to start chatting
+            </p>
+          </div>
+
+          {/* Groups List */}
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+            <div className="space-y-3">
+              {groups.map((group) => {
+                const isSelected = selectedGroup.id === group.id;
+                return (
+                  <div
+                    key={group.id}
+                    onClick={() => selectGroup(group)}
+                    className={`cursor-pointer rounded-lg p-4 border transition-all duration-200 hover:shadow-md ${
+                      isSelected
+                        ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200"
+                        : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                     }`}
                   >
-                    {group.name}
-                  </h2>
-                  {group.unreadMessages ? (
-                    <span className="ml-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">
-                      {group.unreadMessages}
-                    </span>
-                  ) : null}
-                </div>
-                <p className="text-xs text-gray-600 mt-0.5 truncate">
-                  {group.description}
-                </p>
-              </div>
-            );
-          })}
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1 min-w-0">
+                        <h2
+                          className={`text-base sm:text-lg font-semibold truncate ${
+                            isSelected ? "text-blue-700" : "text-gray-900"
+                          }`}
+                        >
+                          {group.name}
+                        </h2>
+                        <p className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-2">
+                          {group.description}
+                        </p>
+                        <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
+                          <span>{group.members} members</span>
+                          <span>•</span>
+                          <span>{group.level}</span>
+                        </div>
+                      </div>
+                      {group.unreadMessages ? (
+                        <span className="ml-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded-full flex-shrink-0">
+                          {group.unreadMessages}
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </aside>
 
-      <main className="flex-1 flex flex-col  shadow-inner rounded-l-xl overflow-hidden">
-        <header className="flex justify-between items-center bg-gray-100 p-4 border-b border-gray-300">
-          <h2 className="text-xl font-semibold">{selectedGroup.name} Chat</h2>
+      {/* Main Chat Area */}
+      <main className="flex-1 flex flex-col bg-white shadow-lg lg:shadow-none">
+        {/* Chat Header */}
+        <header className="flex justify-between items-center bg-white p-4 sm:p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
+            {/* Mobile Sidebar Toggle */}
             <button
-              onClick={() => setIsMinimized(!isMinimized)}
-              aria-label={isMinimized ? "Maximize chat" : "Minimize chat"}
-              className="p-1 hover:bg-gray-200 rounded"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="lg:hidden bg-blue-600 text-white p-2 rounded-lg shadow-lg hover:bg-blue-700 transition-colors duration-200"
             >
-              {isMinimized ? <FaChevronUp /> : <FaChevronDown />}
+              {isSidebarOpen ? <FaTimes /> : <FaBars />}
             </button>
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+              {selectedGroup.name}
+            </h2>
+            <span className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+              {selectedGroup.members} members
+            </span>
           </div>
         </header>
 
-        {!isMinimized && selectedGroup && (
+        {selectedGroup && (
           <>
-            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
               {messages.length === 0 && (
-                <p className="text-gray-500 text-center mt-8">
-                  No messages yet. Start the conversation!
-                </p>
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <FaPaperPlane className="text-gray-400 text-xl" />
+                    </div>
+                    <p className="text-gray-500 text-sm sm:text-base">
+                      No messages yet. Start the conversation!
+                    </p>
+                  </div>
+                </div>
               )}
               {messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`max-w-xs p-3 rounded-lg ${
+                  className={`max-w-[85%] sm:max-w-[70%] p-3 sm:p-4 rounded-lg shadow-sm ${
                     msg.sender === "You"
-                      ? "bg-blue-100 text-blue-900 self-end"
-                      : "bg-gray-200 text-gray-900 self-start"
+                      ? "bg-blue-500 text-white ml-auto"
+                      : "bg-gray-100 text-gray-900"
                   }`}
                 >
-                  <p className="text-sm font-semibold">{msg.sender}</p>
-                  <p className="mt-1">{msg.content}</p>
-                  <p className="text-xs text-gray-500 mt-1 text-right">
+                  <p className="text-xs sm:text-sm font-semibold mb-1">
+                    {msg.sender}
+                  </p>
+                  <p className="text-sm sm:text-base">{msg.content}</p>
+                  <p
+                    className={`text-xs mt-2 text-right ${
+                      msg.sender === "You" ? "text-blue-100" : "text-gray-500"
+                    }`}
+                  >
                     {msg.timestamp}
                   </p>
                 </div>
               ))}
             </div>
 
-            <div className="border-t border-b border-gray-300 px-4 py-3 flex items-center space-x-3">
-              <input
-                type="text"
-                placeholder="Type your message..."
-                className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleSendMessage();
-                  }
-                }}
-              />
-              <Button variant="primary" onClick={handleSendMessage}>
-                Send
-              </Button>
+            {/* Message Input */}
+            <div className="border-t border-gray-200 p-4 sm:p-6 bg-gray-50">
+              <div className="flex items-center space-x-3">
+                <input
+                  type="text"
+                  placeholder="Type your message..."
+                  className="flex-1 border border-gray-300 rounded-lg px-4 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleSendMessage();
+                    }
+                  }}
+                />
+                <button
+                  onClick={handleSendMessage}
+                  disabled={!newMessage.trim()}
+                  className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white p-3 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                >
+                  <FaPaperPlane className="text-sm" />
+                </button>
+              </div>
             </div>
           </>
         )}
-
-        {isMinimized && (
-          <div className="p-4 text-center text-gray-500 italic select-none">
-            Chat minimized. Click the arrow to expand.
-          </div>
-        )}
       </main>
+
+      {/* Mobile Overlay */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
     </div>
   );
 };

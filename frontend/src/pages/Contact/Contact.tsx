@@ -5,9 +5,11 @@ import bannerBg from "../../assets/bannerBg.webp";
 
 const Contact = () => {
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
       <Hero />
-      <ContactForm />
+      <div className="px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+        <ContactForm />
+      </div>
       <Banner
         imageSrc={bannerBg}
         title="Start learning a new language today!"
