@@ -84,10 +84,9 @@ export default function RightSideChat() {
 
   return (
     <div
-      className={`fixed bottom-4 right-4 flex flex-col rounded-xl shadow-lg border border-gray-200 transition-all duration-300 overflow-hidden
-        bg-white z-50
-        ${isOpen ? "w-[580px] h-[600px]" : "w-72 h-14"}
-      `}
+      className={`fixed bottom-0 right-2 z-50 flex flex-col transition-all duration-300
+    bg-white border border-gray-200 shadow-lg overflow-hidden
+    ${isOpen ? "w-[580px] h-[600px] rounded-t-xl" : "w-72 h-14 rounded-t-xl"}`}
     >
       {/* Header */}
       <div
