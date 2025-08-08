@@ -32,7 +32,7 @@ const MyGroup = () => {
               Once logged in, you'll be able to see and manage your joined
               groups.
             </p>
-            <Link to="/login">
+            <Link to="/login" className="inline-block mx-auto">
               <Button variant="primary">Login</Button>
             </Link>
           </div>
