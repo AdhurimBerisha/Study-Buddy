@@ -1,6 +1,6 @@
 import { useLocation, NavLink } from "react-router-dom";
 import { useState } from "react";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import Logo from "../assets/Logo.svg";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
@@ -11,6 +11,9 @@ import { FaUserCircle } from "react-icons/fa";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isGroupsDropdownOpen, setIsGroupsDropdownOpen] = useState(false);
+  const [isMobileGroupsDropdownOpen, setIsMobileGroupsDropdownOpen] =
+    useState(false);
   const location = useLocation();
   const isGroupsActive = location.pathname.startsWith("/groups");
 
@@ -22,6 +25,14 @@ const Navbar = () => {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+    // Reset mobile dropdown when closing menu
+    if (isMenuOpen) {
+      setIsMobileGroupsDropdownOpen(false);
+    }
+  };
+
+  const toggleMobileGroupsDropdown = () => {
+    setIsMobileGroupsDropdownOpen(!isMobileGroupsDropdownOpen);
   };
 
   return (
@@ -69,19 +80,26 @@ const Navbar = () => {
         </li>
 
         <li className="relative group">
-          <div
+          <button
+            type="button"
+            onClick={() => setIsGroupsDropdownOpen(!isGroupsDropdownOpen)}
             className={`cursor-pointer inline-block hover:text-blue-500 ${
               isGroupsActive ? "text-blue-600 font-semibold" : "text-black"
-            }`}
+            } lg:inline-flex lg:items-center`}
           >
             Groups ▾
-          </div>
+          </button>
 
-          <ul className="absolute left-0 top-full w-40 bg-white text-black rounded-md shadow-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+          <ul
+            className={`absolute left-0 top-full w-40 bg-white text-black rounded-md shadow-lg overflow-hidden transition-all duration-200
+      ${isGroupsDropdownOpen ? "opacity-100 visible" : "opacity-0 invisible"}
+      lg:absolute lg:left-0 lg:top-full lg:w-40 lg:bg-white lg:shadow-lg lg:rounded-md lg:opacity-0 lg:invisible lg:group-hover:opacity-100 lg:group-hover:visible`}
+          >
             <li>
               <NavLink
                 to="/groups"
                 className="block px-4 py-2 hover:bg-gray-100 w-full"
+                onClick={() => setIsGroupsDropdownOpen(false)}
               >
                 View All Groups
               </NavLink>
@@ -90,6 +108,7 @@ const Navbar = () => {
               <NavLink
                 to="/groups/my"
                 className="block px-4 py-2 hover:bg-gray-100 w-full"
+                onClick={() => setIsGroupsDropdownOpen(false)}
               >
                 Your Groups
               </NavLink>
@@ -98,6 +117,7 @@ const Navbar = () => {
               <NavLink
                 to="/groups/chat"
                 className="block px-4 py-2 hover:bg-gray-100 w-full"
+                onClick={() => setIsGroupsDropdownOpen(false)}
               >
                 Chat
               </NavLink>
@@ -184,7 +204,7 @@ const Navbar = () => {
 
       <button
         onClick={toggleMenu}
-        className="lg:hidden text-white text-xl p-2"
+        className="lg:hidden text-black text-xl p-2"
         aria-label="Toggle menu"
       >
         {isMenuOpen ? <FaTimes /> : <FaBars />}
@@ -232,18 +252,74 @@ const Navbar = () => {
                 Tutors
               </NavLink>
             </li>
-            <li>
-              <NavLink
-                to="/groups"
-                onClick={toggleMenu}
-                className={({ isActive }) =>
-                  isActive
+            <li className="relative">
+              <button
+                onClick={toggleMobileGroupsDropdown}
+                className={`flex items-center justify-center w-full ${
+                  isGroupsActive
                     ? "text-blue-400 font-semibold"
                     : "hover:text-blue-300"
-                }
+                }`}
               >
                 Groups
-              </NavLink>
+                {isMobileGroupsDropdownOpen ? (
+                  <FaChevronUp className="ml-2" />
+                ) : (
+                  <FaChevronDown className="ml-2" />
+                )}
+              </button>
+              {isMobileGroupsDropdownOpen && (
+                <ul className="mt-2 space-y-2 pl-4 border-l border-gray-600">
+                  <li>
+                    <NavLink
+                      to="/groups"
+                      onClick={() => {
+                        toggleMenu();
+                        setIsMobileGroupsDropdownOpen(false);
+                      }}
+                      className={({ isActive }) =>
+                        isActive
+                          ? "text-blue-400 font-semibold"
+                          : "hover:text-blue-300"
+                      }
+                    >
+                      View All Groups
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/groups/my"
+                      onClick={() => {
+                        toggleMenu();
+                        setIsMobileGroupsDropdownOpen(false);
+                      }}
+                      className={({ isActive }) =>
+                        isActive
+                          ? "text-blue-400 font-semibold"
+                          : "hover:text-blue-300"
+                      }
+                    >
+                      Your Groups
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/groups/chat"
+                      onClick={() => {
+                        toggleMenu();
+                        setIsMobileGroupsDropdownOpen(false);
+                      }}
+                      className={({ isActive }) =>
+                        isActive
+                          ? "text-blue-400 font-semibold"
+                          : "hover:text-blue-300"
+                      }
+                    >
+                      Chat
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
             </li>
             <li>
               <NavLink
@@ -273,20 +349,57 @@ const Navbar = () => {
             </li>
             <li className="pt-4 border-t border-gray-600 w-full text-center">
               <div className="flex flex-col items-center space-y-3">
-                <NavLink
-                  to="/login"
-                  onClick={toggleMenu}
-                  className="px-4 py-2 text-white hover:text-blue-200 transition-colors duration-200"
-                >
-                  Sign In
-                </NavLink>
-                <NavLink
-                  to="/register"
-                  onClick={toggleMenu}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-500 transition-all duration-200 font-medium"
-                >
-                  Sign Up
-                </NavLink>
+                {isAuthenticated ? (
+                  <>
+                    <div className="flex items-center gap-2 text-white mb-2">
+                      {user?.avatar ? (
+                        <img
+                          src={user.avatar}
+                          alt="User Avatar"
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+                      ) : (
+                        <FaUserCircle className="text-2xl" />
+                      )}
+                      <span className="text-sm">
+                        {user?.firstName} {user?.lastName}
+                      </span>
+                    </div>
+                    <NavLink
+                      to={`/profile/${user?.id}`}
+                      onClick={toggleMenu}
+                      className="px-4 py-2 text-white hover:text-blue-200 transition-colors duration-200"
+                    >
+                      Profile
+                    </NavLink>
+                    <button
+                      onClick={() => {
+                        dispatch(logout());
+                        toggleMenu();
+                      }}
+                      className="px-4 py-2 text-white hover:text-blue-200 transition-colors duration-200"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <NavLink
+                      to="/login"
+                      onClick={toggleMenu}
+                      className="px-4 py-2 text-white hover:text-blue-200 transition-colors duration-200"
+                    >
+                      Sign In
+                    </NavLink>
+                    <NavLink
+                      to="/register"
+                      onClick={toggleMenu}
+                      className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-500 transition-all duration-200 font-medium"
+                    >
+                      Sign Up
+                    </NavLink>
+                  </>
+                )}
               </div>
             </li>
           </ul>
