@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import About from "./pages/About/About";
 import Contact from "./pages/Contact/Contact";
@@ -14,10 +14,14 @@ import NotFound from "./pages/NotFound/NotFound";
 import MyProfile from "./pages/Profile/MyProfile";
 import GroupDetails from "./pages/Groups/GroupDetails";
 import ChatLayout from "./components/ChatLayout";
+import ChatPage from "./pages/Groups/ChatPage";
 
 function App() {
+  const location = useLocation();
+
+  const showChatLayout = location.pathname !== "/groups/chat";
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-200 via-neutral-100 to-blue-50 bg-[length:200%_200%] animate-gradient-x">
+    <div className="min-h-screen bg-gradient-to-br from-blue-200 via-neutral-100 to-blue-50 bg-[length:200%_200%] animate-gradient-x pt-20">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -25,6 +29,7 @@ function App() {
         <Route path="/tutors" element={<Tutors />} />
         <Route path="/groups" element={<AllGroups />} />
         <Route path="/groups/my" element={<MyGroup />} />
+        <Route path="/groups/chat" element={<ChatPage />} />
         <Route path="/groups/:id" element={<GroupDetails />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
@@ -33,7 +38,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      <ChatLayout />
+      {showChatLayout && <ChatLayout />}
       <Footer />
     </div>
   );

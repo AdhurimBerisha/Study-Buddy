@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { useLocation, NavLink } from "react-router-dom";
 import { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import Logo from "../assets/Logo.svg";
@@ -11,6 +11,8 @@ import { FaUserCircle } from "react-icons/fa";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  const isGroupsActive = location.pathname.startsWith("/groups");
 
   const user = useSelector((state: RootState) => state.auth.currentUser);
   const isAuthenticated = useSelector(
@@ -23,7 +25,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="absolute top-0 left-0 w-full z-20 flex items-center tracking-wide justify-between text-sm py-4 px-3">
+    <div className="fixed top-0 left-0 w-full bg-white/30 backdrop-blur-md shadow-md z-30 flex items-center tracking-wide justify-between text-sm py-2 px-6 text-gray-900">
       <a href="/">
         <img
           className="w-[150px] md:w-[200px] h-auto"
@@ -32,7 +34,7 @@ const Navbar = () => {
         />
       </a>
 
-      <ul className="hidden lg:flex gap-6 font-medium text-white ">
+      <ul className="hidden lg:flex gap-6 font-medium text-black ">
         <li>
           <NavLink
             to="/"
@@ -67,7 +69,11 @@ const Navbar = () => {
         </li>
 
         <li className="relative group">
-          <div className="cursor-pointer hover:text-blue-500 inline-block">
+          <div
+            className={`cursor-pointer inline-block hover:text-blue-500 ${
+              isGroupsActive ? "text-blue-600 font-semibold" : "text-black"
+            }`}
+          >
             Groups ▾
           </div>
 
@@ -86,6 +92,14 @@ const Navbar = () => {
                 className="block px-4 py-2 hover:bg-gray-100 w-full"
               >
                 Your Groups
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/groups/chat"
+                className="block px-4 py-2 hover:bg-gray-100 w-full"
+              >
+                Chat
               </NavLink>
             </li>
           </ul>
@@ -154,13 +168,13 @@ const Navbar = () => {
           <>
             <NavLink
               to="/login"
-              className="px-4 py-2 hover:text-blue-200 transition-colors duration-200"
+              className="px-4 py-2 hover:text-blue-200 transition-colors duration-200 text-black font-semibold"
             >
               Sign In
             </NavLink>
             <NavLink
               to="/register"
-              className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-500 transition-all duration-200 font-medium"
+              className="px-6 py-2 bg-blue-600 text-white rounded-full  hover:bg-blue-500 transition-all duration-200 font-semibold"
             >
               Sign Up
             </NavLink>
