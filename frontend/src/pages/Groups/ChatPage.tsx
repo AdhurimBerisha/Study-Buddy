@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import {
   FaBars,
@@ -10,67 +9,28 @@ import {
   FaLock,
 } from "react-icons/fa";
 import Button from "../../components/Button";
-
-const groups = [
-  {
-    id: 1,
-    name: "Frontend Masters",
-    category: "Web Development",
-    members: 85,
-    level: "Intermediate",
-    description: "A place for frontend developers.",
-    upcomingEvent: "Aug 20 - React Conf",
-    lastActivity: "2 hours ago",
-    unreadMessages: 5,
-    pendingTasks: 2,
-    isMember: true,
-  },
-  {
-    id: 2,
-    name: "Python Pioneers",
-    category: "Software Development",
-    members: 120,
-    level: "Beginner",
-    description: "Python programming enthusiasts.",
-    upcomingEvent: "Sep 10 - Python Meetup",
-    lastActivity: "1 day ago",
-    unreadMessages: 0,
-    pendingTasks: 0,
-    isMember: true,
-  },
-];
-
-type Message = {
-  id: number;
-  sender: string;
-  content: string;
-  timestamp: string;
-};
-
-const dummyMessages: Message[] = [
-  { id: 1, sender: "Alice", content: "Hi everyone!", timestamp: "10:00 AM" },
-  {
-    id: 2,
-    sender: "Bob",
-    content: "Hello! How are you?",
-    timestamp: "10:01 AM",
-  },
-  {
-    id: 3,
-    sender: "Alice",
-    content: "Doing great, thanks!",
-    timestamp: "10:02 AM",
-  },
-];
+import {
+  selectGroup as selectGroupAction,
+  sendMessage as sendMessageAction,
+  toggleSidebar,
+  setSidebarOpen,
+} from "../../store/slice/chatSlice";
 
 const ChatPage: React.FC = () => {
+  const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
-  const [selectedGroup, setSelectedGroup] = useState(groups[0]);
-  const [messages, setMessages] = useState<Message[]>(dummyMessages);
+  const { selectedGroupId, messagesByGroupId, isSidebarOpen } = useSelector(
+    (state: RootState) => state.chat
+  );
+  const groups = useSelector((state: RootState) => state.groups.myGroups);
   const [newMessage, setNewMessage] = useState("");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Redirect to login if not authenticated
+  const selectedGroup =
+    groups.find((g) => g.id === selectedGroupId) || groups[0];
+  const messages = selectedGroup
+    ? messagesByGroupId[selectedGroup.id] || []
+    : [];
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
@@ -107,39 +67,32 @@ const ChatPage: React.FC = () => {
   }
 
   const handleSendMessage = () => {
-    if (newMessage.trim() === "") return;
-    const newMsg: Message = {
-      id: messages.length + 1,
-      sender: "You",
-      content: newMessage.trim(),
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    };
-    setMessages([...messages, newMsg]);
+    if (newMessage.trim() === "" || !selectedGroup) return;
+    dispatch(
+      sendMessageAction({
+        groupId: selectedGroup.id,
+        content: newMessage.trim(),
+        sender: "You",
+      })
+    );
     setNewMessage("");
   };
 
-  const selectGroup = (group: (typeof groups)[0]) => {
-    setSelectedGroup(group);
-    setMessages(dummyMessages);
-    // Close sidebar on mobile after selecting a group
+  const selectGroup = (groupId: number) => {
+    dispatch(selectGroupAction(groupId));
     if (window.innerWidth < 768) {
-      setIsSidebarOpen(false);
+      dispatch(setSidebarOpen(false));
     }
   };
 
   return (
     <div className="flex h-[calc(100vh-80px)] bg-gray-50">
-      {/* Sidebar */}
       <aside
         className={`fixed lg:static inset-y-0 left-0 z-30 w-80 lg:w-96 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:transform-none ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
         <div className="h-full flex flex-col">
-          {/* Sidebar Header */}
           <div className="p-4 sm:p-6 border-b border-gray-200">
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
               Your Groups
@@ -149,7 +102,6 @@ const ChatPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Groups List */}
           <div className="flex-1 overflow-y-auto p-4 sm:p-6">
             <div className="space-y-3">
               {groups.map((group) => {
@@ -157,7 +109,7 @@ const ChatPage: React.FC = () => {
                 return (
                   <div
                     key={group.id}
-                    onClick={() => selectGroup(group)}
+                    onClick={() => selectGroup(group.id)}
                     className={`cursor-pointer rounded-lg p-4 border transition-all duration-200 hover:shadow-md ${
                       isSelected
                         ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200"
@@ -182,11 +134,6 @@ const ChatPage: React.FC = () => {
                           <span>{group.level}</span>
                         </div>
                       </div>
-                      {group.unreadMessages ? (
-                        <span className="ml-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded-full flex-shrink-0">
-                          {group.unreadMessages}
-                        </span>
-                      ) : null}
                     </div>
                   </div>
                 );
@@ -196,14 +143,11 @@ const ChatPage: React.FC = () => {
         </div>
       </aside>
 
-      {/* Main Chat Area */}
       <main className="flex-1 flex flex-col bg-white shadow-lg lg:shadow-none">
-        {/* Chat Header */}
         <header className="flex justify-between items-center bg-white p-4 sm:p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            {/* Mobile Sidebar Toggle */}
             <button
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              onClick={() => dispatch(toggleSidebar())}
               className="lg:hidden bg-blue-600 text-white p-2 rounded-lg shadow-lg hover:bg-blue-700 transition-colors duration-200"
             >
               {isSidebarOpen ? <FaTimes /> : <FaBars />}
@@ -219,7 +163,6 @@ const ChatPage: React.FC = () => {
 
         {selectedGroup && (
           <>
-            {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
               {messages.length === 0 && (
                 <div className="flex items-center justify-center h-full">
@@ -257,7 +200,6 @@ const ChatPage: React.FC = () => {
               ))}
             </div>
 
-            {/* Message Input */}
             <div className="border-t border-gray-200 p-4 sm:p-6 bg-gray-50">
               <div className="flex items-center space-x-3">
                 <input
@@ -286,11 +228,10 @@ const ChatPage: React.FC = () => {
         )}
       </main>
 
-      {/* Mobile Overlay */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
-          onClick={() => setIsSidebarOpen(false)}
+          onClick={() => dispatch(setSidebarOpen(false))}
         />
       )}
     </div>
