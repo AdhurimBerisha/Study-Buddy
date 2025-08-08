@@ -18,7 +18,6 @@ const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
     return () => document.removeEventListener("keydown", handleEsc);
   }, [onClose]);
 
-  // Close if click outside modal content
   const onOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
       onClose();

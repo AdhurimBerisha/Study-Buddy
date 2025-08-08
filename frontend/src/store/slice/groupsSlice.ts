@@ -1,14 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-interface Group {
+export interface Group {
   id: number;
   name: string;
   category: string;
-  isMember: boolean;
   members: number;
-  createdBy: string;
+  level: string;
   description?: string;
+  upcomingEvent?: string;
+  isMember?: boolean;
+  createdBy?: string;
   lastActivity?: string;
 }
 
@@ -18,7 +20,32 @@ interface GroupState {
 }
 
 const initialState: GroupState = {
-  allGroups: [],
+  allGroups: [
+    {
+      id: 101,
+      name: "Dummy Group 1",
+      category: "Test Category",
+      members: 10,
+      level: "Beginner",
+      description: "This is a dummy group for testing",
+      upcomingEvent: "Test Event - Tomorrow",
+      isMember: false,
+      createdBy: "someoneElse",
+      lastActivity: "2025-08-01T12:00:00Z",
+    },
+    {
+      id: 102,
+      name: "Dummy Group 2",
+      category: "Another Category",
+      members: 5,
+      level: "Advanced",
+      description: "Another dummy group",
+      upcomingEvent: "Test Event - Next Week",
+      isMember: false,
+      createdBy: "someoneElse",
+      lastActivity: "2025-07-30T15:00:00Z",
+    },
+  ],
   myGroups: [],
 };
 
@@ -28,8 +55,6 @@ const groupSlice = createSlice({
   reducers: {
     createGroup: (state, action: PayloadAction<Group>) => {
       state.allGroups.push(action.payload);
-
-      // Automatically add to `myGroups` if created by user
       if (action.payload.isMember) {
         state.myGroups.push(action.payload);
       }
@@ -38,7 +63,7 @@ const groupSlice = createSlice({
       const group = state.allGroups.find((g) => g.id === action.payload);
       if (group && !group.isMember) {
         group.isMember = true;
-        group.members += 1;
+        group.members++;
         state.myGroups.push(group);
       }
     },
@@ -50,15 +75,8 @@ const groupSlice = createSlice({
         state.myGroups = state.myGroups.filter((g) => g.id !== action.payload);
       }
     },
-    // Optional: fetch all groups (for simulation)
-    setAllGroups: (state, action: PayloadAction<Group[]>) => {
-      state.allGroups = action.payload;
-      state.myGroups = action.payload.filter((g) => g.isMember);
-    },
   },
 });
 
-export const { createGroup, joinGroup, leaveGroup, setAllGroups } =
-  groupSlice.actions;
-
+export const { createGroup, joinGroup, leaveGroup } = groupSlice.actions;
 export default groupSlice.reducer;

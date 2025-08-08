@@ -1,101 +1,67 @@
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState } from "../../store/store";
+import {
+  createGroup,
+  joinGroup,
+  leaveGroup,
+} from "../../store/slice/groupsSlice";
+
 import Hero from "../../components/Hero";
 import Button from "../../components/Button";
 import Modal from "../../components/Modal";
-import { FaPlus, FaStar, FaClock, FaUsers } from "react-icons/fa";
+import { FaClock, FaPlus, FaStar, FaUsers } from "react-icons/fa";
 import Features from "../../components/Features";
 import Banner from "../../components/Banner";
 import bannerBg from "../../assets/bannerBg.webp";
 import GroupCard from "./GroupCard";
 
 const AllGroups = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch();
+  const allGroups = useSelector((state: RootState) => state.groups.allGroups);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [category, setCategory] = useState("");
+  const [level, setLevel] = useState("");
   const [description, setDescription] = useState("");
-
-  const handleJoinGroup = (groupId: number) => {
-    console.log(`Joining group ${groupId}`);
-    // TODO: join group logic
-  };
+  const [upcomingEvent, setUpcomingEvent] = useState("");
 
   const handleCreateGroup = () => {
+    if (!groupName || !category || !level) {
+      alert("Please fill Group Name, Category and Level.");
+      return;
+    }
+
     const newGroup = {
       id: Date.now(),
       name: groupName,
       category,
       members: 1,
-      level: "Beginner",
+      level,
       description,
-      upcomingEvent: "",
+      upcomingEvent,
+      isMember: true,
+      createdBy: "currentUserId",
+      lastActivity: new Date().toISOString(),
     };
 
-    console.log("Creating group:", newGroup);
-    // TODO: Dispatch Redux action to add this group
-
+    dispatch(createGroup(newGroup));
     setGroupName("");
     setCategory("");
+    setLevel("");
     setDescription("");
+    setUpcomingEvent("");
     setIsModalOpen(false);
   };
 
-  const allGroups = [
-    {
-      id: 1,
-      name: "Frontend Masters",
-      category: "Web Development",
-      members: 85,
-      level: "Intermediate",
-      description: "Learn modern frontend technologies with industry experts",
-      upcomingEvent: "React Workshop - Tomorrow 3PM",
-    },
-    {
-      id: 2,
-      name: "Python Pioneers",
-      category: "Software Development",
-      members: 120,
-      level: "Beginner",
-      description: "Master Python programming from basics to advanced concepts",
-      upcomingEvent: "Django Basics - Friday 10AM",
-    },
-    {
-      id: 3,
-      name: "Data Wizards",
-      category: "Data Science",
-      members: 95,
-      level: "Professional",
-      description: "Advanced data analysis and machine learning techniques",
-      upcomingEvent: "TensorFlow Workshop - Next Week",
-    },
-    {
-      id: 4,
-      name: "Cloud Commanders",
-      category: "DevOps & Cloud",
-      members: 55,
-      level: "Advanced",
-      description: "Cloud infrastructure and deployment strategies",
-      upcomingEvent: "AWS Certification Prep - Ongoing",
-    },
-    {
-      id: 5,
-      name: "Network Ninjas",
-      category: "Networking & Security",
-      members: 45,
-      level: "Advanced",
-      description: "Network architecture and cybersecurity best practices",
-      upcomingEvent: "Cisco Lab Session - Wednesday",
-    },
-    {
-      id: 6,
-      name: "Unity Universe",
-      category: "Game Development",
-      members: 40,
-      level: "Beginner",
-      description: "Game development with Unity and Unreal Engine",
-      upcomingEvent: "3D Modeling Workshop - Coming Soon",
-    },
-  ];
+  const handleJoinGroup = (id: number) => {
+    dispatch(joinGroup(id));
+  };
+
+  const handleLeaveGroup = (id: number) => {
+    dispatch(leaveGroup(id));
+  };
 
   return (
     <div>
@@ -116,12 +82,27 @@ const AllGroups = () => {
           </div>
         </div>
 
-        {/* Stats Bar */}
         <div className="flex flex-wrap justify-center items-center gap-6 mb-12">
-          {/* ... stats blocks ... */}
+          <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
+            <FaUsers className="text-blue-600 text-xl" />
+            <span className="text-gray-700 font-semibold">
+              {allGroups.reduce((acc, g) => acc + g.members, 0)}+ Active Members
+            </span>
+          </div>
+          <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
+            <FaStar className="text-yellow-500 text-xl" />
+            <span className="text-gray-700 font-semibold">
+              {allGroups.length} Specialized Groups
+            </span>
+          </div>
+          <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
+            <FaClock className="text-green-500 text-xl" />
+            <span className="text-gray-700 font-semibold">
+              Weekly Events & Activities
+            </span>
+          </div>
         </div>
 
-        {/* Groups Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {allGroups.map((group) => (
             <GroupCard
@@ -129,6 +110,7 @@ const AllGroups = () => {
               group={group}
               variant="all"
               onJoin={() => handleJoinGroup(group.id)}
+              onLeave={() => handleLeaveGroup(group.id)}
             />
           ))}
         </div>
@@ -176,10 +158,24 @@ const AllGroups = () => {
             onChange={(e) => setCategory(e.target.value)}
             className="border px-4 py-2 rounded"
           />
+          <input
+            type="text"
+            placeholder="Level"
+            value={level}
+            onChange={(e) => setLevel(e.target.value)}
+            className="border px-4 py-2 rounded"
+          />
           <textarea
             placeholder="Description (optional)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            className="border px-4 py-2 rounded"
+          />
+          <input
+            type="text"
+            placeholder="Upcoming Event (optional)"
+            value={upcomingEvent}
+            onChange={(e) => setUpcomingEvent(e.target.value)}
             className="border px-4 py-2 rounded"
           />
           <button
