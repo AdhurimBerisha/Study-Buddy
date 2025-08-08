@@ -10,10 +10,17 @@ import Button from "../../components/Button";
 import { findCourseBySlug } from "./data";
 import { Link as RouterLink } from "react-router-dom";
 import { tutors as allTutors, toTutorSlug } from "../Tutors/data";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../../store/store";
+import { enrollCourse } from "../../store/slice/learningSlice";
+import { toCourseSlug } from "./data";
 
 const CourseDetails = () => {
   const { slug } = useParams<{ slug: string }>();
   const course = slug ? findCourseBySlug(slug) : undefined;
+  const dispatch = useDispatch();
+  const { enrolledCourseSlugs } = useSelector((s: RootState) => s.learning);
+  const isEnrolled = !!(slug && enrolledCourseSlugs.includes(slug));
 
   if (!course) {
     return (
@@ -102,6 +109,25 @@ const CourseDetails = () => {
                 >
                   <Button fullWidth>Buy course</Button>
                 </RouterLink>
+                <div className="space-y-3">
+                  {isEnrolled ? (
+                    <RouterLink to={`/learning/course/${slug}`}>
+                      <Button fullWidth variant="secondary">
+                        Go to course
+                      </Button>
+                    </RouterLink>
+                  ) : (
+                    <Button
+                      fullWidth
+                      variant="outline"
+                      onClick={() =>
+                        dispatch(enrollCourse(toCourseSlug(course.language)))
+                      }
+                    >
+                      Enroll (demo)
+                    </Button>
+                  )}
+                </div>
                 <Link to="/groups" className="mt-4 block">
                   <Button fullWidth variant="secondary">
                     Join a study group

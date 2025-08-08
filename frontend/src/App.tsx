@@ -21,6 +21,8 @@ import ChatLayout from "./components/ChatLayout";
 import ChatPage from "./pages/Groups/ChatPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Checkout from "./pages/Payments/Checkout";
+import MyLearning from "./pages/Learning/MyLearning";
+import CourseReader from "./pages/Learning/CourseReader";
 
 function App() {
   const location = useLocation();
@@ -53,6 +55,8 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/profile/:userId" element={<MyProfile />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/learning" element={<MyLearning />} />
+        <Route path="/learning/course/:slug" element={<CourseReader />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />

@@ -1,6 +1,9 @@
 import { useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
+import { useDispatch } from "react-redux";
+import { enrollCourse, purchaseCourse } from "../../store/slice/learningSlice";
+import { toCourseSlug } from "../Courses/data";
 
 type CheckoutState =
   | {
@@ -17,6 +20,7 @@ const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const state = (location.state || {}) as CheckoutState;
+  const dispatch = useDispatch();
 
   const { title, amount, subtitle } = useMemo(() => {
     if (state && state.type === "course") {
@@ -44,7 +48,14 @@ const Checkout = () => {
 
   const handleComplete = () => {
     alert("Payment successful (demo)");
-    navigate("/", { replace: true });
+    if (state && state.type === "course") {
+      const slug = toCourseSlug(state.course.title);
+      dispatch(purchaseCourse(slug));
+      dispatch(enrollCourse(slug));
+      navigate(`/learning/course/${slug}`, { replace: true });
+      return;
+    }
+    navigate("/learning", { replace: true });
   };
 
   if (!state) {
