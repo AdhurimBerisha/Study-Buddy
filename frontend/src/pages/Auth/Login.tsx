@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useState } from "react";
 import AuthLayout from "./AuthLayout";
@@ -18,8 +18,12 @@ interface LoginFormData {
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
   const users = useSelector((state: RootState) => state.auth.users);
+
+  // Get the redirect path from location state, or default to home
+  const from = (location.state as any)?.from?.pathname || "/";
 
   const {
     register,
@@ -36,7 +40,8 @@ const Login = () => {
     }
 
     dispatch(loginSuccess(foundUser));
-    navigate("/");
+    // Redirect to the page they were trying to access, or home
+    navigate(from, { replace: true });
   };
 
   return (

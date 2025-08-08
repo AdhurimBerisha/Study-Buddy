@@ -1,4 +1,10 @@
-import { FaUsers, FaCalendarAlt, FaComments, FaTasks } from "react-icons/fa";
+import {
+  FaUsers,
+  FaCalendarAlt,
+  FaComments,
+  FaTasks,
+  FaLock,
+} from "react-icons/fa";
 import Button from "../../components/Button";
 
 type GroupCardProps = {
@@ -20,6 +26,7 @@ type GroupCardProps = {
   onJoin?: () => void;
   onLeave?: () => void;
   actions?: React.ReactNode;
+  isAuthenticated?: boolean;
 };
 
 const GroupCard = ({
@@ -29,6 +36,7 @@ const GroupCard = ({
   onJoin,
   onLeave,
   actions,
+  isAuthenticated = true,
 }: GroupCardProps) => {
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow">
@@ -114,7 +122,16 @@ const GroupCard = ({
           {actions ? (
             actions
           ) : variant === "all" ? (
-            group.isMember ? (
+            !isAuthenticated ? (
+              <Button
+                variant="outline"
+                className="w-full opacity-75 cursor-not-allowed"
+                disabled
+              >
+                <FaLock className="mr-2" />
+                Login to Join
+              </Button>
+            ) : group.isMember ? (
               <Button variant="outline" className="w-full" onClick={onLeave}>
                 Leave Group
               </Button>
