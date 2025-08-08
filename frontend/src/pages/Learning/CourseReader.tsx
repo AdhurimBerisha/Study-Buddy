@@ -10,22 +10,7 @@ import {
   toggleLessonComplete,
   setLastLesson,
 } from "../../store/slice/learningSlice";
-import {
-  FaArrowLeft,
-  FaArrowRight,
-  FaCheck,
-  FaCheckCircle,
-  FaPlay,
-  FaTrophy,
-} from "react-icons/fa";
-
-// Dummy curriculum for all courses (can be specialized per course later)
-const curriculum = [
-  { id: "intro", title: "Introduction" },
-  { id: "fundamentals", title: "Fundamentals" },
-  { id: "practice", title: "Practice Exercise" },
-  { id: "summary", title: "Summary & Next Steps" },
-];
+import { FaTrophy } from "react-icons/fa";
 
 const CourseReader = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -38,38 +23,28 @@ const CourseReader = () => {
     [slug]
   );
 
-  if (!slug || !course) {
-    return (
-      <div className="max-w-4xl mx-auto px-6 py-16 text-center">
-        <p className="text-gray-600 mb-4">Course not found.</p>
-        <Link to="/courses">
-          <Button>Back to courses</Button>
-        </Link>
-      </div>
-    );
-  }
-
-  const isEnrolled = enrolledCourseSlugs.includes(slug);
-  const progress = progressByCourseSlug[slug] || { completedLessonIds: [] };
-  const lessons = getCurriculumBySlug(slug);
+  const progress = slug
+    ? progressByCourseSlug[slug] || { completedLessonIds: [] }
+    : { completedLessonIds: [] };
+  const lessons = slug ? getCurriculumBySlug(slug) : [];
   const completedCount = progress.completedLessonIds.length;
   const totalCount = lessons.length || 1;
   const percent = Math.min(
     100,
     Math.round((completedCount / totalCount) * 100)
   );
-  const isCompleted = completedCourseSlugs.includes(slug);
+  const isEnrolled = slug ? enrolledCourseSlugs.includes(slug) : false;
+  const isCompleted = slug ? completedCourseSlugs.includes(slug) : false;
 
   const initialSelectedId = progress.lastLessonId || (lessons[0]?.id ?? "");
   const [selectedLessonId, setSelectedLessonId] =
     useState<string>(initialSelectedId);
 
   useEffect(() => {
-    if (selectedLessonId) {
+    if (selectedLessonId && slug) {
       dispatch(setLastLesson({ slug, lessonId: selectedLessonId }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedLessonId]);
+  }, [selectedLessonId, dispatch, slug]);
 
   const selectedLesson =
     lessons.find((l) => l.id === selectedLessonId) || lessons[0];
@@ -86,6 +61,17 @@ const CourseReader = () => {
     if (idx >= 0 && idx < lessons.length - 1)
       setSelectedLessonId(lessons[idx + 1].id);
   };
+
+  if (!slug || !course) {
+    return (
+      <div className="max-w-4xl mx-auto px-6 py-16 text-center">
+        <p className="text-gray-600 mb-4">Course not found.</p>
+        <Link to="/courses">
+          <Button>Back to courses</Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -205,6 +191,8 @@ const CourseReader = () => {
                           <a
                             href={r.url}
                             className="text-blue-600 hover:underline"
+                            target="_blank"
+                            rel="noopener noreferrer"
                           >
                             {r.label}
                           </a>

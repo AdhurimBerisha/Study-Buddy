@@ -32,7 +32,9 @@ function loadInitialState(): LearningState {
         completedCourseSlugs: parsed.completedCourseSlugs || [],
       };
     }
-  } catch {}
+  } catch (err) {
+    console.log(err);
+  }
   return {
     enrolledCourseSlugs: [],
     progressByCourseSlug: {},
@@ -46,7 +48,9 @@ function loadInitialState(): LearningState {
 function persist(state: LearningState) {
   try {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
-  } catch {}
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 const initialState: LearningState = loadInitialState();
@@ -92,18 +96,15 @@ const learningSlice = createSlice({
       if (idx >= 0) progress.completedLessonIds.splice(idx, 1);
       else progress.completedLessonIds.push(lessonId);
 
-      // Check if course is now complete
       const curriculum = getCurriculumBySlug(slug);
       const totalLessons = curriculum.length;
       const completedCount = progress.completedLessonIds.length;
 
       if (completedCount === totalLessons && totalLessons > 0) {
-        // Course is complete - add to completedCourseSlugs if not already there
         if (!state.completedCourseSlugs.includes(slug)) {
           state.completedCourseSlugs.push(slug);
         }
       } else {
-        // Course is not complete - remove from completedCourseSlugs if it's there
         state.completedCourseSlugs = state.completedCourseSlugs.filter(
           (s) => s !== slug
         );

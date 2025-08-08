@@ -15,15 +15,18 @@ interface LoginFormData {
   rememberMe: boolean;
 }
 
+interface LocationState {
+  from?: { pathname: string };
+}
+
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const state = location.state as LocationState | null;
+  const from = state?.from?.pathname || "/";
   const dispatch = useDispatch<AppDispatch>();
   const users = useSelector((state: RootState) => state.auth.users);
-
-  // Get the redirect path from location state, or default to home
-  const from = (location.state as any)?.from?.pathname || "/";
 
   const {
     register,
@@ -40,7 +43,6 @@ const Login = () => {
     }
 
     dispatch(loginSuccess(foundUser));
-    // Redirect to the page they were trying to access, or home
     navigate(from, { replace: true });
   };
 
