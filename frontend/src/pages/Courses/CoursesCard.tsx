@@ -9,6 +9,8 @@ import {
   FaUsers,
 } from "react-icons/fa";
 import { SiSpringboot } from "react-icons/si";
+import Button from "../../components/Button";
+import { toCourseSlug } from "./data";
 
 type CardProps = {
   category: string;
@@ -92,12 +94,18 @@ const CoursesCard = ({ category, language, tutors }: CardProps) => {
         </p>
       </div>
 
-      <div className="w-full bg-gray-200 rounded-full h-2 mt-auto">
+      <div className="w-full bg-gray-200 rounded-full h-2 mt-auto mb-4">
         <div
           className={`${colorClass} h-2 rounded-full`}
           style={{ width: `${Math.min(tutors * 2, 100)}%` }}
         ></div>
       </div>
+
+      <Link to={`/courses/${toCourseSlug(language)}`} className="mt-auto">
+        <Button fullWidth size="sm">
+          Show more
+        </Button>
+      </Link>
     </div>
   );
 };
