@@ -107,7 +107,7 @@ const Hero = () => {
 
   return (
     <section
-      className="relative h-[90vh] flex items-center justify-center text-center text-white bg-cover bg-center"
+      className="relative h-[91vh] flex items-center justify-center text-center text-white bg-cover bg-center"
       style={{ backgroundImage: `url(${bgImage})` }}
     >
       <div className="absolute inset-0 bg-black/50" />
