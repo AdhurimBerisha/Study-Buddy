@@ -1,44 +1,19 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store/store";
 import Hero from "../../components/Hero";
 import Button from "../../components/Button";
 import { FaUsers, FaStar, FaClock } from "react-icons/fa";
 import bannerBg from "../../assets/bannerBg.webp";
 import Banner from "../../components/Banner";
 
-const dummyGroups = [
-  {
-    id: 1,
-    name: "Frontend Masters",
-    category: "Web Development",
-    members: 85,
-    level: "Intermediate",
-    lastActivity: "2 hours ago",
-    upcomingEvent: "React Workshop - Tomorrow 3PM",
-    unreadMessages: 5,
-    pendingTasks: 2,
-    description:
-      "Join this group to master modern frontend tools like React, Vue, and Tailwind. Weekly workshops and real-world projects included.",
-  },
-  {
-    id: 2,
-    name: "Python Pioneers",
-    category: "Software Development",
-    members: 120,
-    level: "Beginner",
-    lastActivity: "1 day ago",
-    upcomingEvent: "Django Basics - Friday 10AM",
-    unreadMessages: 3,
-    pendingTasks: 1,
-    description:
-      "Explore Python fundamentals and web development using Django and Flask. Perfect for beginners stepping into software dev.",
-  },
-];
-
 const GroupDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const group = dummyGroups.find((g) => g.id === Number(id));
+  const allGroups = useSelector((state: RootState) => state.groups.allGroups);
+
+  const group = allGroups.find((g) => g.id === Number(id));
 
   if (!group) {
     return (
@@ -79,10 +54,12 @@ const GroupDetails = () => {
           {group.description}
         </div>
 
-        <div className="bg-gray-50 border rounded-lg p-4 mb-6">
-          <h3 className="font-semibold text-gray-800 mb-2">Upcoming Event</h3>
-          <p className="text-gray-600">{group.upcomingEvent}</p>
-        </div>
+        {group.upcomingEvent && (
+          <div className="bg-gray-50 border rounded-lg p-4 mb-6">
+            <h3 className="font-semibold text-gray-800 mb-2">Upcoming Event</h3>
+            <p className="text-gray-600">{group.upcomingEvent}</p>
+          </div>
+        )}
 
         <div className="flex items-center gap-4">
           <Button variant="primary">Join Chat</Button>
