@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import Button from "../../components/Button";
+import { Link } from "react-router-dom";
+import { toTutorSlug } from "./data";
 
 type TutorCardProps = {
   avatar: ReactNode;
@@ -38,7 +40,11 @@ export default function TutorCard({
             {rating.toFixed(1)} ★
           </div>
           <div className="text-gray-400 text-sm mb-3">{lessons} Lessons</div>
-          <Button>Book Trial</Button>
+          <Link to={`/tutors/${toTutorSlug(name)}`} className="w-full">
+            <Button fullWidth size="sm">
+              Show more
+            </Button>
+          </Link>
         </div>
       </div>
 
