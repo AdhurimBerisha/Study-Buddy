@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import Button from "../../components/Button";
 import { findCourseBySlug } from "./data";
+import { Link as RouterLink } from "react-router-dom";
 import { tutors as allTutors, toTutorSlug } from "../Tutors/data";
 
 const CourseDetails = () => {
@@ -83,8 +84,25 @@ const CourseDetails = () => {
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Next steps
               </h3>
-              <div className="space-y-3">
-                <Link to="/groups">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3">
+                  <span className="text-gray-700 font-medium">
+                    Course price
+                  </span>
+                  <span className="text-blue-600 font-extrabold text-lg">
+                    ${course.price.toFixed(2)}
+                  </span>
+                </div>
+                <RouterLink
+                  to="/checkout"
+                  state={{
+                    type: "course",
+                    course: { title: course.language, price: course.price },
+                  }}
+                >
+                  <Button fullWidth>Buy course</Button>
+                </RouterLink>
+                <Link to="/groups" className="mt-4 block">
                   <Button fullWidth variant="secondary">
                     Join a study group
                   </Button>
@@ -130,7 +148,22 @@ const CourseDetails = () => {
                       <Link to={`/tutors/${toTutorSlug(tutor.name)}`}>
                         <Button size="sm">View Profile</Button>
                       </Link>
-                      <Link to={`/tutors/${toTutorSlug(tutor.name)}`}>
+                      <Link
+                        to="/checkout"
+                        state={{
+                          type: "tutor",
+                          tutor: {
+                            name: tutor.name,
+                            trialRate: parseFloat(
+                              tutor.trialRate.replace(/[^0-9.]/g, "")
+                            ),
+                            hourlyRate: parseFloat(
+                              tutor.hourlyRate.replace(/[^0-9.]/g, "")
+                            ),
+                          },
+                          booking: { isTrial: true },
+                        }}
+                      >
                         <Button size="sm" variant="secondary">
                           Book Trial
                         </Button>
