@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { FaBars, FaTimes, FaPaperPlane } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
+import type { RootState } from "../../store/store";
+import {
+  FaBars,
+  FaTimes,
+  FaPaperPlane,
+  FaSignInAlt,
+  FaLock,
+} from "react-icons/fa";
 import Button from "../../components/Button";
 
 const groups = [
@@ -55,10 +64,47 @@ const dummyMessages: Message[] = [
 ];
 
 const ChatPage: React.FC = () => {
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const [selectedGroup, setSelectedGroup] = useState(groups[0]);
   const [messages, setMessages] = useState<Message[]>(dummyMessages);
   const [newMessage, setNewMessage] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Redirect to login if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <FaLock className="text-blue-600 text-2xl" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Login Required
+          </h2>
+          <p className="text-gray-600 mb-6">
+            You need to be logged in to access group chats and discussions.
+          </p>
+          <div className="space-y-3">
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              <FaSignInAlt className="mr-2" />
+              Login to Continue
+            </Button>
+            <p className="text-sm text-gray-500">
+              Don't have an account?{" "}
+              <span className="text-blue-600 hover:underline cursor-pointer">
+                Sign up
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleSendMessage = () => {
     if (newMessage.trim() === "") return;

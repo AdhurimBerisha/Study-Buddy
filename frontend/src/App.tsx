@@ -1,4 +1,6 @@
 import { Route, Routes, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import type { RootState } from "./store/store";
 import Home from "./pages/Home/Home";
 import About from "./pages/About/About";
 import Contact from "./pages/Contact/Contact";
@@ -15,11 +17,15 @@ import MyProfile from "./pages/Profile/MyProfile";
 import GroupDetails from "./pages/Groups/GroupDetails";
 import ChatLayout from "./components/ChatLayout";
 import ChatPage from "./pages/Groups/ChatPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const location = useLocation();
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
-  const showChatLayout = location.pathname !== "/groups/chat";
+  const showChatLayout =
+    location.pathname !== "/groups/chat" && isAuthenticated;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-200 via-neutral-100 to-blue-50 bg-[length:200%_200%] animate-gradient-x pt-20">
       <Navbar />
@@ -29,7 +35,14 @@ function App() {
         <Route path="/tutors" element={<Tutors />} />
         <Route path="/groups" element={<AllGroups />} />
         <Route path="/groups/my" element={<MyGroup />} />
-        <Route path="/groups/chat" element={<ChatPage />} />
+        <Route
+          path="/groups/chat"
+          element={
+            <ProtectedRoute>
+              <ChatPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/groups/:id" element={<GroupDetails />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import type { RootState } from "../../store/store";
 import {
   createGroup,
@@ -10,7 +11,14 @@ import {
 import Hero from "../../components/Hero";
 import Button from "../../components/Button";
 import Modal from "../../components/Modal";
-import { FaClock, FaPlus, FaStar, FaUsers } from "react-icons/fa";
+import {
+  FaClock,
+  FaPlus,
+  FaStar,
+  FaUsers,
+  FaLock,
+  FaSignInAlt,
+} from "react-icons/fa";
 import Features from "../../components/Features";
 import Banner from "../../components/Banner";
 import bannerBg from "../../assets/bannerBg.webp";
@@ -18,7 +26,11 @@ import GroupCard from "./GroupCard";
 
 const AllGroups = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const allGroups = useSelector((state: RootState) => state.groups.allGroups);
+  const { isAuthenticated, currentUser } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [groupName, setGroupName] = useState("");
@@ -28,6 +40,11 @@ const AllGroups = () => {
   const [upcomingEvent, setUpcomingEvent] = useState("");
 
   const handleCreateGroup = () => {
+    if (!isAuthenticated) {
+      alert("Please log in to create a group.");
+      return;
+    }
+
     if (!groupName || !category || !level) {
       alert("Please fill Group Name, Category and Level.");
       return;
@@ -42,7 +59,7 @@ const AllGroups = () => {
       description,
       upcomingEvent,
       isMember: true,
-      createdBy: "currentUserId",
+      createdBy: currentUser?.id || "currentUserId",
       lastActivity: new Date().toISOString(),
     };
 
@@ -56,11 +73,31 @@ const AllGroups = () => {
   };
 
   const handleJoinGroup = (id: number) => {
+    if (!isAuthenticated) {
+      alert("Please log in to join a group.");
+      return;
+    }
     dispatch(joinGroup(id));
   };
 
   const handleLeaveGroup = (id: number) => {
+    if (!isAuthenticated) {
+      alert("Please log in to leave a group.");
+      return;
+    }
     dispatch(leaveGroup(id));
+  };
+
+  const handleCreateGroupClick = () => {
+    if (!isAuthenticated) {
+      alert("Please log in to create a new group.");
+      return;
+    }
+    setIsModalOpen(true);
+  };
+
+  const handleLoginClick = () => {
+    navigate("/login");
   };
 
   return (
@@ -71,9 +108,23 @@ const AllGroups = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">All Groups</h1>
           <div className="flex flex-col sm:flex-row gap-4 mt-4 md:mt-0">
-            <Button onClick={() => setIsModalOpen(true)}>
-              <FaPlus className="mr-2" />
-              Create New Group
+            <Button
+              onClick={handleCreateGroupClick}
+              className={
+                !isAuthenticated ? "opacity-75 cursor-not-allowed" : ""
+              }
+            >
+              {isAuthenticated ? (
+                <>
+                  <FaPlus className="mr-2" />
+                  Create New Group
+                </>
+              ) : (
+                <>
+                  <FaLock className="mr-2" />
+                  Login to Create Group
+                </>
+              )}
             </Button>
             <Button variant="outline">
               <FaUsers className="mr-2" />
@@ -103,6 +154,29 @@ const AllGroups = () => {
           </div>
         </div>
 
+        {!isAuthenticated && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+            <div className="flex items-center gap-3 mb-3">
+              <FaSignInAlt className="text-blue-600 text-xl" />
+              <h3 className="text-lg font-semibold text-blue-900">
+                Login Required
+              </h3>
+            </div>
+            <p className="text-blue-700 mb-4">
+              Please log in to create groups, join discussions, and access all
+              features.
+            </p>
+            <Button
+              variant="primary"
+              className="bg-blue-600 hover:bg-blue-700"
+              onClick={handleLoginClick}
+            >
+              <FaSignInAlt className="mr-2" />
+              Login Now
+            </Button>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {allGroups.map((group) => (
             <GroupCard
@@ -111,6 +185,7 @@ const AllGroups = () => {
               variant="all"
               onJoin={() => handleJoinGroup(group.id)}
               onLeave={() => handleLeaveGroup(group.id)}
+              isAuthenticated={isAuthenticated}
             />
           ))}
         </div>
@@ -121,10 +196,18 @@ const AllGroups = () => {
               No groups available yet
             </h3>
             <p className="text-gray-500 mb-6">
-              Be the first to create a new group
+              {isAuthenticated
+                ? "Be the first to create a new group"
+                : "Login to create the first group"}
             </p>
-            <Button variant="primary" onClick={() => setIsModalOpen(true)}>
-              Create New Group
+            <Button
+              variant="primary"
+              onClick={handleCreateGroupClick}
+              className={
+                !isAuthenticated ? "opacity-75 cursor-not-allowed" : ""
+              }
+            >
+              {isAuthenticated ? "Create New Group" : "Login to Create Group"}
             </Button>
           </div>
         )}
