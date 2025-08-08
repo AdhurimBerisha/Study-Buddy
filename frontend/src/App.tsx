@@ -12,6 +12,7 @@ import CourseDetails from "./pages/Courses/CourseDetails";
 import AllGroups from "./pages/Groups/AllGroups";
 import MyGroup from "./pages/Groups/MyGroup";
 import Tutors from "./pages/Tutors/Tutors";
+import TutorDetails from "./pages/Tutors/TutorDetails";
 import Footer from "./components/Footer";
 import NotFound from "./pages/NotFound/NotFound";
 import MyProfile from "./pages/Profile/MyProfile";
@@ -35,6 +36,7 @@ function App() {
         <Route path="/courses" element={<Courses />} />
         <Route path="/courses/:slug" element={<CourseDetails />} />
         <Route path="/tutors" element={<Tutors />} />
+        <Route path="/tutors/:slug" element={<TutorDetails />} />
         <Route path="/groups" element={<AllGroups />} />
         <Route path="/groups/my" element={<MyGroup />} />
         <Route
