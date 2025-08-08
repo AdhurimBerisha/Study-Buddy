@@ -8,6 +8,7 @@ import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import Navbar from "./components/Navbar";
 import Courses from "./pages/Courses/Courses";
+import CourseDetails from "./pages/Courses/CourseDetails";
 import AllGroups from "./pages/Groups/AllGroups";
 import MyGroup from "./pages/Groups/MyGroup";
 import Tutors from "./pages/Tutors/Tutors";
@@ -32,6 +33,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/courses" element={<Courses />} />
+        <Route path="/courses/:slug" element={<CourseDetails />} />
         <Route path="/tutors" element={<Tutors />} />
         <Route path="/groups" element={<AllGroups />} />
         <Route path="/groups/my" element={<MyGroup />} />
