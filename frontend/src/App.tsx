@@ -13,6 +13,7 @@ import Footer from "./components/Footer";
 import NotFound from "./pages/NotFound/NotFound";
 import MyProfile from "./pages/Profile/MyProfile";
 import GroupDetails from "./pages/Groups/GroupDetails";
+import ChatLayout from "./components/ChatLayout";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <ChatLayout />
       <Footer />
     </div>
   );
