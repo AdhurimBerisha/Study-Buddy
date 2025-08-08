@@ -11,7 +11,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const location = useLocation();
 
   if (!isAuthenticated) {
-    // Redirect to login page with the current location as state
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

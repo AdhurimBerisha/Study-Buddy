@@ -19,8 +19,12 @@ type CheckoutState =
 const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const state = (location.state || {}) as CheckoutState;
   const dispatch = useDispatch();
+
+  const state = useMemo(
+    () => (location.state || {}) as CheckoutState,
+    [location.state]
+  );
 
   const { title, amount, subtitle } = useMemo(() => {
     if (state && state.type === "course") {

@@ -46,7 +46,7 @@ const Features = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10">
-        {features.map((feature, index) => (
+        {features.map((feature) => (
           <div
             key={feature.title}
             className="flex flex-col items-center text-center p-4 sm:p-6 rounded-lg hover:bg-gray-50 transition-all duration-300 group"

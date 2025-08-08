@@ -2,7 +2,7 @@ export type Course = {
   category: string;
   language: string;
   tutors: number;
-  price: number; // general course price (separate from tutor hourly)
+  price: number;
 };
 
 export const courses: Course[] = [

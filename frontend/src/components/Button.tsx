@@ -5,7 +5,7 @@ type ButtonProps = {
   className?: string;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   fullWidth?: boolean;
 };
 
