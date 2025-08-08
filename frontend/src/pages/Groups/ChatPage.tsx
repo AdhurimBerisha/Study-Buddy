@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { FaChevronDown, FaChevronUp, FaTimes } from "react-icons/fa";
-import Button from "../../components/Button"; // Your button component
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import Button from "../../components/Button";
 
-// Sample group data
 const groups = [
   {
     id: 1,
@@ -78,7 +77,6 @@ const ChatPage: React.FC = () => {
 
   return (
     <div className="flex h-[calc(100vh-64px)]  bg-blue-50">
-      {/* Left: Groups List */}
       <aside className="w-72 border-r border-gray-200 overflow-y-auto p-4 ">
         <h1 className="text-2xl font-bold mb-6">Your Groups</h1>
         <div className="space-y-3">
@@ -121,7 +119,6 @@ const ChatPage: React.FC = () => {
         </div>
       </aside>
 
-      {/* Right: Chat Window */}
       <main className="flex-1 flex flex-col  shadow-inner rounded-l-xl overflow-hidden">
         <header className="flex justify-between items-center bg-gray-100 p-4 border-b border-gray-300">
           <h2 className="text-xl font-semibold">{selectedGroup.name} Chat</h2>
@@ -133,13 +130,11 @@ const ChatPage: React.FC = () => {
             >
               {isMinimized ? <FaChevronUp /> : <FaChevronDown />}
             </button>
-            {/* Removed close button */}
           </div>
         </header>
 
         {!isMinimized && selectedGroup && (
           <>
-            {/* Messages */}
             <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
               {messages.length === 0 && (
                 <p className="text-gray-500 text-center mt-8">
@@ -164,7 +159,6 @@ const ChatPage: React.FC = () => {
               ))}
             </div>
 
-            {/* Message Input */}
             <div className="border-t border-gray-300 px-4 py-3 flex items-center space-x-3">
               <input
                 type="text"

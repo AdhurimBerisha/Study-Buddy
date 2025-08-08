@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaChevronDown, FaChevronUp, FaTimes, FaUsers } from "react-icons/fa";
 import Button from "./Button";
 
@@ -79,7 +79,7 @@ export default function RightSideChat() {
 
   const selectGroup = (group: (typeof groups)[0]) => {
     setSelectedGroup(group);
-    setMessages(dummyMessages); // Replace with real fetch if needed
+    setMessages(dummyMessages);
   };
 
   return (

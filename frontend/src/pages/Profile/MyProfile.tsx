@@ -63,9 +63,7 @@ const MyProfile = () => {
     setAvatarFile(file);
   };
 
-  const onSubmit = (data: ProfileFormData) => {
-    // TODO: Dispatch Redux action to update user profile + avatar
-  };
+  const onSubmit = (data: ProfileFormData) => {};
 
   return (
     <div className="max-w-md mx-auto p-16 space-y-6">

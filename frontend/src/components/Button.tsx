@@ -28,7 +28,7 @@ const Button = ({
     <button
       type={type}
       disabled={disabled}
-      onClick={onClick} // ✅ forward it here
+      onClick={onClick}
       className={`${baseStyles} ${variants[variant]} ${className} ${
         disabled ? "opacity-50 cursor-not-allowed" : ""
       }`}
