@@ -25,8 +25,8 @@ export default function TutorCard({
   headline,
   description,
   speaks,
-  hourlyRate,
-  trialRate,
+  hourlyRate: _hourlyRate,
+  trialRate: _trialRate,
 }: TutorCardProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-8 py-8 border-b border-gray-200 w-full max-w-4xl">
@@ -57,19 +57,7 @@ export default function TutorCard({
         <div className="text-sm text-gray-500 uppercase mb-1">Speaks:</div>
         <p className="mb-6">{speaks}</p>
 
-        <div className="flex flex-col gap-4 text-sm">
-          <div>
-            <div className="text-gray-400 uppercase text-xs">
-              Hourly Rate From:
-            </div>
-            <div className="font-semibold">{hourlyRate}</div>
-          </div>
-
-          <div>
-            <div className="text-gray-400 uppercase text-xs">Trial:</div>
-            <div className="font-semibold">{trialRate}</div>
-          </div>
-        </div>
+        <div className="flex flex-col gap-4 text-sm" />
       </div>
     </div>
   );

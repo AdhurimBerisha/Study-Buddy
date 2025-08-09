@@ -80,36 +80,14 @@ const TutorDetails = () => {
 
           <aside className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 h-fit">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <FaChalkboardTeacher className="text-blue-600" /> Book a trial
+              <FaChalkboardTeacher className="text-blue-600" /> Start Learning
             </h3>
             <div className="space-y-4 text-sm">
-              <div>
-                <div className="text-gray-500 uppercase text-xs">
-                  Hourly Rate From
-                </div>
-                <div className="font-semibold">{tutor.hourlyRate}</div>
-              </div>
-              <div>
-                <div className="text-gray-500 uppercase text-xs">Trial</div>
-                <div className="font-semibold">{tutor.trialRate}</div>
-              </div>
-              <Link
-                to="/checkout"
-                state={{
-                  type: "tutor",
-                  tutor: {
-                    name: tutor.name,
-                    trialRate: parseFloat(
-                      tutor.trialRate.replace(/[^0-9.]/g, "")
-                    ),
-                    hourlyRate: parseFloat(
-                      tutor.hourlyRate.replace(/[^0-9.]/g, "")
-                    ),
-                  },
-                  booking: { isTrial: true },
-                }}
-              >
-                <Button fullWidth>Book Trial</Button>
+              <p className="text-gray-700 mb-2">
+                Start your career from learning with {tutor.name}
+              </p>
+              <Link to="/courses">
+                <Button fullWidth>Courses</Button>
               </Link>
             </div>
           </aside>
