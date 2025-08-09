@@ -38,6 +38,45 @@ export const tutors: Tutor[] = [
     hourlyRate: "USD 14.00",
     trialRate: "USD 6.00",
   },
+  {
+    id: "amilia-luna",
+    category: "English Language",
+    rating: 4.3,
+    lessons: 100,
+    name: "Amilia Luna",
+    headline: "Native English Teacher from the U.S.",
+    description:
+      "consectetur adipisicing elit, sed do eiusmod ut labore et magna aliqua...",
+    speaks: "English (Native)",
+    hourlyRate: "USD 14.00",
+    trialRate: "USD 6.00",
+  },
+  {
+    id: "amilia-luna",
+    category: "English Language",
+    rating: 4.3,
+    lessons: 100,
+    name: "Amilia Luna",
+    headline: "Native English Teacher from the U.S.",
+    description:
+      "consectetur adipisicing elit, sed do eiusmod ut labore et magna aliqua...",
+    speaks: "English (Native)",
+    hourlyRate: "USD 14.00",
+    trialRate: "USD 6.00",
+  },
+  {
+    id: "amilia-luna",
+    category: "English Language",
+    rating: 4.3,
+    lessons: 100,
+    name: "Amilia Luna",
+    headline: "Native English Teacher from the U.S.",
+    description:
+      "consectetur adipisicing elit, sed do eiusmod ut labore et magna aliqua...",
+    speaks: "English (Native)",
+    hourlyRate: "USD 14.00",
+    trialRate: "USD 6.00",
+  },
 ];
 
 export const toTutorSlug = (name: string): string =>
