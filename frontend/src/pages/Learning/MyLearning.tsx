@@ -73,6 +73,7 @@ const MyLearning = () => {
           const completed = progress?.completedLessonIds.length || 0;
           const curriculum = getCurriculumBySlug(slug);
           const total = curriculum.length || 1;
+          const isPurchased = purchasedCourseSlugs.includes(slug);
           const percent = Math.round((completed / total) * 100);
           const isCompleted = completedCourseSlugs.includes(slug);
 
@@ -92,24 +93,28 @@ const MyLearning = () => {
               <h2 className="font-bold text-gray-900 mb-2">
                 {course.language}
               </h2>
-              {isCompleted ? (
-                <div className="text-sm text-green-600 font-medium mb-2 flex items-center">
-                  <FaCheckCircle className="mr-1" />
-                  Course completed!
-                </div>
-              ) : (
-                <div className="text-sm text-gray-600 mb-2">
-                  Lessons completed: {completed} / {total}
-                </div>
+              {isPurchased && (
+                <>
+                  {isCompleted ? (
+                    <div className="text-sm text-green-600 font-medium mb-2 flex items-center">
+                      <FaCheckCircle className="mr-1" />
+                      Course completed!
+                    </div>
+                  ) : (
+                    <div className="text-sm text-gray-600 mb-2">
+                      Lessons completed: {completed} / {total}
+                    </div>
+                  )}
+                  <div className="w-full h-2 bg-gray-200 rounded-full mb-4">
+                    <div
+                      className={`h-2 rounded-full ${
+                        isCompleted ? "bg-green-500" : "bg-blue-500"
+                      }`}
+                      style={{ width: `${percent}%` }}
+                    />
+                  </div>
+                </>
               )}
-              <div className="w-full h-2 bg-gray-200 rounded-full mb-4">
-                <div
-                  className={`h-2 rounded-full ${
-                    isCompleted ? "bg-green-500" : "bg-blue-500"
-                  }`}
-                  style={{ width: `${percent}%` }}
-                />
-              </div>
               <Link to={`/learning/course/${slug}`} className="mt-auto">
                 <Button
                   fullWidth

@@ -54,9 +54,30 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/profile/:userId" element={<MyProfile />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/learning" element={<MyLearning />} />
-        <Route path="/learning/course/:slug" element={<CourseReader />} />
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <Checkout />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/learning"
+          element={
+            <ProtectedRoute>
+              <MyLearning />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/learning/course/:slug"
+          element={
+            <ProtectedRoute>
+              <CourseReader />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
