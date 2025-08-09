@@ -54,6 +54,24 @@ export const courses: Course[] = [
     tutors: 8,
     price: 99,
   },
+  {
+    category: "Game Development",
+    language: "Unity, C#, Unreal Engine",
+    tutors: 8,
+    price: 99,
+  },
+  {
+    category: "Game Development",
+    language: "Unity, C#, Unreal Engine",
+    tutors: 8,
+    price: 99,
+  },
+  {
+    category: "Game Development",
+    language: "Unity, C#, Unreal Engine",
+    tutors: 8,
+    price: 99,
+  },
 ];
 
 export const toCourseSlug = (language: string): string =>
