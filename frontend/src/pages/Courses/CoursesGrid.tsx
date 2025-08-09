@@ -17,7 +17,7 @@ const CoursesGrid = ({
 }: CoursesGridProps) => {
   const list = items && items.length > 0 ? items : allCourses;
   return (
-    <section className="max-w-7xl mx-auto px-6 border-b border-gray-300 pb-8 mb-8 -mt-20 pt-8 relative z-10">
+    <section className="max-w-7xl mx-auto px-6 border-b border-gray-300 pb-8 mb-8 mt-0 pt-0 relative z-10">
       <div className="relative mb-16">
         <div className="absolute inset-0 bg-gray-50 rounded-3xl"></div>
 

@@ -16,6 +16,7 @@ type Props = {
   sortLabel?: string;
   ascLabel?: string;
   descLabel?: string;
+  containerClassName?: string;
 };
 
 const FilterBar = ({
@@ -30,6 +31,7 @@ const FilterBar = ({
   sortLabel = "Sort",
   ascLabel = "Ascending",
   descLabel = "Descending",
+  containerClassName,
 }: Props) => {
   const categories = useMemo(() => {
     if (providedCategories && providedCategories.length > 0) {
@@ -40,8 +42,10 @@ const FilterBar = ({
     return Array.from(set).sort();
   }, [providedCategories]);
 
+  const containerClasses = containerClassName || "-mt-24 mb-6";
+
   return (
-    <div className="max-w-7xl mx-auto px-6 -mt-24 relative z-20 mb-6">
+    <div className={`max-w-7xl mx-auto px-6 relative z-20 ${containerClasses}`}>
       <div className="bg-white/90 backdrop-blur border border-gray-200 rounded-2xl shadow-sm p-4 sm:p-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>

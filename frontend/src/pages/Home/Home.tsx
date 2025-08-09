@@ -1,6 +1,7 @@
 import Hero from "../../components/Hero";
 import HowItWorks from "./HowItWorks";
 import CoursesGrid from "../Courses/CoursesGrid";
+import { courses as allCourses } from "../Courses/data";
 import WhyUs from "../../components/WhyUs";
 import Features from "../../components/Features";
 import Banner from "../../components/Banner";
@@ -10,7 +11,7 @@ const Home = () => {
   return (
     <div>
       <Hero />
-      <CoursesGrid />
+      <CoursesGrid items={allCourses.slice(0, 4)} />
       <HowItWorks />
       <Features />
       <WhyUs />
