@@ -126,7 +126,7 @@ const AllGroups = () => {
                 </>
               )}
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" onClick={() => navigate("/groups/my")}>
               <FaUsers className="mr-2" />
               My Groups
             </Button>
