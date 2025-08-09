@@ -29,22 +29,17 @@ const ContactForm = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-3xl mx-auto">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full space-y-6 sm:space-y-8"
+        className="w-full space-y-6 sm:space-y-8 bg-white/80 backdrop-blur p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100"
       >
         <div className="text-center sm:text-left">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold pb-6 sm:pb-8 lg:pb-10 leading-tight">
-            Media and <br className="sm:hidden" />
-            Business Inquiries
-          </h1>
-          <p className="font-thin text-sm sm:text-base lg:text-lg text-gray-600">
-            Send us a message below or email us at{" "}
-            <br className="hidden sm:block" />
-            <span className="underline text-blue-600 hover:text-blue-800 transition-colors duration-200">
-              contact@info.com
-            </span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
+            Send us a message
+          </h2>
+          <p className="mt-1 text-sm sm:text-base text-gray-600">
+            We’ll get back to you as soon as we can.
           </p>
         </div>
 
@@ -158,7 +153,7 @@ const ContactForm = () => {
           )}
         </div>
 
-        <div className="pt-4 sm:pt-6">
+        <div className="pt-2 sm:pt-4">
           <Button
             type="submit"
             size="lg"
