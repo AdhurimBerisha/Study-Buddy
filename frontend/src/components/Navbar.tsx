@@ -13,6 +13,8 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileGroupsDropdownOpen, setIsMobileGroupsDropdownOpen] =
     useState(false);
+  const [isMobileCoursesDropdownOpen, setIsMobileCoursesDropdownOpen] =
+    useState(false);
   const location = useLocation();
   const isGroupsActive = location.pathname.startsWith("/groups");
 
@@ -302,32 +304,61 @@ const Navbar = () => {
               Home
             </NavLink>
 
-            <NavLink
-              to="/courses"
-              onClick={toggleMenu}
-              className={({ isActive }) =>
-                `block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
-                  isActive
+            {/* Mobile Courses Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setIsMobileCoursesDropdownOpen((v) => !v)}
+                className={`w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 flex items-center justify-between ${
+                  location.pathname.startsWith("/courses") ||
+                  location.pathname.startsWith("/learning")
                     ? "text-blue-400 font-semibold"
                     : "text-white hover:text-blue-300"
-                }`
-              }
-            >
-              Courses
-            </NavLink>
-            <NavLink
-              to="/learning"
-              onClick={toggleMenu}
-              className={({ isActive }) =>
-                `block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
-                  isActive
-                    ? "text-blue-400 font-semibold"
-                    : "text-white hover:text-blue-300"
-                }`
-              }
-            >
-              My Learning
-            </NavLink>
+                }`}
+              >
+                <span>Courses</span>
+                {isMobileCoursesDropdownOpen ? (
+                  <FaChevronUp className="h-4 w-4" />
+                ) : (
+                  <FaChevronDown className="h-4 w-4" />
+                )}
+              </button>
+              {isMobileCoursesDropdownOpen && (
+                <div className="mt-2 ml-4 space-y-1 border-l-2 border-gray-600 pl-4">
+                  <NavLink
+                    to="/courses"
+                    onClick={() => {
+                      toggleMenu();
+                      setIsMobileCoursesDropdownOpen(false);
+                    }}
+                    className={({ isActive }) =>
+                      `block px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                        isActive
+                          ? "text-blue-400 font-semibold"
+                          : "text-white hover:text-blue-300"
+                      }`
+                    }
+                  >
+                    All Courses
+                  </NavLink>
+                  <NavLink
+                    to="/learning"
+                    onClick={() => {
+                      toggleMenu();
+                      setIsMobileCoursesDropdownOpen(false);
+                    }}
+                    className={({ isActive }) =>
+                      `block px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                        isActive
+                          ? "text-blue-400 font-semibold"
+                          : "text-white hover:text-blue-300"
+                      }`
+                    }
+                  >
+                    My Learning
+                  </NavLink>
+                </div>
+              )}
+            </div>
 
             <NavLink
               to="/tutors"
