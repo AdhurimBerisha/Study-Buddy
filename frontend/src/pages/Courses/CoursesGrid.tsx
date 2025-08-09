@@ -1,20 +1,28 @@
 import Button from "../../components/Button";
 import LanguageCard from "./CoursesCard";
 import { FaPlus, FaUsers, FaClock, FaStar } from "react-icons/fa";
-import { courses } from "./data";
+import { courses as allCourses } from "./data";
+import type { Course } from "./data";
 
 type CoursesGridProps = {
   showExtras?: boolean;
+  items?: Course[];
+  footer?: React.ReactNode;
 };
 
-const CoursesGrid = ({ showExtras = true }: CoursesGridProps) => {
+const CoursesGrid = ({
+  showExtras = true,
+  items,
+  footer,
+}: CoursesGridProps) => {
+  const list = items && items.length > 0 ? items : allCourses;
   return (
     <section className="max-w-7xl mx-auto px-6 border-b border-gray-300 pb-8 mb-8 -mt-20 pt-8 relative z-10">
       <div className="relative mb-16">
         <div className="absolute inset-0 bg-gray-50 rounded-3xl"></div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 py-12 px-8 rounded-3xl shadow-lg bg-white relative">
-          {courses.map((lang, index) => (
+          {list.map((lang, index) => (
             <div key={`${lang.category}-${index}`}>
               <LanguageCard {...lang} />
             </div>
@@ -56,6 +64,9 @@ const CoursesGrid = ({ showExtras = true }: CoursesGridProps) => {
             </div>
           </div>
         </>
+      )}
+      {footer && (
+        <div className="mt-4 flex justify-center items-center">{footer}</div>
       )}
     </section>
   );
