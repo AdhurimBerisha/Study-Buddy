@@ -50,8 +50,12 @@ const Courses = () => {
         onQueryChange={setQuery}
         category={category}
         onCategoryChange={setCategory}
-        priceSort={priceSort}
-        onPriceSortChange={setPriceSort}
+        sort={priceSort}
+        onSortChange={setPriceSort}
+        searchPlaceholder="Search by course or category"
+        sortLabel="Sort by price"
+        ascLabel="Lowest first"
+        descLabel="Highest first"
       />
       <CoursesGrid
         showExtras={false}

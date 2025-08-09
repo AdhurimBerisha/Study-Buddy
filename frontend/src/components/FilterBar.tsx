@@ -2,13 +2,20 @@ import { useMemo } from "react";
 import Button from "./Button";
 import { courses } from "../pages/Courses/data";
 
+type SortOrder = "asc" | "desc" | null;
+
 type Props = {
   query: string;
   onQueryChange: (v: string) => void;
   category: string | null;
   onCategoryChange: (v: string | null) => void;
-  priceSort: "asc" | "desc" | null;
-  onPriceSortChange: (v: "asc" | "desc" | null) => void;
+  sort: SortOrder;
+  onSortChange: (v: SortOrder) => void;
+  categories?: string[];
+  searchPlaceholder?: string;
+  sortLabel?: string;
+  ascLabel?: string;
+  descLabel?: string;
 };
 
 const FilterBar = ({
@@ -16,14 +23,22 @@ const FilterBar = ({
   onQueryChange,
   category,
   onCategoryChange,
-  priceSort,
-  onPriceSortChange,
+  sort,
+  onSortChange,
+  categories: providedCategories,
+  searchPlaceholder = "Search",
+  sortLabel = "Sort",
+  ascLabel = "Ascending",
+  descLabel = "Descending",
 }: Props) => {
   const categories = useMemo(() => {
+    if (providedCategories && providedCategories.length > 0) {
+      return Array.from(new Set(providedCategories)).sort();
+    }
     const set = new Set<string>();
     courses.forEach((c) => set.add(c.category));
     return Array.from(set).sort();
-  }, []);
+  }, [providedCategories]);
 
   return (
     <div className="max-w-7xl mx-auto px-6 -mt-24 relative z-20 mb-6">
@@ -36,7 +51,7 @@ const FilterBar = ({
             <input
               value={query}
               onChange={(e) => onQueryChange(e.target.value)}
-              placeholder="Search by course or category"
+              placeholder={searchPlaceholder}
               className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
@@ -59,20 +74,18 @@ const FilterBar = ({
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Sort by price
+              {sortLabel}
             </label>
             <select
-              value={priceSort ?? ""}
+              value={sort ?? ""}
               onChange={(e) =>
-                onPriceSortChange(
-                  (e.target.value as "asc" | "desc" | "") || null
-                )
+                onSortChange((e.target.value as "asc" | "desc" | "") || null)
               }
               className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
             >
               <option value="">None</option>
-              <option value="asc">Lowest first</option>
-              <option value="desc">Highest first</option>
+              <option value="asc">{ascLabel}</option>
+              <option value="desc">{descLabel}</option>
             </select>
           </div>
           <div className="flex items-end">
@@ -82,7 +95,7 @@ const FilterBar = ({
               onClick={() => {
                 onQueryChange("");
                 onCategoryChange(null);
-                onPriceSortChange(null);
+                onSortChange(null);
               }}
             >
               Clear filters
