@@ -14,11 +14,11 @@ export type Tutor = {
 export const tutors: Tutor[] = [
   {
     id: "jaxon-clarke",
-    category: "English Language",
+    category: "Web Development",
     rating: 4.9,
     lessons: 125,
     name: "Jaxon Clarke",
-    headline: "Native English Teacher from the U.S.",
+    headline: "Web Developer with over 10+ years of experience from the U.S.",
     description:
       "consectetur adipisicing elit, sed do eiusmod ut labore et magna aliqua...",
     speaks: "English (Native), French C1",
@@ -27,11 +27,12 @@ export const tutors: Tutor[] = [
   },
   {
     id: "amilia-luna",
-    category: "English Language",
+    category: "Software Development",
     rating: 4.3,
     lessons: 100,
     name: "Amilia Luna",
-    headline: "Native English Teacher from the U.S.",
+    headline:
+      "Software Engineer with over 10+ years of experience from the U.S.",
     description:
       "consectetur adipisicing elit, sed do eiusmod ut labore et magna aliqua...",
     speaks: "English (Native)",
