@@ -23,6 +23,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Checkout from "./pages/Payments/Checkout";
 import MyLearning from "./pages/Learning/MyLearning";
 import CourseReader from "./pages/Learning/CourseReader";
+import { useEffect } from "react";
 
 function App() {
   const location = useLocation();
@@ -30,6 +31,10 @@ function App() {
 
   const showChatLayout =
     location.pathname !== "/groups/chat" && isAuthenticated;
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-200 via-neutral-100 to-blue-50 bg-[length:200%_200%] animate-gradient-x pt-20">
