@@ -12,6 +12,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { tutors as allTutors, toTutorSlug } from "../Tutors/data";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
+import { FaLock } from "react-icons/fa";
 import { enrollCourse } from "../../store/slice/learningSlice";
 import { toCourseSlug } from "./data";
 
@@ -20,6 +21,7 @@ const CourseDetails = () => {
   const course = slug ? findCourseBySlug(slug) : undefined;
   const dispatch = useDispatch();
   const { enrolledCourseSlugs } = useSelector((s: RootState) => s.learning);
+  const { isAuthenticated } = useSelector((s: RootState) => s.auth);
   const isEnrolled = !!(slug && enrolledCourseSlugs.includes(slug));
 
   if (!course) {
@@ -100,15 +102,27 @@ const CourseDetails = () => {
                     ${course.price.toFixed(2)}
                   </span>
                 </div>
-                <RouterLink
-                  to="/checkout"
-                  state={{
-                    type: "course",
-                    course: { title: course.language, price: course.price },
-                  }}
-                >
-                  <Button fullWidth>Buy course</Button>
-                </RouterLink>
+                {isAuthenticated ? (
+                  <RouterLink
+                    to="/checkout"
+                    state={{
+                      type: "course",
+                      course: { title: course.language, price: course.price },
+                    }}
+                  >
+                    <Button fullWidth>Buy course</Button>
+                  </RouterLink>
+                ) : (
+                  <Button
+                    fullWidth
+                    className="opacity-75 cursor-not-allowed"
+                    onClick={() =>
+                      alert("Please log in to purchase this course.")
+                    }
+                  >
+                    <FaLock className="mr-2" /> Login to Buy Course
+                  </Button>
+                )}
                 <div className="space-y-3">
                   {isEnrolled ? (
                     <RouterLink to={`/learning/course/${slug}`}>
@@ -116,7 +130,7 @@ const CourseDetails = () => {
                         Go to course
                       </Button>
                     </RouterLink>
-                  ) : (
+                  ) : isAuthenticated ? (
                     <Button
                       fullWidth
                       variant="outline"
@@ -125,6 +139,17 @@ const CourseDetails = () => {
                       }
                     >
                       Enroll (demo)
+                    </Button>
+                  ) : (
+                    <Button
+                      fullWidth
+                      variant="outline"
+                      className="opacity-75 cursor-not-allowed"
+                      onClick={() =>
+                        alert("Please log in to enroll in the demo.")
+                      }
+                    >
+                      <FaLock className="mr-2" /> Login to Enroll (demo)
                     </Button>
                   )}
                 </div>

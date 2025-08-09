@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, NavLink } from "react-router-dom";
 import type { RootState } from "../../store/store";
 import Button from "../../components/Button";
 import { courses, toCourseSlug } from "../Courses/data";
@@ -10,13 +10,18 @@ import {
   toggleLessonComplete,
   setLastLesson,
 } from "../../store/slice/learningSlice";
-import { FaTrophy } from "react-icons/fa";
+import { FaTrophy, FaLock } from "react-icons/fa";
 
 const CourseReader = () => {
   const { slug } = useParams<{ slug: string }>();
   const dispatch = useDispatch();
-  const { enrolledCourseSlugs, progressByCourseSlug, completedCourseSlugs } =
-    useSelector((s: RootState) => s.learning);
+  const {
+    enrolledCourseSlugs,
+    purchasedCourseSlugs,
+    progressByCourseSlug,
+    completedCourseSlugs,
+  } = useSelector((s: RootState) => s.learning);
+  const { isAuthenticated } = useSelector((s: RootState) => s.auth);
 
   const course = useMemo(
     () => courses.find((c) => toCourseSlug(c.language) === slug),
@@ -26,7 +31,10 @@ const CourseReader = () => {
   const progress = slug
     ? progressByCourseSlug[slug] || { completedLessonIds: [] }
     : { completedLessonIds: [] };
-  const lessons = slug ? getCurriculumBySlug(slug) : [];
+  const allLessons = slug ? getCurriculumBySlug(slug) : [];
+  const isPurchased = slug ? purchasedCourseSlugs.includes(slug) : false;
+  const halfCount = Math.max(1, Math.floor(allLessons.length / 2));
+  const lessons = isPurchased ? allLessons : allLessons.slice(0, halfCount);
   const completedCount = progress.completedLessonIds.length;
   const totalCount = lessons.length || 1;
   const percent = Math.min(
@@ -77,6 +85,12 @@ const CourseReader = () => {
     <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
       <aside className="lg:col-span-1 bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
         <h2 className="text-lg font-semibold mb-4">Curriculum</h2>
+        {!isPurchased && allLessons.length > 0 && (
+          <div className="mb-3 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3">
+            Demo access: You can view {halfCount} of {allLessons.length}{" "}
+            lessons. Purchase to unlock the full course.
+          </div>
+        )}
         <ul className="space-y-2">
           {lessons.map((item) => {
             const done = progress.completedLessonIds.includes(item.id);
@@ -114,48 +128,85 @@ const CourseReader = () => {
             );
           })}
         </ul>
+        {!isPurchased && allLessons.length > lessons.length && (
+          <div className="mt-4">
+            {isAuthenticated ? (
+              <NavLink
+                to="/checkout"
+                state={{
+                  type: "course",
+                  course: { title: course.language, price: course.price },
+                }}
+                className="block"
+              >
+                <Button fullWidth>Buy course to unlock all lessons</Button>
+              </NavLink>
+            ) : (
+              <Button
+                fullWidth
+                className="opacity-75 cursor-not-allowed"
+                onClick={() => alert("Please log in to purchase this course.")}
+              >
+                <FaLock className="mr-2" /> Login to Buy Course
+              </Button>
+            )}
+          </div>
+        )}
       </aside>
 
       <main className="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold">{course.language}</h1>
           {!isEnrolled ? (
-            <Button onClick={() => dispatch(enrollCourse(slug))}>Enroll</Button>
+            isAuthenticated ? (
+              <Button onClick={() => dispatch(enrollCourse(slug))}>
+                Enroll
+              </Button>
+            ) : (
+              <Button
+                className="opacity-75 cursor-not-allowed"
+                onClick={() => alert("Please log in to enroll in the demo.")}
+              >
+                <FaLock className="mr-2" /> Login to Enroll (demo)
+              </Button>
+            )
           ) : (
             <span className="text-sm text-green-700 bg-green-100 px-3 py-1 rounded-full">
               Enrolled
             </span>
           )}
         </div>
-        <div className="mb-6">
-          {isCompleted ? (
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
-              <div className="flex items-center text-green-700 mb-2">
-                <FaTrophy className="mr-2" />
-                <span className="font-semibold">Congratulations!</span>
+        {isPurchased && (
+          <div className="mb-6">
+            {isCompleted ? (
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
+                <div className="flex items-center text-green-700 mb-2">
+                  <FaTrophy className="mr-2" />
+                  <span className="font-semibold">Congratulations!</span>
+                </div>
+                <p className="text-green-600 text-sm">
+                  You have successfully completed this course. All lessons are
+                  done!
+                </p>
               </div>
-              <p className="text-green-600 text-sm">
-                You have successfully completed this course. All lessons are
-                done!
-              </p>
-            </div>
-          ) : (
-            <>
-              <div className="flex items-center justify-between mb-1 text-sm text-gray-600">
-                <span>Progress</span>
-                <span>{percent}%</span>
-              </div>
-              <div className="h-2 bg-gray-200 rounded-full">
-                <div
-                  className={`h-2 rounded-full ${
-                    isCompleted ? "bg-green-500" : "bg-blue-500"
-                  }`}
-                  style={{ width: `${percent}%` }}
-                />
-              </div>
-            </>
-          )}
-        </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between mb-1 text-sm text-gray-600">
+                  <span>Progress</span>
+                  <span>{percent}%</span>
+                </div>
+                <div className="h-2 bg-gray-200 rounded-full">
+                  <div
+                    className={`h-2 rounded-full ${
+                      isCompleted ? "bg-green-500" : "bg-blue-500"
+                    }`}
+                    style={{ width: `${percent}%` }}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+        )}
         {selectedLesson && (
           <>
             <p className="text-gray-700 leading-relaxed mb-6">

@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { getCurriculumBySlug } from "../../pages/Courses/curriculum";
+import type { RootState } from "../store";
 
 type CourseProgress = {
   completedLessonIds: string[];
@@ -8,6 +9,7 @@ type CourseProgress = {
 };
 
 export interface LearningState {
+  activeUserId: string | null;
   enrolledCourseSlugs: string[];
   progressByCourseSlug: Record<string, CourseProgress>;
   wishlist: string[];
@@ -17,13 +19,35 @@ export interface LearningState {
 }
 
 const LOCAL_STORAGE_KEY = "studybuddy_learning_state_v1";
+const AUTH_STORAGE_KEY = "studybuddy_auth_v1";
 
-function loadInitialState(): LearningState {
+function getAuthCurrentUserId(): string | null {
   try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as {
+      currentUser?: { id?: string } | null;
+    };
+    return parsed?.currentUser?.id ?? null;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
+function storageKeyForUser(userId: string | null): string {
+  return userId
+    ? `${LOCAL_STORAGE_KEY}::${userId}`
+    : `${LOCAL_STORAGE_KEY}::anon`;
+}
+
+function loadStateForUser(userId: string | null): LearningState {
+  try {
+    const raw = localStorage.getItem(storageKeyForUser(userId));
     if (raw) {
       const parsed = JSON.parse(raw) as Partial<LearningState>;
       return {
+        activeUserId: userId,
         enrolledCourseSlugs: parsed.enrolledCourseSlugs || [],
         progressByCourseSlug: parsed.progressByCourseSlug || {},
         wishlist: parsed.wishlist || [],
@@ -36,6 +60,7 @@ function loadInitialState(): LearningState {
     console.log(err);
   }
   return {
+    activeUserId: userId,
     enrolledCourseSlugs: [],
     progressByCourseSlug: {},
     wishlist: [],
@@ -45,9 +70,17 @@ function loadInitialState(): LearningState {
   };
 }
 
+function loadInitialState(): LearningState {
+  const currentUserId = getAuthCurrentUserId();
+  return loadStateForUser(currentUserId);
+}
+
 function persist(state: LearningState) {
   try {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(
+      storageKeyForUser(state.activeUserId),
+      JSON.stringify(state)
+    );
   } catch (err) {
     console.log(err);
   }
@@ -55,10 +88,23 @@ function persist(state: LearningState) {
 
 const initialState: LearningState = loadInitialState();
 
+import { loginSuccess, logout } from "./authSlice";
+
 const learningSlice = createSlice({
   name: "learning",
   initialState,
   reducers: {
+    setActiveUserId: (state, action: PayloadAction<string | null>) => {
+      const userId = action.payload;
+      const nextState = loadStateForUser(userId);
+      state.activeUserId = nextState.activeUserId;
+      state.enrolledCourseSlugs = nextState.enrolledCourseSlugs;
+      state.progressByCourseSlug = nextState.progressByCourseSlug;
+      state.wishlist = nextState.wishlist;
+      state.following = nextState.following;
+      state.purchasedCourseSlugs = nextState.purchasedCourseSlugs;
+      state.completedCourseSlugs = nextState.completedCourseSlugs;
+    },
     purchaseCourse: (state, action: PayloadAction<string>) => {
       const slug = action.payload;
       if (!state.purchasedCourseSlugs.includes(slug)) {
@@ -143,9 +189,33 @@ const learningSlice = createSlice({
       persist(state);
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(loginSuccess, (state, action) => {
+      const userId = action.payload.id;
+      const nextState = loadStateForUser(userId);
+      state.activeUserId = nextState.activeUserId;
+      state.enrolledCourseSlugs = nextState.enrolledCourseSlugs;
+      state.progressByCourseSlug = nextState.progressByCourseSlug;
+      state.wishlist = nextState.wishlist;
+      state.following = nextState.following;
+      state.purchasedCourseSlugs = nextState.purchasedCourseSlugs;
+      state.completedCourseSlugs = nextState.completedCourseSlugs;
+    });
+    builder.addCase(logout, (state) => {
+      const nextState = loadStateForUser(null);
+      state.activeUserId = nextState.activeUserId;
+      state.enrolledCourseSlugs = nextState.enrolledCourseSlugs;
+      state.progressByCourseSlug = nextState.progressByCourseSlug;
+      state.wishlist = nextState.wishlist;
+      state.following = nextState.following;
+      state.purchasedCourseSlugs = nextState.purchasedCourseSlugs;
+      state.completedCourseSlugs = nextState.completedCourseSlugs;
+    });
+  },
 });
 
 export const {
+  setActiveUserId,
   purchaseCourse,
   enrollCourse,
   unenrollCourse,
