@@ -11,7 +11,7 @@ type Props = {
 const TutorsGrid = ({ items, footer }: Props) => {
   const list = items && items.length > 0 ? items : allTutors;
   return (
-    <section className="max-w-7xl mx-auto px-6 border-b border-gray-300 pb-8 mb-8 -mt-20 pt-8 relative z-10 flex flex-col items-center">
+    <section className="max-w-7xl mx-auto px-6 border-b border-gray-300 pb-8 mb-8 mt-0 pt-0 relative z-10 flex flex-col items-center">
       {list.map((tutor, index) => (
         <TutorCard key={index} avatar={<FaUserCircle />} {...tutor} />
       ))}

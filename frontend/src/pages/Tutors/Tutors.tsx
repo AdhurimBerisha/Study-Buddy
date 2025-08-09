@@ -55,6 +55,7 @@ const Tutors = () => {
         sortLabel="Sort by rating"
         ascLabel="Lowest rated"
         descLabel="Highest rated"
+        containerClassName="mt-6 mb-6"
       />
       <TutorsGrid
         items={visible}

@@ -56,6 +56,7 @@ const Courses = () => {
         sortLabel="Sort by price"
         ascLabel="Lowest first"
         descLabel="Highest first"
+        containerClassName="mt-6 mb-6"
       />
       <CoursesGrid
         showExtras={false}
