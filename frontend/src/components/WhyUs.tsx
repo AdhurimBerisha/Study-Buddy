@@ -1,7 +1,9 @@
 import { FaArrowRight } from "react-icons/fa6";
 import Button from "../components/Button";
+import { useNavigate } from "react-router-dom";
 
 const WhyUs = () => {
+  const navigate = useNavigate();
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start">
@@ -79,7 +81,9 @@ const WhyUs = () => {
               mentoring.
             </p>
             <div className="pt-2">
-              <Button size="lg">Read More</Button>
+              <Button onClick={() => navigate("/about")} size="lg">
+                Read More
+              </Button>
             </div>
           </div>
         </div>
