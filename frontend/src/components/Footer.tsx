@@ -1,4 +1,5 @@
-import React from "react";
+//
+import { NavLink } from "react-router-dom";
 import {
   FaFacebookF,
   FaTwitter,
@@ -10,118 +11,107 @@ import {
   FaMapMarkerAlt,
 } from "react-icons/fa";
 
-const Footer: React.FC = () => {
+const Footer = () => {
   return (
     <footer className="bg-gray-900 text-gray-300 py-12 sm:py-16 lg:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-12 lg:gap-16">
-          {/* About Us */}
           <div className="space-y-4">
             <h3 className="text-lg sm:text-xl font-semibold text-white mb-4 sm:mb-6">
-              About Us
+              About StudyBuddy
             </h3>
             <ul className="space-y-2 sm:space-y-3">
               <li>
-                <a
-                  href="#"
+                <NavLink
+                  to="/about"
                   className="hover:text-blue-400 transition-colors duration-200 text-sm sm:text-base"
                 >
-                  How it Works
-                </a>
+                  What we do
+                </NavLink>
               </li>
               <li>
-                <a
-                  href="#"
+                <NavLink
+                  to="/courses"
                   className="hover:text-blue-400 transition-colors duration-200 text-sm sm:text-base"
                 >
-                  Affiliate Program
-                </a>
+                  Browse courses
+                </NavLink>
               </li>
               <li>
-                <a
-                  href="#"
+                <NavLink
+                  to="/tutors"
                   className="hover:text-blue-400 transition-colors duration-200 text-sm sm:text-base"
                 >
-                  Education Partners
-                </a>
+                  Find a tutor
+                </NavLink>
               </li>
               <li>
-                <a
-                  href="#"
+                <NavLink
+                  to="/groups"
                   className="hover:text-blue-400 transition-colors duration-200 text-sm sm:text-base"
                 >
-                  We are Hiring!
-                </a>
+                  Join study groups
+                </NavLink>
               </li>
               <li>
-                <a
-                  href="#"
+                <NavLink
+                  to="/contact"
                   className="hover:text-blue-400 transition-colors duration-200 text-sm sm:text-base"
                 >
-                  Become a Teacher
-                </a>
+                  Contact us
+                </NavLink>
               </li>
             </ul>
           </div>
 
-          {/* Teachers */}
           <div className="space-y-4">
             <h3 className="text-lg sm:text-xl font-semibold text-white mb-4 sm:mb-6">
-              Teachers
+              For Tutors
             </h3>
             <ul className="space-y-2 sm:space-y-3">
               <li>
-                <a
-                  href="#"
+                <NavLink
+                  to="/tutors"
                   className="hover:text-blue-400 transition-colors duration-200 text-sm sm:text-base"
                 >
-                  Web Development - Front End
-                </a>
+                  Meet our tutors
+                </NavLink>
               </li>
               <li>
-                <a
-                  href="#"
+                <NavLink
+                  to="/about"
                   className="hover:text-blue-400 transition-colors duration-200 text-sm sm:text-base"
                 >
-                  Web Development - Back End
-                </a>
+                  How tutoring works
+                </NavLink>
               </li>
               <li>
-                <a
-                  href="#"
+                <NavLink
+                  to="/contact"
                   className="hover:text-blue-400 transition-colors duration-200 text-sm sm:text-base"
                 >
-                  Software Development
-                </a>
+                  Become a tutor
+                </NavLink>
               </li>
               <li>
-                <a
-                  href="#"
+                <NavLink
+                  to="/groups"
                   className="hover:text-blue-400 transition-colors duration-200 text-sm sm:text-base"
                 >
-                  Networking & Security
-                </a>
+                  Join study groups
+                </NavLink>
               </li>
               <li>
-                <a
-                  href="#"
+                <NavLink
+                  to="/contact"
                   className="hover:text-blue-400 transition-colors duration-200 text-sm sm:text-base"
                 >
-                  Data Science
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="hover:text-blue-400 transition-colors duration-200 text-sm sm:text-base"
-                >
-                  Mobile Development
-                </a>
+                  Contact support
+                </NavLink>
               </li>
             </ul>
           </div>
 
-          {/* Support */}
           <div className="space-y-4">
             <h3 className="text-lg sm:text-xl font-semibold text-white mb-4 sm:mb-6">
               Support
@@ -138,7 +128,6 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Follow Us */}
           <div className="space-y-4">
             <h3 className="text-lg sm:text-xl font-semibold text-white mb-4 sm:mb-6">
               Follow Us
@@ -192,7 +181,6 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Contact */}
           <div className="space-y-4">
             <h3 className="text-lg sm:text-xl font-semibold text-white mb-4 sm:mb-6">
               Contact
@@ -213,11 +201,10 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom Section */}
         <div className="border-t border-gray-700 mt-12 sm:mt-16 pt-8 sm:pt-12">
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
             <p className="text-sm sm:text-base text-gray-400">
-              © 2024 StudyBuddy. All rights reserved.
+              © {new Date().getFullYear()} StudyBuddy. All rights reserved.
             </p>
             <div className="flex space-x-6 text-sm sm:text-base">
               <a
