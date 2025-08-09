@@ -26,7 +26,11 @@ const ChatPage: React.FC = () => {
   const [newMessage, setNewMessage] = useState("");
 
   const selectedGroup =
-    groups.find((g) => g.id === selectedGroupId) || groups[0];
+    groups.length > 0
+      ? selectedGroupId
+        ? groups.find((g) => g.id === selectedGroupId) || groups[0]
+        : groups[0]
+      : null;
   const messages = selectedGroup
     ? messagesByGroupId[selectedGroup.id] || []
     : [];
@@ -105,7 +109,7 @@ const ChatPage: React.FC = () => {
           <div className="flex-1 overflow-y-auto p-4 sm:p-6">
             <div className="space-y-3">
               {groups.map((group) => {
-                const isSelected = selectedGroup.id === group.id;
+                const isSelected = selectedGroup?.id === group.id;
                 return (
                   <div
                     key={group.id}
@@ -153,15 +157,17 @@ const ChatPage: React.FC = () => {
               {isSidebarOpen ? <FaTimes /> : <FaBars />}
             </button>
             <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
-              {selectedGroup.name}
+              {selectedGroup ? selectedGroup.name : "No group selected"}
             </h2>
-            <span className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-              {selectedGroup.members} members
-            </span>
+            {selectedGroup && (
+              <span className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                {selectedGroup.members} members
+              </span>
+            )}
           </div>
         </header>
 
-        {selectedGroup && (
+        {selectedGroup ? (
           <>
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
               {messages.length === 0 && (
@@ -225,6 +231,14 @@ const ChatPage: React.FC = () => {
               </div>
             </div>
           </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center p-8">
+            <div className="text-center text-gray-600">
+              <p className="text-sm sm:text-base">
+                No groups available. Join or create a group to start chatting.
+              </p>
+            </div>
+          </div>
         )}
       </main>
 
