@@ -21,7 +21,6 @@ export const authResolvers = {
       try {
         const User = sequelize.models.User;
         if (User) {
-          // Hash the password
           const saltRounds = 12;
           const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -58,7 +57,6 @@ export const authResolvers = {
         if (!user) {
           throw new Error("Invalid email or password");
         }
-        // Compare hashed password
         const isPasswordValid = await bcrypt.compare(
           password,
           user.getDataValue("password")
@@ -70,7 +68,6 @@ export const authResolvers = {
         const plainUser = user.get({ plain: true });
         delete plainUser.password;
 
-        // Generate a simple token for now (you'll want to use JWT later)
         const token = `token_${plainUser.id}_${Date.now()}`;
 
         console.log("🎉 User successfully logged in:", plainUser.email);
