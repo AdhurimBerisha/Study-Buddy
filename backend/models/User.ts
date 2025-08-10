@@ -16,19 +16,9 @@ export interface UserAttributes {
 export interface UserCreationAttributes
   extends Omit<UserAttributes, "id" | "createdAt" | "updatedAt"> {}
 
-class User
-  extends Model<UserAttributes, UserCreationAttributes>
-  implements UserAttributes
-{
-  public id!: string;
-  public email!: string;
-  public password!: string;
-  public firstName!: string;
-  public lastName!: string;
-  public phone?: string;
-  public avatar?: string;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+class User extends Model<UserAttributes, UserCreationAttributes> {
+  // Sequelize will automatically create getters/setters for all attributes
+  // The interface is just for type checking, not implementation
 }
 
 User.init(

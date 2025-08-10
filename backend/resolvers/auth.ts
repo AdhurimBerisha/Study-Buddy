@@ -33,7 +33,35 @@ export const authResolvers = {
       _: any,
       { email, password }: { email: string; password: string }
     ) => {
-      throw new Error("Login not implemented yet");
+      try {
+        const User = sequelize.models.User;
+        if (!User) {
+          throw new Error("User model not found");
+        }
+        const user = await User.findOne({ where: { email } });
+        if (!user) {
+          throw new Error("Invalid email or password");
+        }
+        if (user.getDataValue("password") !== password) {
+          throw new Error("Invalid email or password");
+        }
+
+        const plainUser = user.get({ plain: true });
+        delete plainUser.password;
+
+        // Generate a simple token for now (you'll want to use JWT later)
+        const token = `token_${plainUser.id}_${Date.now()}`;
+
+        console.log("🎉 User successfully logged in:", plainUser.email);
+
+        return {
+          token,
+          user: plainUser,
+        };
+      } catch (error: any) {
+        console.error("❌ Login error:", error);
+        throw new Error(error.message);
+      }
     },
 
     register: async (
