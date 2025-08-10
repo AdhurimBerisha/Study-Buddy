@@ -8,9 +8,11 @@ export const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const { currentUser, isAuthenticated, loading, error, token } = useSelector(
+  const { user, loading, error, token } = useSelector(
     (state: RootState) => state.auth
   );
+
+  const isAuthenticated = !!token;
 
   const handleLogout = useCallback(() => {
     dispatch(logout());
@@ -22,7 +24,7 @@ export const useAuth = () => {
   }, [dispatch]);
 
   return {
-    currentUser,
+    user,
     isAuthenticated,
     loading,
     error,

@@ -14,7 +14,7 @@ const Navbar = () => {
   const location = useLocation();
   const isGroupsActive = location.pathname.startsWith("/groups");
 
-  const { currentUser, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -197,9 +197,9 @@ const Navbar = () => {
               {isAuthenticated ? (
                 <div className="relative group">
                   <button className="flex items-center gap-2 text-sm font-medium text-gray-900 hover:text-blue-500 transition-colors duration-200 focus:outline-none">
-                    {currentUser?.avatar ? (
+                    {user?.avatar ? (
                       <img
-                        src={currentUser.avatar}
+                        src={user.avatar}
                         alt="User Avatar"
                         className="w-8 h-8 rounded-full object-cover"
                       />
@@ -207,7 +207,7 @@ const Navbar = () => {
                       <FaUserCircle className="w-8 h-8 text-gray-600" />
                     )}
                     <span className="hidden sm:block">
-                      {currentUser?.firstName} {currentUser?.lastName}
+                      {user?.firstName} {user?.lastName}
                     </span>
                     <svg
                       className="h-4 w-4 transition-transform duration-200 group-hover:rotate-180"

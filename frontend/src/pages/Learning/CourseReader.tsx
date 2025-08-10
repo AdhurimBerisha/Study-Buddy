@@ -21,7 +21,8 @@ const CourseReader = () => {
     progressByCourseSlug,
     completedCourseSlugs,
   } = useSelector((s: RootState) => s.learning);
-  const { isAuthenticated } = useSelector((s: RootState) => s.auth);
+  const { user } = useSelector((s: RootState) => s.auth);
+  const isAuthenticated = !!user;
 
   const course = useMemo(
     () => courses.find((c) => toCourseSlug(c.language) === slug),

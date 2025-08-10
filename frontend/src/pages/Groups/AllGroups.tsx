@@ -28,7 +28,7 @@ const AllGroups = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const allGroups = useSelector((state: RootState) => state.groups.allGroups);
-  const { isAuthenticated, currentUser } = useSelector(
+  const { isAuthenticated, user } = useSelector(
     (state: RootState) => state.auth
   );
 
@@ -59,7 +59,7 @@ const AllGroups = () => {
       description,
       upcomingEvent,
       isMember: true,
-      createdBy: currentUser?.id || "currentUserId",
+      createdBy: user?.id || "currentUserId",
       lastActivity: new Date().toISOString(),
     };
 

@@ -1,4 +1,4 @@
-import { Model, DataTypes } from "sequelize";
+import { Model, DataTypes, Optional } from "sequelize";
 import sequelize from "../config/db";
 
 export interface UserAttributes {
@@ -7,16 +7,19 @@ export interface UserAttributes {
   password: string;
   firstName: string;
   lastName: string;
-  phone?: string;
-  avatar?: string;
+  phone?: string | null;
+  avatar?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 export interface UserCreationAttributes
-  extends Omit<UserAttributes, "id" | "createdAt" | "updatedAt"> {}
+  extends Optional<
+    UserAttributes,
+    "id" | "phone" | "avatar" | "createdAt" | "updatedAt"
+  > {}
 
-class User extends Model<UserAttributes, UserCreationAttributes> {
+export class User extends Model<UserAttributes, UserCreationAttributes> {
   // Sequelize will automatically create getters/setters for all attributes
   // The interface is just for type checking, not implementation
 }

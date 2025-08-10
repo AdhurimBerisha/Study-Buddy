@@ -1,32 +1,37 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import { expressMiddleware } from "@as-integrations/express5";
 import sequelize from "./config/db";
-import { createApolloServer } from "./config/apollo";
-import "./models/User.js";
-import { authMiddleware } from "./middlewares/auth";
+import "./models/User";
+import authRoutes from "./routes/auth";
+import userRoutes from "./routes/user";
+import courseRoutes from "./routes/course";
+import groupRoutes from "./routes/group";
+import tutorRoutes from "./routes/tutor";
 
 const app = express();
-const PORT = 8080;
-
-const server = await createApolloServer();
+const PORT = Number(process.env.PORT) || 8080;
 
 app.use(cors());
 app.use(express.json());
 
-app.use(
-  "/graphql",
-  expressMiddleware(server, {
-    context: async ({ req }) => {
-      const authContext = await authMiddleware(req);
-      return authContext;
-    },
-  })
-);
+// REST routes
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/courses", courseRoutes);
+app.use("/api/groups", groupRoutes);
+app.use("/api/tutors", tutorRoutes);
 
-app.get("/", (req, res) => {
-  res.send("Server is running! GraphQL at /graphql");
+app.get("/", (_req, res) => {
+  res.send("Server is running! REST API at /api");
+});
+
+// Test endpoint for debugging
+app.get("/api/test", (_req, res) => {
+  res.json({
+    message: "Backend is working!",
+    timestamp: new Date().toISOString(),
+  });
 });
 
 const connectDatabase = async () => {
@@ -45,5 +50,5 @@ connectDatabase();
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📊 GraphQL endpoint: http://localhost:${PORT}/graphql`);
+  console.log(`📡 REST base: http://localhost:${PORT}/api`);
 });
