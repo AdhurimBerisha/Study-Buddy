@@ -88,8 +88,6 @@ function persist(state: LearningState) {
 
 const initialState: LearningState = loadInitialState();
 
-import { loginSuccess, logout } from "./authSlice";
-
 const learningSlice = createSlice({
   name: "learning",
   initialState,
@@ -188,10 +186,8 @@ const learningSlice = createSlice({
       else state.wishlist.push(slug);
       persist(state);
     },
-  },
-  extraReducers: (builder) => {
-    builder.addCase(loginSuccess, (state, action) => {
-      const userId = action.payload.id;
+    handleLogin: (state, action: PayloadAction<{ user: { id: string } }>) => {
+      const userId = action.payload.user.id;
       const nextState = loadStateForUser(userId);
       state.activeUserId = nextState.activeUserId;
       state.enrolledCourseSlugs = nextState.enrolledCourseSlugs;
@@ -200,8 +196,8 @@ const learningSlice = createSlice({
       state.following = nextState.following;
       state.purchasedCourseSlugs = nextState.purchasedCourseSlugs;
       state.completedCourseSlugs = nextState.completedCourseSlugs;
-    });
-    builder.addCase(logout, (state) => {
+    },
+    handleLogout: (state) => {
       const nextState = loadStateForUser(null);
       state.activeUserId = nextState.activeUserId;
       state.enrolledCourseSlugs = nextState.enrolledCourseSlugs;
@@ -210,9 +206,11 @@ const learningSlice = createSlice({
       state.following = nextState.following;
       state.purchasedCourseSlugs = nextState.purchasedCourseSlugs;
       state.completedCourseSlugs = nextState.completedCourseSlugs;
-    });
+    },
   },
 });
+
+export default learningSlice.reducer;
 
 export const {
   setActiveUserId,
@@ -220,9 +218,10 @@ export const {
   enrollCourse,
   unenrollCourse,
   toggleLessonComplete,
+  clearCourseProgress,
   setLastLesson,
   toggleFollowCourse,
   toggleWishlistCourse,
+  handleLogin,
+  handleLogout,
 } = learningSlice.actions;
-
-export default learningSlice.reducer;

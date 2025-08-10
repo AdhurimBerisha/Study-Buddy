@@ -1,6 +1,6 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
-import type { RootState } from "../../store/store";
+import type { RootState, AppDispatch } from "../../store/store";
 import FormInput from "../../components/FormInput";
 import {
   FaUser,
@@ -13,7 +13,11 @@ import {
 } from "react-icons/fa";
 import Button from "../../components/Button";
 import { useState, useEffect } from "react";
-import { useMyProfileQuery } from "../../store/api/authApi";
+import {
+  fetchProfile,
+  updateProfile,
+  clearError,
+} from "../../store/slice/authSlice";
 
 interface ProfileFormData {
   firstName: string;
@@ -23,20 +27,17 @@ interface ProfileFormData {
 }
 
 const MyProfile = () => {
-  const { currentUser, loading, error } = useSelector(
+  const dispatch = useDispatch<AppDispatch>();
+  const { user, loading, error } = useSelector(
     (state: RootState) => state.auth
   );
-  const {
-    data: profileData,
-    isLoading: isProfileLoading,
-    error: profileError,
-  } = useMyProfileQuery(undefined, {
-    skip: !currentUser,
-  });
 
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-
+  const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(
+    null
+  );
   const [isEditing, setIsEditing] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
 
   const {
     register,
@@ -45,37 +46,74 @@ const MyProfile = () => {
     formState: { errors, isSubmitting },
   } = useForm<ProfileFormData>({
     defaultValues: {
-      firstName: currentUser?.firstName || "",
-      lastName: currentUser?.lastName || "",
-      email: currentUser?.email || "",
-      phone: currentUser?.phone || "",
+      firstName: user?.firstName || "",
+      lastName: user?.lastName || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
     },
   });
 
   useEffect(() => {
-    if (currentUser) {
+    if (!user) {
+      dispatch(fetchProfile());
+    } else {
       reset({
-        firstName: currentUser.firstName,
-        lastName: currentUser.lastName,
-        email: currentUser.email,
-        phone: currentUser.phone || "",
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone || "",
       });
-      setAvatarPreview(currentUser.avatar || null);
+      setAvatarPreview(user.avatar || null);
+      setSelectedAvatarFile(null); // Clear selected file when user changes
+      setAvatarError(null); // Clear avatar errors when user changes
     }
-    if (
-      profileData &&
-      (!currentUser?.phone || currentUser.phone !== profileData.phone)
-    ) {
-      reset({
-        firstName: profileData.firstName,
-        lastName: profileData.lastName,
-        email: profileData.email,
-        phone: profileData.phone ?? "",
-      });
-    }
-  }, [currentUser, profileData, reset]);
+  }, [user, reset, dispatch]);
 
-  if (loading || isProfileLoading) {
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      setAvatarError("File size must be less than 5MB");
+      return;
+    }
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      setAvatarError("Please select an image file");
+      return;
+    }
+
+    // Show preview immediately
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setAvatarPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // Store the file for later upload with profile data
+    setSelectedAvatarFile(file);
+    setAvatarError(null);
+  };
+
+  const onSubmit = async (data: ProfileFormData) => {
+    try {
+      await dispatch(
+        updateProfile({
+          profileData: data,
+          avatarFile: selectedAvatarFile || undefined,
+        })
+      ).unwrap();
+      setIsEditing(false);
+      setSelectedAvatarFile(null); // Clear the selected file after successful upload
+      dispatch(clearError());
+    } catch (error) {
+      // Error is handled by the slice
+    }
+  };
+
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="text-center">
@@ -90,7 +128,7 @@ const MyProfile = () => {
     );
   }
 
-  if (error || profileError) {
+  if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="text-center">
@@ -101,15 +139,15 @@ const MyProfile = () => {
             Error Loading Profile
           </h2>
           <p className="text-gray-600 mb-4">
-            {(error as string) || "Failed to load profile"}
+            {error || "Failed to load profile"}
           </p>
-          <Button onClick={() => window.location.reload()}>Try Again</Button>
+          <Button onClick={() => dispatch(fetchProfile())}>Try Again</Button>
         </div>
       </div>
     );
   }
 
-  if (!currentUser) {
+  if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="text-center">
@@ -124,22 +162,6 @@ const MyProfile = () => {
       </div>
     );
   }
-
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setAvatarPreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const onSubmit = (data: ProfileFormData) => {
-    console.log("Profile updated:", data);
-    setIsEditing(false);
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 sm:py-12 lg:py-16">
@@ -162,7 +184,7 @@ const MyProfile = () => {
               {avatarPreview ? (
                 <img
                   src={avatarPreview}
-                  alt={`${currentUser.firstName} avatar`}
+                  alt={`${user.firstName} avatar`}
                   className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-white shadow-lg"
                 />
               ) : (
@@ -187,13 +209,18 @@ const MyProfile = () => {
               />
             </div>
 
+            {/* Avatar Upload Error */}
+            {avatarError && (
+              <div className="mt-3 bg-red-50 border border-red-200 text-red-600 px-3 py-2 rounded-md text-sm">
+                {avatarError}
+              </div>
+            )}
+
             <div className="mt-4 text-white">
               <h2 className="text-xl sm:text-2xl font-semibold">
-                {currentUser.firstName} {currentUser.lastName}
+                {user.firstName} {user.lastName}
               </h2>
-              <p className="text-blue-100 text-sm sm:text-base">
-                {currentUser.email}
-              </p>
+              <p className="text-blue-100 text-sm sm:text-base">{user.email}</p>
             </div>
           </div>
 
