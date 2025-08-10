@@ -58,7 +58,7 @@ function App() {
         <Route path="/groups/:id" element={<GroupDetails />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/profile/:userId" element={<MyProfile />} />
+        <Route path="/profile" element={<MyProfile />} />
         <Route
           path="/checkout"
           element={

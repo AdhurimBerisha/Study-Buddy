@@ -27,6 +27,7 @@ export const userSchema = gql`
     email: String!
     firstName: String!
     lastName: String!
+    phone: String
   }
 
   type Query {

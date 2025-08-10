@@ -6,7 +6,8 @@ import AuthLayout from "./AuthLayout";
 import FormInput from "../../components/FormInput";
 import Button from "../../components/Button";
 import { useDispatch, useSelector } from "react-redux";
-import { loginSuccess } from "../../store/slice/authSlice";
+import { setCredentials } from "../../store/slice/authSlice";
+import { useLoginMutation } from "../../store/api/authApi";
 import type { RootState, AppDispatch } from "../../store/store";
 
 interface LoginFormData {
@@ -26,7 +27,8 @@ const Login = () => {
   const state = location.state as LocationState | null;
   const from = state?.from?.pathname || "/";
   const dispatch = useDispatch<AppDispatch>();
-  const users = useSelector((state: RootState) => state.auth.users);
+  const { error } = useSelector((state: RootState) => state.auth);
+  const [login, { isLoading }] = useLoginMutation();
 
   const {
     register,
@@ -35,15 +37,27 @@ const Login = () => {
   } = useForm<LoginFormData>();
 
   const onSubmit = async (data: LoginFormData) => {
-    const foundUser = users.find((u) => u.email === data.email);
-
-    if (!foundUser) {
-      alert("Invalid email or password");
-      return;
+    try {
+      const result = await login({
+        email: data.email,
+        password: data.password,
+      }).unwrap();
+      const normalizedUser = {
+        ...result.user,
+        phone: result.user.phone ?? undefined,
+      } as unknown as {
+        id: string;
+        email: string;
+        firstName: string;
+        lastName: string;
+        phone?: string;
+        avatar?: string | null;
+      };
+      dispatch(setCredentials({ user: normalizedUser, token: result.token }));
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.error("Login failed:", error);
     }
-
-    dispatch(loginSuccess(foundUser));
-    navigate(from, { replace: true });
   };
 
   return (
@@ -131,12 +145,22 @@ const Login = () => {
           </Link>
         </div>
 
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            {error}
+          </div>
+        )}
+
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isLoading || isSubmitting}
           className="w-full justify-center"
         >
-          {isSubmitting ? "Signing in..." : "Sign In"}
+          {isLoading
+            ? "Signing In..."
+            : isSubmitting
+            ? "Signing in..."
+            : "Sign In"}
         </Button>
 
         <div className="relative">

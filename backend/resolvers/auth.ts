@@ -12,11 +12,13 @@ export const authResolvers = {
         firstName,
         lastName,
         password,
+        phone,
       }: {
         email: string;
         password: string;
         firstName: string;
         lastName: string;
+        phone?: string;
       }
     ) => {
       try {
@@ -25,12 +27,18 @@ export const authResolvers = {
           const saltRounds = 12;
           const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-          console.log("🔍 Creating user with:", { email, firstName, lastName });
+          console.log("🔍 Creating user with:", {
+            email,
+            firstName,
+            lastName,
+            phone,
+          });
           const user = await User.create({
             email,
             firstName: firstName,
             lastName: lastName,
             password: hashedPassword,
+            phone: phone ?? null,
           });
           console.log("✅ User created:", user.toJSON());
           const plainUser = user.get({ plain: true });
