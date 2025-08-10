@@ -1,6 +1,7 @@
 import sequelize from "../config/db";
 import { CreateUserInput } from "../schema/user";
 import bcrypt from "bcryptjs";
+import { generateToken } from "../utils/jwt";
 
 export const authResolvers = {
   Mutation: {
@@ -68,7 +69,10 @@ export const authResolvers = {
         const plainUser = user.get({ plain: true });
         delete plainUser.password;
 
-        const token = `token_${plainUser.id}_${Date.now()}`;
+        const token = generateToken({
+          userId: plainUser.id,
+          email: plainUser.email,
+        });
 
         console.log("🎉 User successfully logged in:", plainUser.email);
 

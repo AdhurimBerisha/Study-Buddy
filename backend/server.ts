@@ -5,6 +5,7 @@ import { expressMiddleware } from "@as-integrations/express5";
 import sequelize from "./config/db";
 import { createApolloServer } from "./config/apollo";
 import "./models/User.js";
+import { authMiddleware } from "./middlewares/auth";
 
 const app = express();
 const PORT = 8080;
@@ -14,7 +15,15 @@ const server = await createApolloServer();
 app.use(cors());
 app.use(express.json());
 
-app.use("/graphql", expressMiddleware(server));
+app.use(
+  "/graphql",
+  expressMiddleware(server, {
+    context: async ({ req }) => {
+      const authContext = await authMiddleware(req);
+      return authContext;
+    },
+  })
+);
 
 app.get("/", (req, res) => {
   res.send("Server is running! GraphQL at /graphql");
