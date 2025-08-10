@@ -1,21 +1,36 @@
 import sequelize from "../config/db";
 import { CreateUserInput } from "../schema/user";
+import bcrypt from "bcryptjs";
 
 export const authResolvers = {
   Mutation: {
     createUser: async (
       _: any,
-      { email, firstName, lastName }: CreateUserInput
+      {
+        email,
+        firstName,
+        lastName,
+        password,
+      }: {
+        email: string;
+        password: string;
+        firstName: string;
+        lastName: string;
+      }
     ) => {
       try {
         const User = sequelize.models.User;
         if (User) {
+          // Hash the password
+          const saltRounds = 12;
+          const hashedPassword = await bcrypt.hash(password, saltRounds);
+
           console.log("🔍 Creating user with:", { email, firstName, lastName });
           const user = await User.create({
             email,
             firstName: firstName,
             lastName: lastName,
-            password: "temp123",
+            password: hashedPassword,
           });
           console.log("✅ User created:", user.toJSON());
           const plainUser = user.get({ plain: true });
@@ -25,6 +40,7 @@ export const authResolvers = {
         throw new Error("User model not found");
       } catch (error: any) {
         console.error("❌ Error creating user:", error);
+        console.error("❌ Full error details:", JSON.stringify(error, null, 2));
         throw new Error(error.message);
       }
     },
@@ -42,7 +58,12 @@ export const authResolvers = {
         if (!user) {
           throw new Error("Invalid email or password");
         }
-        if (user.getDataValue("password") !== password) {
+        // Compare hashed password
+        const isPasswordValid = await bcrypt.compare(
+          password,
+          user.getDataValue("password")
+        );
+        if (!isPasswordValid) {
           throw new Error("Invalid email or password");
         }
 

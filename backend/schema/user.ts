@@ -3,6 +3,7 @@ import { gql } from "graphql-tag";
 // User interfaces
 export interface CreateUserInput {
   email: string;
+  password: string;
   firstName: string;
   lastName: string;
 }
