@@ -1,9 +1,7 @@
 import sequelize from "../config/db";
-import { CreateUserInput } from "../schema/user";
 
 export const userResolvers = {
   Query: {
-    hello: () => "Hello from GraphQL!",
     users: async () => {
       try {
         const User = sequelize.models.User;
@@ -16,9 +14,34 @@ export const userResolvers = {
         return [];
       }
     },
+    myProfile: async (_: any, __: any, context: any) => {
+      try {
+        const userId = context.user?.id;
+
+        if (!userId) {
+          throw new Error("Authentication required");
+        }
+
+        const User = sequelize.models.User;
+        if (!User) {
+          throw new Error("User model not found");
+        }
+
+        const user = await User.findByPk(userId);
+        if (!user) {
+          throw new Error("User not found");
+        }
+
+        const plainUser = user.get({ plain: true });
+        delete plainUser.password;
+
+        return plainUser;
+      } catch (error: any) {
+        console.error("Error fetching user profile:", error);
+        throw new Error(error.message);
+      }
+    },
   },
 
-  Mutation: {
-    // User profile management operations
-  },
+  Mutation: {},
 };

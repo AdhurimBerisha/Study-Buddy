@@ -32,5 +32,6 @@ export const userSchema = gql`
   type Query {
     hello: String!
     users: [User!]!
+    myProfile: User!
   }
 `;
