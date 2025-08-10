@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import type { RootState } from "../../store/store";
@@ -14,6 +13,7 @@ import {
 } from "react-icons/fa";
 import Button from "../../components/Button";
 import { useState, useEffect } from "react";
+import { useMyProfileQuery } from "../../store/api/authApi";
 
 interface ProfileFormData {
   firstName: string;
@@ -23,13 +23,19 @@ interface ProfileFormData {
 }
 
 const MyProfile = () => {
-  const { userId } = useParams<{ userId: string }>();
-  const user = useSelector((state: RootState) =>
-    state.auth.users.find((u) => u.id === userId)
+  const { currentUser, loading, error } = useSelector(
+    (state: RootState) => state.auth
   );
+  const {
+    data: profileData,
+    isLoading: isProfileLoading,
+    error: profileError,
+  } = useMyProfileQuery(undefined, {
+    skip: !currentUser,
+  });
 
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+
   const [isEditing, setIsEditing] = useState(false);
 
   const {
@@ -39,26 +45,52 @@ const MyProfile = () => {
     formState: { errors, isSubmitting },
   } = useForm<ProfileFormData>({
     defaultValues: {
-      firstName: user?.firstName || "",
-      lastName: user?.lastName || "",
-      email: user?.email || "",
-      phone: user?.phone || "",
+      firstName: currentUser?.firstName || "",
+      lastName: currentUser?.lastName || "",
+      email: currentUser?.email || "",
+      phone: currentUser?.phone || "",
     },
   });
 
   useEffect(() => {
-    if (user) {
+    if (currentUser) {
       reset({
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phone: user.phone || "",
+        firstName: currentUser.firstName,
+        lastName: currentUser.lastName,
+        email: currentUser.email,
+        phone: currentUser.phone || "",
       });
-      setAvatarPreview(user.avatar || null);
+      setAvatarPreview(currentUser.avatar || null);
     }
-  }, [user, reset]);
+    if (
+      profileData &&
+      (!currentUser?.phone || currentUser.phone !== profileData.phone)
+    ) {
+      reset({
+        firstName: profileData.firstName,
+        lastName: profileData.lastName,
+        email: profileData.email,
+        phone: profileData.phone ?? "",
+      });
+    }
+  }, [currentUser, profileData, reset]);
 
-  if (!user)
+  if (loading || isProfileLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Loading Profile...
+          </h2>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || profileError) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="text-center">
@@ -66,14 +98,32 @@ const MyProfile = () => {
             <FaUserCircle className="text-red-500 text-2xl" />
           </div>
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            User Not Found
+            Error Loading Profile
           </h2>
-          <p className="text-gray-600">
-            The requested user profile could not be found.
+          <p className="text-gray-600 mb-4">
+            {(error as string) || "Failed to load profile"}
           </p>
+          <Button onClick={() => window.location.reload()}>Try Again</Button>
         </div>
       </div>
     );
+  }
+
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <FaUserCircle className="text-red-500 text-2xl" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Not Authenticated
+          </h2>
+          <p className="text-gray-600">Please log in to view your profile.</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -84,7 +134,6 @@ const MyProfile = () => {
       setAvatarPreview(reader.result as string);
     };
     reader.readAsDataURL(file);
-    setAvatarFile(file);
   };
 
   const onSubmit = (data: ProfileFormData) => {
@@ -113,7 +162,7 @@ const MyProfile = () => {
               {avatarPreview ? (
                 <img
                   src={avatarPreview}
-                  alt={`${user.firstName} avatar`}
+                  alt={`${currentUser.firstName} avatar`}
                   className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-white shadow-lg"
                 />
               ) : (
@@ -140,9 +189,11 @@ const MyProfile = () => {
 
             <div className="mt-4 text-white">
               <h2 className="text-xl sm:text-2xl font-semibold">
-                {user.firstName} {user.lastName}
+                {currentUser.firstName} {currentUser.lastName}
               </h2>
-              <p className="text-blue-100 text-sm sm:text-base">{user.email}</p>
+              <p className="text-blue-100 text-sm sm:text-base">
+                {currentUser.email}
+              </p>
             </div>
           </div>
 

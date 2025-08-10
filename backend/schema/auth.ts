@@ -12,6 +12,7 @@ export const authSchema = gql`
       password: String!
       firstName: String!
       lastName: String!
+      phone: String
     ): User!
     login(email: String!, password: String!): AuthPayload!
     register(

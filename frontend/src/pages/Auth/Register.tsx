@@ -12,9 +12,9 @@ import { useState } from "react";
 import AuthLayout from "./AuthLayout";
 import FormInput from "../../components/FormInput";
 import Button from "../../components/Button";
-import { useDispatch } from "react-redux";
-import { register as registerUser } from "../../store/slice/authSlice";
-import type { AppDispatch } from "../../store/store";
+import { useSelector } from "react-redux";
+import { useRegisterMutation } from "../../store/api/authApi";
+import type { RootState } from "../../store/store";
 
 interface RegisterFormData {
   firstName: string;
@@ -31,7 +31,8 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  const { error } = useSelector((state: RootState) => state.auth);
+  const [registerMutation, { isLoading }] = useRegisterMutation();
 
   const {
     register,
@@ -44,23 +45,17 @@ const Register = () => {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      dispatch(
-        registerUser({
-          id: crypto.randomUUID(),
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email,
-          phone: data.phone,
-          avatar: null,
-        })
-      );
-
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await registerMutation({
+        email: data.email,
+        password: data.password,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phone: data.phone,
+      }).unwrap();
 
       navigate("/login");
     } catch (error) {
       console.error("Registration error:", error);
-      alert("Registration failed. Please try again.");
     }
   };
 
@@ -277,12 +272,22 @@ const Register = () => {
           </label>
         </div>
 
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            {error}
+          </div>
+        )}
+
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isLoading || isSubmitting}
           className="w-full justify-center"
         >
-          {isSubmitting ? "Creating Account..." : "Create Account"}
+          {isLoading
+            ? "Creating Account..."
+            : isSubmitting
+            ? "Creating Account..."
+            : "Create Account"}
         </Button>
 
         <div className="relative">

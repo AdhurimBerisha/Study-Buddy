@@ -2,12 +2,8 @@ import { useLocation, NavLink } from "react-router-dom";
 import { useState } from "react";
 import { FaBars, FaTimes, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import Logo from "../assets/Logo.svg";
-import { useSelector } from "react-redux";
-import type { RootState } from "../store/store";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../store/store";
-import { logout } from "../store/slice/authSlice";
 import { FaUserCircle } from "react-icons/fa";
+import { useAuth } from "../hooks/useAuth";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,11 +14,7 @@ const Navbar = () => {
   const location = useLocation();
   const isGroupsActive = location.pathname.startsWith("/groups");
 
-  const user = useSelector((state: RootState) => state.auth.currentUser);
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
-  );
-  const dispatch = useDispatch<AppDispatch>();
+  const { currentUser, isAuthenticated, logout } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -205,9 +197,9 @@ const Navbar = () => {
               {isAuthenticated ? (
                 <div className="relative group">
                   <button className="flex items-center gap-2 text-sm font-medium text-gray-900 hover:text-blue-500 transition-colors duration-200 focus:outline-none">
-                    {user?.avatar ? (
+                    {currentUser?.avatar ? (
                       <img
-                        src={user.avatar}
+                        src={currentUser.avatar}
                         alt="User Avatar"
                         className="w-8 h-8 rounded-full object-cover"
                       />
@@ -215,7 +207,7 @@ const Navbar = () => {
                       <FaUserCircle className="w-8 h-8 text-gray-600" />
                     )}
                     <span className="hidden sm:block">
-                      {user?.firstName} {user?.lastName}
+                      {currentUser?.firstName} {currentUser?.lastName}
                     </span>
                     <svg
                       className="h-4 w-4 transition-transform duration-200 group-hover:rotate-180"
@@ -235,13 +227,13 @@ const Navbar = () => {
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                     <div className="py-1">
                       <NavLink
-                        to={`/profile/${user?.id}`}
+                        to="/profile"
                         className="block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 transition-colors duration-200"
                       >
                         Profile
                       </NavLink>
                       <button
-                        onClick={() => dispatch(logout())}
+                        onClick={logout}
                         className="block w-full text-left px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 transition-colors duration-200"
                       >
                         Logout
@@ -496,7 +488,7 @@ const Navbar = () => {
                     </div>
                     <div className="flex flex-col items-center space-y-2 w-full">
                       <NavLink
-                        to={`/profile/${user?.id}`}
+                        to="/profile"
                         onClick={toggleMenu}
                         className="w-full text-center px-3 py-2 text-sm font-medium text-white hover:text-blue-300 transition-colors duration-200"
                       >
@@ -504,7 +496,7 @@ const Navbar = () => {
                       </NavLink>
                       <button
                         onClick={() => {
-                          dispatch(logout());
+                          logout();
                           toggleMenu();
                         }}
                         className="w-full text-center px-3 py-2 text-sm font-medium text-white hover:text-blue-300 transition-colors duration-200"
