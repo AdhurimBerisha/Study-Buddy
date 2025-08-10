@@ -9,7 +9,6 @@ export interface UserAttributes {
   lastName: string;
   phone?: string;
   avatar?: string;
-  acceptedTerms?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -28,7 +27,6 @@ class User
   public lastName!: string;
   public phone?: string;
   public avatar?: string;
-  public acceptedTerms?: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -71,12 +69,6 @@ User.init(
     avatar: {
       type: DataTypes.TEXT,
       allowNull: true,
-    },
-    acceptedTerms: {
-      type: DataTypes.BOOLEAN,
-      allowNull: true,
-      defaultValue: false,
-      field: "accepted_terms",
     },
   },
   {
