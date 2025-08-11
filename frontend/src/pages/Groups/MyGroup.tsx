@@ -10,7 +10,8 @@ import { leaveGroup } from "../../store/slice/groupsSlice";
 
 const MyGroup = () => {
   const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { token } = useSelector((state: RootState) => state.auth);
+  const isAuthenticated = !!token;
   const myGroups = useSelector((state: RootState) => state.groups.myGroups);
 
   const handleLeaveGroup = (groupId: number) => {

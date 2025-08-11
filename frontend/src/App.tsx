@@ -26,7 +26,7 @@ import MyLearning from "./pages/Learning/MyLearning";
 import CourseReader from "./pages/Learning/CourseReader";
 import { useEffect } from "react";
 
-function App() {
+const App = () => {
   const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
   const { token, user } = useSelector((state: RootState) => state.auth);
@@ -101,6 +101,6 @@ function App() {
       <Footer />
     </div>
   );
-}
+};
 
 export default App;

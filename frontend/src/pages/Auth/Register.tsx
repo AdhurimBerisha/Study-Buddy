@@ -6,7 +6,7 @@ import { register, clearError } from "../../store/slice/authSlice";
 import AuthLayout from "./AuthLayout";
 import Button from "../../components/Button";
 
-const Register: React.FC = () => {
+const Register = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",

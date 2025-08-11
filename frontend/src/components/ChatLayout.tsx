@@ -15,7 +15,7 @@ import {
   FaPaperPlane,
 } from "react-icons/fa";
 
-export default function RightSideChat() {
+const RightSideChat = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { selectedGroupId, messagesByGroupId, isChatWidgetOpen } = useSelector(
     (state: RootState) => state.chat
@@ -188,4 +188,6 @@ export default function RightSideChat() {
       )}
     </div>
   );
-}
+};
+
+export default RightSideChat;
