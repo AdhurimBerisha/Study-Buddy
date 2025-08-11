@@ -26,19 +26,8 @@ import {
   FaSignOutAlt,
   FaComments,
 } from "react-icons/fa";
+import type { GroupMember } from "../../store/slice/groupsSlice";
 
-type MemberMeta = {
-  role?: "member" | "admin";
-  joinedAt?: string;
-};
-
-type MemberUser = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  avatar?: string;
-  GroupMember?: MemberMeta;
-};
 
 const GroupDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -185,8 +174,7 @@ const GroupDetails = () => {
     );
   }
 
-  const members: MemberUser[] =
-    (currentGroup as unknown as { members?: MemberUser[] }).members ?? [];
+  const members: GroupMember[] = currentGroup?.members ?? [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -371,7 +359,7 @@ const GroupDetails = () => {
               </h2>
               <div className="space-y-3">
                 {members.length > 0 ? (
-                  members.map((member: MemberUser) => (
+                  members.map((member: GroupMember) => (
                     <div
                       key={member.id}
                       className="flex items-center justify-between p-3 border rounded-lg"
@@ -396,7 +384,7 @@ const GroupDetails = () => {
                             <span className="font-medium text-gray-800">
                               {member.firstName} {member.lastName}
                             </span>
-                            {member?.GroupMember?.role === "admin" ? (
+                            {member?.role === "admin" ? (
                               <span className="inline-flex items-center gap-1 text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full">
                                 <FaCrown /> Admin
                               </span>
@@ -407,12 +395,9 @@ const GroupDetails = () => {
                             )}
                           </div>
 
-                          {member?.GroupMember?.joinedAt && (
+                          {member?.joinedAt && (
                             <p className="text-xs text-gray-500">
-                              Joined{" "}
-                              {new Date(
-                                member.GroupMember.joinedAt
-                              ).toLocaleDateString()}
+                              Joined {new Date(member.joinedAt).toLocaleDateString()}
                             </p>
                           )}
                         </div>
