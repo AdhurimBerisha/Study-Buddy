@@ -4,8 +4,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import type { RootState, AppDispatch } from "../../store/store";
 import {
   fetchGroup,
-  fetchGroupMessages,
-  sendMessage,
   joinGroup,
   leaveGroup,
   deleteGroup,
@@ -28,7 +26,6 @@ import {
 } from "react-icons/fa";
 import type { GroupMember } from "../../store/slice/groupsSlice";
 
-
 const GroupDetails = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch<AppDispatch>();
@@ -38,6 +35,16 @@ const GroupDetails = () => {
   );
   const { token, user } = useSelector((state: RootState) => state.auth);
   const isAuthenticated = !!token;
+
+  // Debug logging
+  console.log("GroupDetails Debug:", {
+    currentGroup,
+    isAuthenticated,
+    user,
+    token: !!token,
+    isMember: currentGroup?.isMember,
+    userRole: currentGroup?.userRole,
+  });
 
   const [newMessage, setNewMessage] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -53,7 +60,6 @@ const GroupDetails = () => {
   useEffect(() => {
     if (id) {
       dispatch(fetchGroup(id));
-      dispatch(fetchGroupMessages({ groupId: id }));
     }
 
     return () => {
@@ -73,21 +79,6 @@ const GroupDetails = () => {
       });
     }
   }, [currentGroup, isEditing]);
-
-  const handleSendMessage = async () => {
-    if (!newMessage.trim() || !id) return;
-
-    try {
-      await dispatch(
-        sendMessage({ groupId: id, data: { content: newMessage } })
-      ).unwrap();
-      setNewMessage("");
-      // Refresh messages
-      dispatch(fetchGroupMessages({ groupId: id }));
-    } catch (error) {
-      console.error("Failed to send message:", error);
-    }
-  };
 
   const handleJoinGroup = async () => {
     if (!id) return;
@@ -175,6 +166,12 @@ const GroupDetails = () => {
   }
 
   const members: GroupMember[] = currentGroup?.members ?? [];
+  const derivedIsMember = Boolean(
+    currentGroup.isMember ||
+      currentGroup.createdBy?.id === user?.id ||
+      members.some((m) => m.id === user?.id)
+  );
+  const memberCount = currentGroup.memberCount ?? members.length;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -214,13 +211,15 @@ const GroupDetails = () => {
                   {currentGroup.level}
                 </span>
                 <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full">
-                  {currentGroup.memberCount} members
-                  {currentGroup.maxMembers && ` / ${currentGroup.maxMembers}`}
+                  {memberCount}
+                  {currentGroup.maxMembers
+                    ? ` / ${currentGroup.maxMembers} members`
+                    : " members"}
                 </span>
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              {!currentGroup.isMember ? (
+              {!derivedIsMember ? (
                 <Button
                   variant="primary"
                   onClick={handleJoinGroup}
@@ -355,7 +354,7 @@ const GroupDetails = () => {
             <div className="bg-white rounded-xl shadow-md p-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
                 <FaUsers className="text-blue-600" />
-                Members ({currentGroup.memberCount})
+                Members ({memberCount})
               </h2>
               <div className="space-y-3">
                 {members.length > 0 ? (
@@ -397,7 +396,8 @@ const GroupDetails = () => {
 
                           {member?.joinedAt && (
                             <p className="text-xs text-gray-500">
-                              Joined {new Date(member.joinedAt).toLocaleDateString()}
+                              Joined{" "}
+                              {new Date(member.joinedAt).toLocaleDateString()}
                             </p>
                           )}
                         </div>
@@ -422,7 +422,7 @@ const GroupDetails = () => {
                 Group Chat
               </h2>
 
-              {!currentGroup.isMember ? (
+              {!derivedIsMember ? (
                 <div className="text-center py-12">
                   <FaComments className="text-4xl text-gray-300 mx-auto mb-4" />
                   <p className="text-gray-500 mb-4">
@@ -483,7 +483,7 @@ const GroupDetails = () => {
                   </div>
 
                   {/* Message Input */}
-                  <form onSubmit={handleSendMessage} className="flex gap-3">
+                  <form className="flex gap-3">
                     <input
                       type="text"
                       value={newMessage}

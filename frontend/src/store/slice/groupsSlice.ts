@@ -1,6 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { groupAPI } from "../../services/api";
+import {
+  updateGroupInArrays,
+  removeGroupFromArrays,
+} from "../helpers/groupHelpers";
 
 export interface GroupMember {
   id: string;
@@ -62,7 +66,7 @@ export interface Message {
   };
 }
 
-interface GroupState {
+export interface GroupState {
   allGroups: Group[];
   myGroups: Group[];
   currentGroup: Group | null;
@@ -80,89 +84,76 @@ const initialState: GroupState = {
   error: null,
 };
 
-// Async thunks
 export const fetchAllGroups = createAsyncThunk(
   "groups/fetchAllGroups",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await groupAPI.getAllGroups();
-      return response.data;
-    } catch (error: unknown) {
-      console.error("Error fetching all groups:", error);
-      if (error instanceof Error) {
-        return rejectWithValue(error.message);
-      }
-      return rejectWithValue("Failed to fetch groups");
-    }
+  async () => {
+    const response = await groupAPI.getAllGroups();
+    return response.data;
   }
 );
 
 export const fetchGroup = createAsyncThunk(
   "groups/fetchGroup",
   async (id: string) => {
-    try {
-      const response = await groupAPI.getGroup(id);
+    const response = await groupAPI.getGroup(id);
 
-      type RawMember = {
+    type RawMember = {
+      id: string;
+      firstName: string;
+      lastName: string;
+      avatar?: string;
+      GroupMember?: { role?: "member" | "admin"; joinedAt?: string };
+    };
+
+    type RawGroup = {
+      [key: string]: unknown;
+      id: string;
+      name: string;
+      description?: string;
+      category: string;
+      level: string;
+      maxMembers?: number;
+      isPrivate: boolean;
+      memberCount: number;
+      createdBy?: {
         id: string;
         firstName: string;
         lastName: string;
         avatar?: string;
-        GroupMember?: { role?: "member" | "admin"; joinedAt?: string };
-      };
-
-      type RawGroup = {
-        [key: string]: unknown;
+      } | null;
+      creator?: {
         id: string;
-        name: string;
-        description?: string;
-        category: string;
-        level: string;
-        maxMembers?: number;
-        isPrivate: boolean;
-        memberCount: number;
-        createdBy?: {
-          id: string;
-          firstName: string;
-          lastName: string;
-          avatar?: string;
-        } | null;
-        creator?: {
-          id: string;
-          firstName: string;
-          lastName: string;
-          avatar?: string;
-        } | null;
-        createdAt: string;
-        updatedAt: string;
-        isMember?: boolean;
-        userRole?: "member" | "admin";
-        members?: RawMember[];
-      };
+        firstName: string;
+        lastName: string;
+        avatar?: string;
+      } | null;
+      createdAt: string;
+      updatedAt: string;
+      isMember?: boolean;
+      userRole?: "member" | "admin";
+      members?: RawMember[];
+    };
 
-      const raw: RawGroup = response.data as RawGroup;
-      const normalizedMembers: GroupMember[] = Array.isArray(raw.members)
-        ? raw.members.map((m) => ({
-            id: m.id,
-            firstName: m.firstName,
-            lastName: m.lastName,
-            avatar: m.avatar,
-            role: m.GroupMember?.role,
-            joinedAt: m.GroupMember?.joinedAt,
-          }))
-        : [];
+    const raw: RawGroup = response.data as RawGroup;
+    const normalizedMembers: GroupMember[] = Array.isArray(raw.members)
+      ? raw.members.map((m) => ({
+          id: m.id,
+          firstName: m.firstName,
+          lastName: m.lastName,
+          avatar: m.avatar,
+          role: m.GroupMember?.role,
+          joinedAt: m.GroupMember?.joinedAt,
+        }))
+      : [];
 
-      const createdBy = raw.createdBy ?? raw.creator ?? null;
-      const { creator, members, ...rest } = raw;
+    const createdBy = raw.createdBy ?? raw.creator ?? null;
+    const { creator, members, ...rest } = raw;
 
-      return {
-        ...(rest as Omit<Group, "members">),
-        createdBy,
-        members: normalizedMembers,
-      } as Group;
-    } catch (error: unknown) {
-      console.log(error);
-    }
+    return {
+      ...(rest as Omit<Group, "members">),
+      createdBy,
+      members: normalizedMembers,
+    } as Group;
   }
 );
 
@@ -176,104 +167,48 @@ export const createGroup = createAsyncThunk(
     maxMembers?: number;
     isPrivate?: boolean;
   }) => {
-    try {
-      const response = await groupAPI.createGroup(groupData);
-      return response.data;
-    } catch (error: unknown) {
-      console.log(error);
-    }
+    const response = await groupAPI.createGroup(groupData);
+    return response.data;
   }
 );
 
 export const updateGroup = createAsyncThunk(
   "groups/updateGroup",
   async ({ id, data }: { id: string; data: UpdateGroupData }) => {
-    try {
-      const response = await groupAPI.updateGroup(id, data);
-      return response.data;
-    } catch (error: unknown) {
-      console.log(error);
-    }
+    const response = await groupAPI.updateGroup(id, data);
+    return response.data;
   }
 );
 
 export const deleteGroup = createAsyncThunk(
   "groups/deleteGroup",
   async (id: string) => {
-    try {
-      await groupAPI.deleteGroup(id);
-      return id;
-    } catch (error: unknown) {
-      console.log(error);
-    }
+    await groupAPI.deleteGroup(id);
+    return id;
   }
 );
 
 export const joinGroup = createAsyncThunk(
   "groups/joinGroup",
   async (id: string) => {
-    try {
-      await groupAPI.joinGroup(id);
-      return id;
-    } catch (error: unknown) {
-      console.log(error);
-    }
+    await groupAPI.joinGroup(id);
+    return id;
   }
 );
 
 export const leaveGroup = createAsyncThunk(
   "groups/leaveGroup",
   async (id: string) => {
-    try {
-      await groupAPI.leaveGroup(id);
-      return id;
-    } catch (error: unknown) {
-      console.log(error);
-    }
+    await groupAPI.leaveGroup(id);
+    return id;
   }
 );
 
 export const fetchMyGroups = createAsyncThunk(
   "groups/fetchMyGroups",
-  async (_) => {
-    try {
-      const response = await groupAPI.getMyGroups();
-      return response.data;
-    } catch (error: unknown) {
-      console.log(error);
-    }
-  }
-);
-
-export const sendMessage = createAsyncThunk(
-  "groups/sendMessage",
-  async ({ groupId, data }: { groupId: string; data: SendMessageData }) => {
-    try {
-      const response = await groupAPI.sendMessage(groupId, data);
-      return response.data;
-    } catch (error: unknown) {
-      console.log(error);
-    }
-  }
-);
-
-export const fetchGroupMessages = createAsyncThunk(
-  "groups/fetchGroupMessages",
-  async ({
-    groupId,
-    page,
-    limit,
-  }: {
-    groupId: string;
-    page?: number;
-    limit?: number;
-  }) => {
-    try {
-      const response = await groupAPI.getGroupMessages(groupId, page, limit);
-      return response.data;
-    } catch (error: unknown) {
-      console.log(error);
-    }
+  async () => {
+    const response = await groupAPI.getMyGroups();
+    return response.data;
   }
 );
 
@@ -325,18 +260,12 @@ const groupSlice = createSlice({
         state.myGroups.unshift(action.payload);
       })
 
+      .addCase(updateGroup.fulfilled, (state, action) => {
+        updateGroupInArrays(state, action.payload);
+      })
+
       .addCase(deleteGroup.fulfilled, (state, action) => {
-        const deletedId = action.payload;
-        state.allGroups = state.allGroups.filter(
-          (group) => group.id !== deletedId
-        );
-        state.myGroups = state.myGroups.filter(
-          (group) => group.id !== deletedId
-        );
-        if (state.currentGroup?.id === deletedId) {
-          state.currentGroup = null;
-          state.messages = [];
-        }
+        removeGroupFromArrays(state, action.payload);
       })
 
       .addCase(joinGroup.fulfilled, (state, action) => {
@@ -348,6 +277,11 @@ const groupSlice = createSlice({
           if (!state.myGroups.find((g) => g.id === groupId)) {
             state.myGroups.push(group);
           }
+        }
+        // Update currentGroup if it's the same group
+        if (state.currentGroup?.id === groupId) {
+          state.currentGroup.isMember = true;
+          state.currentGroup.memberCount += 1;
         }
       })
 
