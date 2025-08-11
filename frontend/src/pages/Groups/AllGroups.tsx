@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import type { RootState } from "../../store/store";
+import type { RootState, AppDispatch } from "../../store/store";
 import {
+  fetchAllGroups,
   createGroup,
   joinGroup,
   leaveGroup,
+  clearError,
 } from "../../store/slice/groupsSlice";
 
 import Hero from "../../components/Hero";
@@ -18,6 +20,8 @@ import {
   FaUsers,
   FaLock,
   FaSignInAlt,
+  FaSpinner,
+  FaExclamationTriangle,
 } from "react-icons/fa";
 import Features from "../../components/Features";
 import Banner from "../../components/Banner";
@@ -25,9 +29,11 @@ import bannerBg from "../../assets/bannerBg.webp";
 import GroupCard from "./GroupCard";
 
 const AllGroups = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const allGroups = useSelector((state: RootState) => state.groups.allGroups);
+  const { allGroups, loading, error } = useSelector(
+    (state: RootState) => state.groups
+  );
   const { token, user } = useSelector((state: RootState) => state.auth);
   const isAuthenticated = !!token;
 
@@ -36,9 +42,23 @@ const AllGroups = () => {
   const [category, setCategory] = useState("");
   const [level, setLevel] = useState("");
   const [description, setDescription] = useState("");
-  const [upcomingEvent, setUpcomingEvent] = useState("");
+  const [maxMembers, setMaxMembers] = useState("");
+  const [isPrivate, setIsPrivate] = useState(false);
 
-  const handleCreateGroup = () => {
+  useEffect(() => {
+    dispatch(fetchAllGroups());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        dispatch(clearError());
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, dispatch]);
+
+  const handleCreateGroup = async () => {
     if (!isAuthenticated) {
       alert("Please log in to create a group.");
       return;
@@ -49,42 +69,55 @@ const AllGroups = () => {
       return;
     }
 
-    const newGroup = {
-      id: Date.now(),
+    const groupData = {
       name: groupName,
-      category,
-      members: 1,
-      level,
       description,
-      upcomingEvent,
-      isMember: true,
-      createdBy: user?.id || "currentUserId",
-      lastActivity: new Date().toISOString(),
+      category,
+      level,
+      maxMembers: maxMembers ? parseInt(maxMembers) : undefined,
+      isPrivate,
     };
 
-    dispatch(createGroup(newGroup));
-    setGroupName("");
-    setCategory("");
-    setLevel("");
-    setDescription("");
-    setUpcomingEvent("");
-    setIsModalOpen(false);
+    try {
+      await dispatch(createGroup(groupData)).unwrap();
+      setGroupName("");
+      setCategory("");
+      setLevel("");
+      setDescription("");
+      setMaxMembers("");
+      setIsPrivate(false);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Failed to create group:", error);
+    }
   };
 
-  const handleJoinGroup = (id: number) => {
+  const handleJoinGroup = async (id: string) => {
     if (!isAuthenticated) {
       alert("Please log in to join a group.");
       return;
     }
-    dispatch(joinGroup(id));
+    try {
+      await dispatch(joinGroup(id)).unwrap();
+      // Refresh groups after joining
+      dispatch(fetchAllGroups());
+    } catch (error) {
+      console.error("Failed to join group:", error);
+    }
   };
 
-  const handleLeaveGroup = (id: number) => {
+  const handleLeaveGroup = async (id: string) => {
     if (!isAuthenticated) {
       alert("Please log in to leave a group.");
       return;
     }
-    dispatch(leaveGroup(id));
+    try {
+      await dispatch(leaveGroup(id)).unwrap();
+      // Refresh groups after leaving
+      dispatch(fetchAllGroups());
+    } catch (error) {
+      console.error("Failed to leave group:", error);
+    }
   };
 
   const handleCreateGroupClick = () => {
@@ -99,11 +132,34 @@ const AllGroups = () => {
     navigate("/login");
   };
 
+  const totalMembers =
+    allGroups?.reduce((acc, g) => acc + (g.memberCount || 0), 0) || 0;
+
+  if (loading && (!allGroups || allGroups.length === 0)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <FaSpinner className="animate-spin text-4xl text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">Loading groups...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <Hero />
 
       <div className="max-w-7xl mx-auto px-6 py-12">
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center gap-3">
+              <FaExclamationTriangle className="text-red-600 text-xl" />
+              <span className="text-red-800 font-medium">{error}</span>
+            </div>
+          </div>
+        )}
+
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">All Groups</h1>
           <div className="flex flex-col sm:flex-row gap-4 mt-4 md:mt-0">
@@ -136,13 +192,13 @@ const AllGroups = () => {
           <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
             <FaUsers className="text-blue-600 text-xl" />
             <span className="text-gray-700 font-semibold">
-              {allGroups.reduce((acc, g) => acc + g.members, 0)}+ Active Members
+              {totalMembers}+ Active Members
             </span>
           </div>
           <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
             <FaStar className="text-yellow-500 text-xl" />
             <span className="text-gray-700 font-semibold">
-              {allGroups.length} Specialized Groups
+              {allGroups?.length || 0} Specialized Groups
             </span>
           </div>
           <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
@@ -177,7 +233,7 @@ const AllGroups = () => {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {allGroups.map((group) => (
+          {allGroups?.map((group) => (
             <GroupCard
               key={group.id}
               group={group}
@@ -189,7 +245,7 @@ const AllGroups = () => {
           ))}
         </div>
 
-        {allGroups.length === 0 && (
+        {(!allGroups || allGroups.length === 0) && !loading && (
           <div className="text-center py-12">
             <h3 className="text-xl font-medium text-gray-700 mb-4">
               No groups available yet
@@ -228,43 +284,59 @@ const AllGroups = () => {
         <div className="flex flex-col gap-4">
           <input
             type="text"
-            placeholder="Group Name"
+            placeholder="Group Name *"
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
-            className="border px-4 py-2 rounded"
+            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="text"
-            placeholder="Category"
+            placeholder="Category *"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="border px-4 py-2 rounded"
+            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <input
-            type="text"
-            placeholder="Level"
+          <select
             value={level}
             onChange={(e) => setLevel(e.target.value)}
-            className="border px-4 py-2 rounded"
-          />
+            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Select Level *</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+            <option value="All Levels">All Levels</option>
+          </select>
           <textarea
             placeholder="Description (optional)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="border px-4 py-2 rounded"
+            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows={3}
           />
           <input
-            type="text"
-            placeholder="Upcoming Event (optional)"
-            value={upcomingEvent}
-            onChange={(e) => setUpcomingEvent(e.target.value)}
-            className="border px-4 py-2 rounded"
+            type="number"
+            placeholder="Max Members (optional)"
+            value={maxMembers}
+            onChange={(e) => setMaxMembers(e.target.value)}
+            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            min="2"
+            max="1000"
           />
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={isPrivate}
+              onChange={(e) => setIsPrivate(e.target.checked)}
+              className="rounded focus:ring-2 focus:ring-blue-500"
+            />
+            <span className="text-sm text-gray-700">Private Group</span>
+          </label>
           <button
             onClick={handleCreateGroup}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            Create
+            Create Group
           </button>
         </div>
       </Modal>

@@ -3,8 +3,15 @@ import sequelize from "../config/db";
 import { verifyToken } from "../utils/jwt";
 
 // Extend Express Request interface to include user property
-interface AuthenticatedRequest extends Request {
-  user?: any; // You can make this more specific based on your User model type
+export interface AuthenticatedRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phone?: string | null;
+    avatar?: string | null;
+  };
 }
 
 export const requireAuth = async (
@@ -23,7 +30,7 @@ export const requireAuth = async (
     if (!User) return res.status(500).json({ message: "User model not found" });
     const user = await User.findByPk(payload.userId);
     if (!user) return res.status(401).json({ message: "Unauthorized" });
-    req.user = user.get({ plain: true });
+    req.user = (user as any).toJSON();
     return next();
   } catch (e) {
     return res.status(401).json({ message: "Unauthorized" });

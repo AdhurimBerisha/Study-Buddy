@@ -60,7 +60,6 @@ const Modal = ({
       onClick={onOverlayClick}
       role="dialog"
       aria-modal="true"
-      aria-labelledby={title ? "modal-title" : undefined}
     >
       <div
         ref={modalRef}
@@ -87,7 +86,6 @@ const Modal = ({
                 <button
                   className="absolute top-4 right-4 sm:top-6 sm:right-6 group text-gray-400 hover:text-gray-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-full p-2 hover:bg-gray-100 hover:scale-110"
                   onClick={onClose}
-                  aria-label="Close modal"
                 >
                   <svg
                     className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-200 group-hover:rotate-90"

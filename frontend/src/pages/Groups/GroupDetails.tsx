@@ -1,79 +1,526 @@
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../store/store";
-import Hero from "../../components/Hero";
+import type { RootState, AppDispatch } from "../../store/store";
+import {
+  fetchGroup,
+  fetchGroupMessages,
+  sendMessage,
+  joinGroup,
+  leaveGroup,
+  deleteGroup,
+  updateGroup,
+  clearCurrentGroup,
+} from "../../store/slice/groupsSlice";
+
 import Button from "../../components/Button";
-import { FaUsers, FaStar, FaClock } from "react-icons/fa";
-import bannerBg from "../../assets/bannerBg.webp";
-import Banner from "../../components/Banner";
+import {
+  FaUsers,
+  FaSpinner,
+  FaExclamationTriangle,
+  FaSignInAlt,
+  FaEdit,
+  FaTrash,
+  FaCrown,
+  FaUser,
+  FaSignOutAlt,
+  FaComments,
+} from "react-icons/fa";
+
+type MemberMeta = {
+  role?: "member" | "admin";
+  joinedAt?: string;
+};
+
+type MemberUser = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  avatar?: string;
+  GroupMember?: MemberMeta;
+};
 
 const GroupDetails = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const { currentGroup, messages, loading, error } = useSelector(
+    (state: RootState) => state.groups
+  );
+  const { token, user } = useSelector((state: RootState) => state.auth);
+  const isAuthenticated = !!token;
 
-  const allGroups = useSelector((state: RootState) => state.groups.allGroups);
+  const [newMessage, setNewMessage] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState({
+    name: "",
+    description: "",
+    category: "",
+    level: "",
+    maxMembers: "",
+    isPrivate: false,
+  });
 
-  const group = allGroups.find((g) => g.id === Number(id));
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchGroup(id));
+      dispatch(fetchGroupMessages({ groupId: id }));
+    }
 
-  if (!group) {
+    return () => {
+      dispatch(clearCurrentGroup());
+    };
+  }, [id, dispatch]);
+
+  useEffect(() => {
+    if (currentGroup && !isEditing) {
+      setEditData({
+        name: currentGroup.name,
+        description: currentGroup.description || "",
+        category: currentGroup.category,
+        level: currentGroup.level,
+        maxMembers: currentGroup.maxMembers?.toString() || "",
+        isPrivate: currentGroup.isPrivate,
+      });
+    }
+  }, [currentGroup, isEditing]);
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !id) return;
+
+    try {
+      await dispatch(
+        sendMessage({ groupId: id, data: { content: newMessage } })
+      ).unwrap();
+      setNewMessage("");
+      // Refresh messages
+      dispatch(fetchGroupMessages({ groupId: id }));
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    }
+  };
+
+  const handleJoinGroup = async () => {
+    if (!id) return;
+    try {
+      await dispatch(joinGroup(id)).unwrap();
+      // Refresh group data
+      dispatch(fetchGroup(id));
+    } catch (error) {
+      console.error("Failed to join group:", error);
+    }
+  };
+
+  const handleLeaveGroup = async () => {
+    if (!id) return;
+    try {
+      await dispatch(leaveGroup(id)).unwrap();
+      navigate("/groups");
+    } catch (error) {
+      console.error("Failed to leave group:", error);
+    }
+  };
+
+  const handleDeleteGroup = async () => {
+    if (!id) return;
+    if (window.confirm("Are you sure you want to delete this group?")) {
+      try {
+        await dispatch(deleteGroup(id)).unwrap();
+        navigate("/groups");
+      } catch (error) {
+        console.error("Failed to delete group:", error);
+      }
+    }
+  };
+
+  const handleUpdateGroup = async () => {
+    if (!id) return;
+    try {
+      const updateData = {
+        name: editData.name,
+        description: editData.description,
+        category: editData.category,
+        level: editData.level,
+        maxMembers: editData.maxMembers
+          ? parseInt(editData.maxMembers)
+          : undefined,
+        isPrivate: editData.isPrivate,
+      };
+
+      await dispatch(updateGroup({ id, data: updateData })).unwrap();
+      setIsEditing(false);
+      // Refresh group data
+      dispatch(fetchGroup(id));
+    } catch (error) {
+      console.error("Failed to update group:", error);
+    }
+  };
+
+  const canEdit =
+    currentGroup &&
+    (currentGroup.userRole === "admin" ||
+      currentGroup.createdBy?.id === user?.id);
+
+  const canDelete = currentGroup && currentGroup.createdBy?.id === user?.id;
+
+  if (loading && !currentGroup) {
     return (
-      <div className="text-center py-32">
-        <h2 className="text-2xl font-semibold text-gray-700 mb-4">
-          Group not found
-        </h2>
-        <Button variant="primary" onClick={() => navigate(-1)}>
-          Go Back
-        </Button>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <FaSpinner className="animate-spin text-4xl text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">Loading group...</p>
+        </div>
       </div>
     );
   }
 
+  if (!currentGroup) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <FaExclamationTriangle className="text-4xl text-red-600 mx-auto mb-4" />
+          <p className="text-gray-600">Group not found</p>
+        </div>
+      </div>
+    );
+  }
+
+  const members: MemberUser[] =
+    (currentGroup as unknown as { members?: MemberUser[] }).members ?? [];
+
   return (
-    <div>
-      <Hero />
-
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">{group.name}</h1>
-        <p className="text-blue-600 font-semibold text-sm mb-2">
-          {group.category}
-        </p>
-
-        <div className="flex flex-wrap items-center gap-4 text-gray-600 mb-6">
-          <div className="flex items-center gap-2">
-            <FaUsers /> {group.members} members
-          </div>
-          <div className="flex items-center gap-2">
-            <FaStar /> {group.level}
-          </div>
-          <div className="flex items-center gap-2">
-            <FaClock /> Last active: {group.lastActivity}
-          </div>
-        </div>
-
-        <div className="text-gray-700 mb-6 leading-relaxed">
-          {group.description}
-        </div>
-
-        {group.upcomingEvent && (
-          <div className="bg-gray-50 border rounded-lg p-4 mb-6">
-            <h3 className="font-semibold text-gray-800 mb-2">Upcoming Event</h3>
-            <p className="text-gray-600">{group.upcomingEvent}</p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center gap-3">
+              <FaExclamationTriangle className="text-red-600 text-xl" />
+              <span className="text-red-800 font-medium">{error}</span>
+            </div>
           </div>
         )}
 
-        <div className="flex items-center gap-4">
-          <Button variant="primary">Join Chat</Button>
-          <Button variant="outline" onClick={() => navigate(-1)}>
-            Back to Groups
-          </Button>
+        {/* Group Header */}
+        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <h1 className="text-3xl font-bold text-gray-800">
+                  {currentGroup.name}
+                </h1>
+                {currentGroup.isPrivate && (
+                  <span className="bg-gray-100 text-gray-800 text-sm font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+                    <FaUser className="text-xs" />
+                    Private
+                  </span>
+                )}
+              </div>
+              <p className="text-gray-600 text-lg mb-2">
+                {currentGroup.description}
+              </p>
+              <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+                  {currentGroup.category}
+                </span>
+                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full">
+                  {currentGroup.level}
+                </span>
+                <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full">
+                  {currentGroup.memberCount} members
+                  {currentGroup.maxMembers && ` / ${currentGroup.maxMembers}`}
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-col gap-3">
+              {!currentGroup.isMember ? (
+                <Button
+                  variant="primary"
+                  onClick={handleJoinGroup}
+                  disabled={!isAuthenticated}
+                  className="w-full lg:w-auto"
+                >
+                  <FaSignInAlt className="mr-2" />
+                  Join Group
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={handleLeaveGroup}
+                  className="w-full lg:w-auto"
+                >
+                  <FaSignOutAlt className="mr-2" />
+                  Leave Group
+                </Button>
+              )}
+              {canEdit && (
+                <Button
+                  variant="outline"
+                  onClick={() => setIsEditing(!isEditing)}
+                  className="w-full lg:w-auto"
+                >
+                  <FaEdit className="mr-2" />
+                  {isEditing ? "Cancel Edit" : "Edit Group"}
+                </Button>
+              )}
+              {canDelete && (
+                <Button
+                  variant="outline"
+                  onClick={handleDeleteGroup}
+                  className="w-full lg:w-auto text-red-600 border-red-600 hover:bg-red-50"
+                >
+                  <FaTrash className="mr-2" />
+                  Delete Group
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Edit Form */}
+          {isEditing && (
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+              <h3 className="text-lg font-semibold mb-4">Edit Group</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  placeholder="Group Name"
+                  value={editData.name}
+                  onChange={(e) =>
+                    setEditData({ ...editData, name: e.target.value })
+                  }
+                  className="border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="text"
+                  placeholder="Category"
+                  value={editData.category}
+                  onChange={(e) =>
+                    setEditData({ ...editData, category: e.target.value })
+                  }
+                  className="border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <select
+                  value={editData.level}
+                  onChange={(e) =>
+                    setEditData({ ...editData, level: e.target.value })
+                  }
+                  className="border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="Beginner">Beginner</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Advanced">Advanced</option>
+                  <option value="All Levels">All Levels</option>
+                </select>
+                <input
+                  type="number"
+                  placeholder="Max Members"
+                  value={editData.maxMembers}
+                  onChange={(e) =>
+                    setEditData({ ...editData, maxMembers: e.target.value })
+                  }
+                  className="border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  min="2"
+                  max="1000"
+                />
+                <div className="md:col-span-2">
+                  <textarea
+                    placeholder="Description"
+                    value={editData.description}
+                    onChange={(e) =>
+                      setEditData({ ...editData, description: e.target.value })
+                    }
+                    className="border px-3 py-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={3}
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={editData.isPrivate}
+                      onChange={(e) =>
+                        setEditData({
+                          ...editData,
+                          isPrivate: e.target.checked,
+                        })
+                      }
+                      className="rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-gray-700">Private Group</span>
+                  </label>
+                </div>
+              </div>
+              <div className="flex gap-3 mt-4">
+                <Button onClick={handleUpdateGroup} variant="primary">
+                  Update Group
+                </Button>
+                <Button onClick={() => setIsEditing(false)} variant="outline">
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Members List */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <FaUsers className="text-blue-600" />
+                Members ({currentGroup.memberCount})
+              </h2>
+              <div className="space-y-3">
+                {members.length > 0 ? (
+                  members.map((member: MemberUser) => (
+                    <div
+                      key={member.id}
+                      className="flex items-center justify-between p-3 border rounded-lg"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center overflow-hidden">
+                          {member.avatar ? (
+                            <img
+                              src={member.avatar}
+                              alt={`${member.firstName} ${member.lastName}`}
+                              className="w-9 h-9 rounded-full object-cover"
+                            />
+                          ) : (
+                            <span className="text-blue-600 text-sm font-semibold">
+                              {member.firstName?.[0]}
+                              {member.lastName?.[0]}
+                            </span>
+                          )}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-gray-800">
+                              {member.firstName} {member.lastName}
+                            </span>
+                            {member?.GroupMember?.role === "admin" ? (
+                              <span className="inline-flex items-center gap-1 text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full">
+                                <FaCrown /> Admin
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">
+                                <FaUser /> Member
+                              </span>
+                            )}
+                          </div>
+
+                          {member?.GroupMember?.joinedAt && (
+                            <p className="text-xs text-gray-500">
+                              Joined{" "}
+                              {new Date(
+                                member.GroupMember.joinedAt
+                              ).toLocaleDateString()}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-4 text-gray-500">
+                    <FaUsers className="text-2xl mx-auto mb-2" />
+                    <p>No members found</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Chat Section */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <FaComments className="text-blue-600" />
+                Group Chat
+              </h2>
+
+              {!currentGroup.isMember ? (
+                <div className="text-center py-12">
+                  <FaComments className="text-4xl text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500 mb-4">
+                    Join the group to participate in discussions
+                  </p>
+                  <Button onClick={handleJoinGroup} disabled={!isAuthenticated}>
+                    <FaSignInAlt className="mr-2" />
+                    Join Group
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  {/* Messages */}
+                  <div className="h-96 overflow-y-auto mb-4 border rounded-lg p-4 bg-gray-50">
+                    {messages.length === 0 ? (
+                      <div className="text-center py-8 text-gray-500">
+                        <FaComments className="text-3xl mx-auto mb-2" />
+                        <p>No messages yet. Start the conversation!</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {messages.map((message) => (
+                          <div key={message.id} className="flex gap-3">
+                            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                              {message.user.avatar ? (
+                                <img
+                                  src={message.user.avatar}
+                                  alt={`${message.user.firstName} ${message.user.lastName}`}
+                                  className="w-8 h-8 rounded-full object-cover"
+                                />
+                              ) : (
+                                <span className="text-blue-600 text-sm font-semibold">
+                                  {message.user.firstName[0]}
+                                  {message.user.lastName[0]}
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="font-medium text-gray-800">
+                                  {message.user.firstName}{" "}
+                                  {message.user.lastName}
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                  {new Date(
+                                    message.createdAt
+                                  ).toLocaleTimeString()}
+                                </span>
+                              </div>
+                              <p className="text-gray-700 bg-white p-3 rounded-lg shadow-sm">
+                                {message.content}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Message Input */}
+                  <form onSubmit={handleSendMessage} className="flex gap-3">
+                    <input
+                      type="text"
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      placeholder="Type your message..."
+                      className="flex-1 border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      disabled={!isAuthenticated}
+                    />
+                    <Button
+                      type="submit"
+                      disabled={!newMessage.trim() || !isAuthenticated}
+                      className="px-6"
+                    >
+                      Send
+                    </Button>
+                  </form>
+                </>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-      <Banner
-        imageSrc={bannerBg}
-        title="Start learning a new language today!"
-        subtitle="Choose a teacher for 1-on-1 lessons"
-        buttonText="Sign Up"
-      />
     </div>
   );
 };

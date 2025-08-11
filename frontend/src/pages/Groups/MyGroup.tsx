@@ -1,91 +1,207 @@
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import type { RootState, AppDispatch } from "../../store/store";
+import {
+  fetchMyGroups,
+  leaveGroup,
+  clearError,
+  deleteGroup,
+} from "../../store/slice/groupsSlice";
+
 import Hero from "../../components/Hero";
 import Button from "../../components/Button";
-import GroupCard from "./GroupCard";
-import type { RootState } from "../../store/store";
-import { Link } from "react-router-dom";
+import {
+  FaUsers,
+  FaSpinner,
+  FaExclamationTriangle,
+  FaSignInAlt,
+} from "react-icons/fa";
+import Features from "../../components/Features";
 import Banner from "../../components/Banner";
 import bannerBg from "../../assets/bannerBg.webp";
-import { leaveGroup } from "../../store/slice/groupsSlice";
+import GroupCard from "./GroupCard";
 
-const MyGroup = () => {
-  const dispatch = useDispatch();
-  const { token } = useSelector((state: RootState) => state.auth);
+const MyGroups = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const { myGroups, loading, error } = useSelector(
+    (state: RootState) => state.groups
+  );
+  const { token, user } = useSelector((state: RootState) => state.auth);
   const isAuthenticated = !!token;
-  const myGroups = useSelector((state: RootState) => state.groups.myGroups);
 
-  const handleLeaveGroup = (groupId: number) => {
-    dispatch(leaveGroup(groupId));
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchMyGroups());
+    }
+  }, [dispatch, isAuthenticated]);
+
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        dispatch(clearError());
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, dispatch]);
+
+  const handleLeaveGroup = async (id: string) => {
+    try {
+      await dispatch(leaveGroup(id)).unwrap();
+      // Refresh groups after leaving
+      dispatch(fetchMyGroups());
+    } catch (error) {
+      console.error("Failed to leave group:", error);
+    }
   };
+
+  
+  const handleDeleteGroup = async (id: string) => {
+    try {
+      const confirmed = window.confirm(
+        "Are you sure you want to delete this group? This action cannot be undone."
+      );
+      if (!confirmed) return;
+      await dispatch(deleteGroup(id)).unwrap();
+    } catch (error) {
+      console.error("Failed to delete group:", error);
+    }
+  };
+
+  const handleLoginClick = () => {
+    navigate("/login");
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div>
+        <Hero />
+        <div className="max-w-4xl mx-auto px-6 py-12 text-center">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-8">
+            <FaSignInAlt className="text-6xl text-blue-600 mx-auto mb-6" />
+            <h1 className="text-3xl font-bold text-blue-900 mb-4">
+              Login Required
+            </h1>
+            <p className="text-blue-700 mb-6 text-lg">
+              Please log in to view and manage your groups.
+            </p>
+            <Button
+              variant="primary"
+              className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-3"
+              onClick={handleLoginClick}
+            >
+              <FaSignInAlt className="mr-2" />
+              Login Now
+            </Button>
+          </div>
+        </div>
+        <Features />
+      </div>
+    );
+  }
+
+  if (loading && myGroups.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <FaSpinner className="animate-spin text-4xl text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">Loading your groups...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
       <Hero />
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">My Groups</h1>
 
-        {!isAuthenticated ? (
-          <div className="text-center py-24">
-            <h3 className="text-xl font-semibold text-gray-700 mb-4">
-              Please login to view the groups you have joined
-            </h3>
-            <p className="text-gray-500 mb-6">
-              Once logged in, you'll be able to see and manage your joined
-              groups.
-            </p>
-            <Link to="/login" className="inline-block mx-auto">
-              <Button variant="primary">Login</Button>
-            </Link>
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center gap-3">
+              <FaExclamationTriangle className="text-red-600 text-xl" />
+              <span className="text-red-800 font-medium">{error}</span>
+            </div>
           </div>
-        ) : myGroups.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        )}
+
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">My Groups</h1>
+            <p className="text-gray-600 mt-2">
+              Manage and participate in your learning communities
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-4 mt-4 md:mt-0">
+            <Button variant="outline" onClick={() => navigate("/groups")}> 
+              <FaUsers className="mr-2" />
+              Browse All Groups
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap justify-center items-center gap-6 mb-12">
+          <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
+            <FaUsers className="text-blue-600 text-xl" />
+            <span className="text-gray-700 font-semibold">
+              {myGroups.length} Active Groups
+            </span>
+          </div>
+          <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
+            <FaUsers className="text-green-500 text-xl" />
+            <span className="text-gray-700 font-semibold">
+              {myGroups.reduce((acc, g) => acc + g.memberCount, 0)}+ Total
+              Members
+            </span>
+          </div>
+        </div>
+
+        {myGroups.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="bg-gray-50 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+              <FaUsers className="text-4xl text-gray-400" />
+            </div>
+            <h3 className="text-xl font-medium text-gray-700 mb-4">
+              You haven't joined any groups yet
+            </h3>
+            <p className="text-gray-500 mb-6 max-w-md mx-auto">
+              Start by exploring available groups.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button variant="outline" onClick={() => navigate("/groups")}>
+                <FaUsers className="mr-2" />
+                Browse All Groups
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {myGroups.map((group) => (
               <GroupCard
                 key={group.id}
                 group={group}
                 variant="my"
+                onView={() => navigate(`/groups/${group.id}`)}
                 onLeave={() => handleLeaveGroup(group.id)}
-                actions={
-                  <div className="flex space-x-4">
-                    <Link to={`/groups/${group.id}`} className="flex-1">
-                      <Button variant="primary" className="w-full">
-                        View Group
-                      </Button>
-                    </Link>
-                    <Button
-                      variant="outline"
-                      className="flex-1"
-                      onClick={() => handleLeaveGroup(group.id)}
-                    >
-                      Leave Group
-                    </Button>
-                  </div>
-                }
+                onDelete={user?.id === group.createdBy.id ? () => handleDeleteGroup(group.id) : undefined}
+                isAuthenticated={isAuthenticated}
               />
             ))}
           </div>
-        ) : (
-          <div className="text-center py-12">
-            <h3 className="text-xl font-medium text-gray-700 mb-4">
-              You haven't joined any groups yet
-            </h3>
-            <p className="text-gray-500 mb-6">
-              Join groups to collaborate with other learners
-            </p>
-            <Link to="/groups">
-              <Button variant="primary">Browse All Groups</Button>
-            </Link>
-          </div>
         )}
       </div>
+
+      <Features />
       <Banner
         imageSrc={bannerBg}
-        title="Start learning a new language today!"
-        subtitle="Choose a teacher for 1-on-1 lessons"
-        buttonText="Sign Up"
+        title="Ready to create your own group?"
+        subtitle="Start a learning community and invite others to join"
+        buttonText="Create Group"
+        buttonLink="/groups"
       />
     </div>
   );
 };
 
-export default MyGroup;
+export default MyGroups;
