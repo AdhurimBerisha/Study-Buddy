@@ -7,6 +7,7 @@ type ButtonProps = {
   disabled?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   fullWidth?: boolean;
+  title?: string;
 };
 
 const Button = ({

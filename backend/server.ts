@@ -2,7 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import sequelize from "./config/db";
-import "./models/User";
+import "./models/index";
 import authRoutes from "./routes/auth";
 import userRoutes from "./routes/user";
 import courseRoutes from "./routes/course";

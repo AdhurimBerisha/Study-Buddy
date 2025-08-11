@@ -68,7 +68,6 @@ const RightSideChat = () => {
                 e.stopPropagation();
                 dispatch(setChatWidgetOpen(false));
               }}
-              aria-label="Minimize chat"
               className="hover:bg-blue-400 p-1 rounded transition-colors duration-200"
             >
               <FaChevronDown className="text-sm" />
@@ -79,7 +78,6 @@ const RightSideChat = () => {
                 e.stopPropagation();
                 dispatch(setChatWidgetOpen(true));
               }}
-              aria-label="Maximize chat"
               className="hover:bg-blue-400 p-1 rounded transition-colors duration-200"
             >
               <FaChevronUp className="text-sm" />
@@ -90,7 +88,6 @@ const RightSideChat = () => {
               e.stopPropagation();
               dispatch(setChatWidgetOpen(false));
             }}
-            aria-label="Close chat"
             className="hover:bg-blue-400 p-1 rounded transition-colors duration-200"
           >
             <FaTimes className="text-sm" />

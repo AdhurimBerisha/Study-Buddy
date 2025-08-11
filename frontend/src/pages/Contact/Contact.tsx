@@ -78,21 +78,18 @@ const Contact = () => {
             </h3>
             <div className="flex items-center gap-3">
               <a
-                aria-label="Facebook"
                 href="#"
                 className="p-2 rounded-lg border border-gray-200 hover:bg-blue-50 hover:border-blue-300 text-gray-600 hover:text-blue-700 transition-colors"
               >
                 <FaFacebook />
               </a>
               <a
-                aria-label="Twitter"
                 href="#"
                 className="p-2 rounded-lg border border-gray-200 hover:bg-blue-50 hover:border-blue-300 text-gray-600 hover:text-blue-700 transition-colors"
               >
                 <FaTwitter />
               </a>
               <a
-                aria-label="LinkedIn"
                 href="#"
                 className="p-2 rounded-lg border border-gray-200 hover:bg-blue-50 hover:border-blue-300 text-gray-600 hover:text-blue-700 transition-colors"
               >
