@@ -1,6 +1,7 @@
 import { Route, Routes, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
-import type { RootState } from "./store/store";
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState, AppDispatch } from "./store/store";
+import { fetchProfile } from "./store/slice/authSlice";
 import Home from "./pages/Home/Home";
 import About from "./pages/About/About";
 import Contact from "./pages/Contact/Contact";
@@ -27,7 +28,9 @@ import { useEffect } from "react";
 
 function App() {
   const location = useLocation();
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch<AppDispatch>();
+  const { token, user } = useSelector((state: RootState) => state.auth);
+  const isAuthenticated = !!token;
 
   const showChatLayout =
     location.pathname !== "/groups/chat" && isAuthenticated;
@@ -35,6 +38,13 @@ function App() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [location.pathname]);
+
+  // Auto-fetch user profile if token exists but no user data
+  useEffect(() => {
+    if (token && !user) {
+      dispatch(fetchProfile());
+    }
+  }, [token, user, dispatch]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-200 via-neutral-100 to-blue-50 bg-[length:200%_200%] animate-gradient-x pt-20">
