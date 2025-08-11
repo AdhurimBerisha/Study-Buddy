@@ -38,16 +38,20 @@ const userLogin = async (req: Request, res: Response) => {
     const user = await User.findOne({ where: { email } });
     if (!user)
       return res.status(401).json({ message: "Invalid email or password" });
-    const isValid = await bcrypt.compare(
-      password,
-      user.getDataValue("password")
-    );
+
+    // Fix: Use consistent password access method like in signup
+    const userPlain = user.get({ plain: true });
+    const isValid = await bcrypt.compare(password, userPlain.password);
+
     if (!isValid)
       return res.status(401).json({ message: "Invalid email or password" });
-    const plain = user.get({ plain: true });
-    delete (plain as any).password;
-    const token = generateToken({ userId: plain.id, email: plain.email });
-    return res.json({ token, user: plain });
+
+    delete (userPlain as any).password;
+    const token = generateToken({
+      userId: userPlain.id,
+      email: userPlain.email,
+    });
+    return res.json({ token, user: userPlain });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Login failed";
     return res.status(400).json({ message });
