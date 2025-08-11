@@ -18,13 +18,6 @@ export const upload = multer({
 
 export const uploadAvatar = upload.single("avatar");
 
-export const debugUpload = (req: any, res: any, next: any) => {
-  console.log("Upload middleware - req.file:", req.file);
-  console.log("Upload middleware - req.body:", req.body);
-  console.log("Upload middleware - req.headers:", req.headers);
-  next();
-};
-
 export const handleUploadError = (
   error: any,
   req: any,
