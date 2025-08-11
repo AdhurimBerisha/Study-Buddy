@@ -14,7 +14,7 @@ router.get("/user/my", requireAuth, groups.getMyGroups);
 router.post("/", requireAuth, groups.createGroup);
 
 // Parameterized routes (must come last)
-router.get("/:id", groups.getGroup);
+router.get("/:id", requireAuth, groups.getGroup);
 router.delete("/:id", requireAuth, groups.deleteGroup);
 router.post("/:id/join", requireAuth, groups.joinGroup);
 router.post("/:id/leave", requireAuth, groups.leaveGroup);
