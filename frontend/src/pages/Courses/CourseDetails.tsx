@@ -21,7 +21,8 @@ const CourseDetails = () => {
   const course = slug ? findCourseBySlug(slug) : undefined;
   const dispatch = useDispatch();
   const { enrolledCourseSlugs } = useSelector((s: RootState) => s.learning);
-  const { isAuthenticated } = useSelector((s: RootState) => s.auth);
+  const { token } = useSelector((s: RootState) => s.auth);
+  const isAuthenticated = !!token;
   const isEnrolled = !!(slug && enrolledCourseSlugs.includes(slug));
 
   if (!course) {
