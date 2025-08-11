@@ -49,8 +49,7 @@ const GroupCard = ({
     switch (role) {
       case "admin":
         return <FaCrown className="text-yellow-500" title="Admin" />;
-      case "moderator":
-        return <FaShieldAlt className="text-blue-500" title="Moderator" />;
+
       default:
         return null;
     }

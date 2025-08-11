@@ -5,7 +5,7 @@ export interface GroupMemberAttributes {
   id: string;
   groupId: string;
   userId: string;
-  role: "member" | "moderator" | "admin";
+  role: "member" | "admin";
   joinedAt: Date;
   createdAt?: Date;
   updatedAt?: Date;
@@ -49,7 +49,7 @@ GroupMember.init(
       },
     },
     role: {
-      type: DataTypes.ENUM("member", "moderator", "admin"),
+      type: DataTypes.ENUM("member", "admin"),
       allowNull: false,
       defaultValue: "member",
     },

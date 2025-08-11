@@ -2,6 +2,15 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { groupAPI } from "../../services/api";
 
+export interface GroupMember {
+  id: string;
+  firstName: string;
+  lastName: string;
+  avatar?: string;
+  role?: "member" | "admin";
+  joinedAt?: string;
+}
+
 export interface Group {
   id: string;
   name: string;
@@ -20,7 +29,8 @@ export interface Group {
   createdAt: string;
   updatedAt: string;
   isMember?: boolean;
-  userRole?: "member" | "moderator" | "admin";
+  userRole?: "member" | "admin";
+  members?: GroupMember[];
 }
 
 export interface UpdateGroupData {
@@ -89,10 +99,67 @@ export const fetchAllGroups = createAsyncThunk(
 
 export const fetchGroup = createAsyncThunk(
   "groups/fetchGroup",
-  async (id: string, { rejectWithValue }) => {
+  async (id: string) => {
     try {
       const response = await groupAPI.getGroup(id);
-      return response.data;
+
+      type RawMember = {
+        id: string;
+        firstName: string;
+        lastName: string;
+        avatar?: string;
+        GroupMember?: { role?: "member" | "admin"; joinedAt?: string };
+      };
+
+      type RawGroup = {
+        [key: string]: unknown;
+        id: string;
+        name: string;
+        description?: string;
+        category: string;
+        level: string;
+        maxMembers?: number;
+        isPrivate: boolean;
+        memberCount: number;
+        createdBy?: {
+          id: string;
+          firstName: string;
+          lastName: string;
+          avatar?: string;
+        } | null;
+        creator?: {
+          id: string;
+          firstName: string;
+          lastName: string;
+          avatar?: string;
+        } | null;
+        createdAt: string;
+        updatedAt: string;
+        isMember?: boolean;
+        userRole?: "member" | "admin";
+        members?: RawMember[];
+      };
+
+      const raw: RawGroup = response.data as RawGroup;
+      const normalizedMembers: GroupMember[] = Array.isArray(raw.members)
+        ? raw.members.map((m) => ({
+            id: m.id,
+            firstName: m.firstName,
+            lastName: m.lastName,
+            avatar: m.avatar,
+            role: m.GroupMember?.role,
+            joinedAt: m.GroupMember?.joinedAt,
+          }))
+        : [];
+
+      const createdBy = raw.createdBy ?? raw.creator ?? null;
+      const { creator, members, ...rest } = raw;
+
+      return {
+        ...(rest as Omit<Group, "members">),
+        createdBy,
+        members: normalizedMembers,
+      } as Group;
     } catch (error: unknown) {
       console.log(error);
     }
@@ -101,17 +168,14 @@ export const fetchGroup = createAsyncThunk(
 
 export const createGroup = createAsyncThunk(
   "groups/createGroup",
-  async (
-    groupData: {
-      name: string;
-      description?: string;
-      category: string;
-      level: string;
-      maxMembers?: number;
-      isPrivate?: boolean;
-    },
-    { rejectWithValue }
-  ) => {
+  async (groupData: {
+    name: string;
+    description?: string;
+    category: string;
+    level: string;
+    maxMembers?: number;
+    isPrivate?: boolean;
+  }) => {
     try {
       const response = await groupAPI.createGroup(groupData);
       return response.data;
@@ -123,10 +187,7 @@ export const createGroup = createAsyncThunk(
 
 export const updateGroup = createAsyncThunk(
   "groups/updateGroup",
-  async (
-    { id, data }: { id: string; data: UpdateGroupData },
-    { rejectWithValue }
-  ) => {
+  async ({ id, data }: { id: string; data: UpdateGroupData }) => {
     try {
       const response = await groupAPI.updateGroup(id, data);
       return response.data;
@@ -138,7 +199,7 @@ export const updateGroup = createAsyncThunk(
 
 export const deleteGroup = createAsyncThunk(
   "groups/deleteGroup",
-  async (id: string, { rejectWithValue }) => {
+  async (id: string) => {
     try {
       await groupAPI.deleteGroup(id);
       return id;
@@ -150,7 +211,7 @@ export const deleteGroup = createAsyncThunk(
 
 export const joinGroup = createAsyncThunk(
   "groups/joinGroup",
-  async (id: string, { rejectWithValue }) => {
+  async (id: string) => {
     try {
       await groupAPI.joinGroup(id);
       return id;
@@ -162,7 +223,7 @@ export const joinGroup = createAsyncThunk(
 
 export const leaveGroup = createAsyncThunk(
   "groups/leaveGroup",
-  async (id: string, { rejectWithValue }) => {
+  async (id: string) => {
     try {
       await groupAPI.leaveGroup(id);
       return id;
@@ -174,7 +235,7 @@ export const leaveGroup = createAsyncThunk(
 
 export const fetchMyGroups = createAsyncThunk(
   "groups/fetchMyGroups",
-  async (_, { rejectWithValue }) => {
+  async (_) => {
     try {
       const response = await groupAPI.getMyGroups();
       return response.data;
@@ -186,10 +247,7 @@ export const fetchMyGroups = createAsyncThunk(
 
 export const sendMessage = createAsyncThunk(
   "groups/sendMessage",
-  async (
-    { groupId, data }: { groupId: string; data: SendMessageData },
-    { rejectWithValue }
-  ) => {
+  async ({ groupId, data }: { groupId: string; data: SendMessageData }) => {
     try {
       const response = await groupAPI.sendMessage(groupId, data);
       return response.data;
@@ -201,14 +259,15 @@ export const sendMessage = createAsyncThunk(
 
 export const fetchGroupMessages = createAsyncThunk(
   "groups/fetchGroupMessages",
-  async (
-    {
-      groupId,
-      page,
-      limit,
-    }: { groupId: string; page?: number; limit?: number },
-    { rejectWithValue }
-  ) => {
+  async ({
+    groupId,
+    page,
+    limit,
+  }: {
+    groupId: string;
+    page?: number;
+    limit?: number;
+  }) => {
     try {
       const response = await groupAPI.getGroupMessages(groupId, page, limit);
       return response.data;
@@ -235,7 +294,6 @@ const groupSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Fetch all groups
       .addCase(fetchAllGroups.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -249,41 +307,24 @@ const groupSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // Fetch single group
       .addCase(fetchGroup.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchGroup.fulfilled, (state, action) => {
         state.loading = false;
-        state.currentGroup = action.payload;
+        state.currentGroup = action.payload || null;
       })
       .addCase(fetchGroup.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
 
-      // Create group
       .addCase(createGroup.fulfilled, (state, action) => {
         state.allGroups.unshift(action.payload);
         state.myGroups.unshift(action.payload);
       })
 
-      // Update group
-      .addCase(updateGroup.fulfilled, (state, action) => {
-        const updatedGroup = action.payload;
-        state.allGroups = state.allGroups.map((group) =>
-          group.id === updatedGroup.id ? updatedGroup : group
-        );
-        state.myGroups = state.myGroups.map((group) =>
-          group.id === updatedGroup.id ? updatedGroup : group
-        );
-        if (state.currentGroup?.id === updatedGroup.id) {
-          state.currentGroup = updatedGroup;
-        }
-      })
-
-      // Delete group
       .addCase(deleteGroup.fulfilled, (state, action) => {
         const deletedId = action.payload;
         state.allGroups = state.allGroups.filter(
@@ -298,7 +339,6 @@ const groupSlice = createSlice({
         }
       })
 
-      // Join group
       .addCase(joinGroup.fulfilled, (state, action) => {
         const groupId = action.payload;
         const group = state.allGroups.find((g) => g.id === groupId);
@@ -311,7 +351,6 @@ const groupSlice = createSlice({
         }
       })
 
-      // Leave group
       .addCase(leaveGroup.fulfilled, (state, action) => {
         const groupId = action.payload;
         const group = state.allGroups.find((g) => g.id === groupId);
@@ -322,19 +361,8 @@ const groupSlice = createSlice({
         state.myGroups = state.myGroups.filter((g) => g.id !== groupId);
       })
 
-      // Fetch my groups
       .addCase(fetchMyGroups.fulfilled, (state, action) => {
         state.myGroups = action.payload;
-      })
-
-      // Send message
-      .addCase(sendMessage.fulfilled, (state, action) => {
-        state.messages.push(action.payload);
-      })
-
-      // Fetch group messages
-      .addCase(fetchGroupMessages.fulfilled, (state, action) => {
-        state.messages = action.payload.messages;
       });
   },
 });
