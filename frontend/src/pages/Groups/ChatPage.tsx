@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import {
@@ -16,9 +16,10 @@ import {
   setSidebarOpen,
 } from "../../store/slice/chatSlice";
 
-const ChatPage: React.FC = () => {
+const ChatPage = () => {
   const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { token } = useSelector((state: RootState) => state.auth);
+  const isAuthenticated = !!token;
   const { selectedGroupId, messagesByGroupId, isSidebarOpen } = useSelector(
     (state: RootState) => state.chat
   );
@@ -31,6 +32,7 @@ const ChatPage: React.FC = () => {
         ? groups.find((g) => g.id === selectedGroupId) || groups[0]
         : groups[0]
       : null;
+
   const messages = selectedGroup
     ? messagesByGroupId[selectedGroup.id] || []
     : [];
@@ -72,6 +74,7 @@ const ChatPage: React.FC = () => {
 
   const handleSendMessage = () => {
     if (newMessage.trim() === "" || !selectedGroup) return;
+
     dispatch(
       sendMessageAction({
         groupId: selectedGroup.id,
@@ -86,6 +89,13 @@ const ChatPage: React.FC = () => {
     dispatch(selectGroupAction(groupId));
     if (window.innerWidth < 768) {
       dispatch(setSidebarOpen(false));
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSendMessage();
     }
   };
 
@@ -170,7 +180,7 @@ const ChatPage: React.FC = () => {
         {selectedGroup ? (
           <>
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
-              {messages.length === 0 && (
+              {messages.length === 0 ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
                     <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -181,29 +191,30 @@ const ChatPage: React.FC = () => {
                     </p>
                   </div>
                 </div>
-              )}
-              {messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`max-w-[85%] sm:max-w-[70%] p-3 sm:p-4 rounded-lg shadow-sm ${
-                    msg.sender === "You"
-                      ? "bg-blue-500 text-white ml-auto"
-                      : "bg-gray-100 text-gray-900"
-                  }`}
-                >
-                  <p className="text-xs sm:text-sm font-semibold mb-1">
-                    {msg.sender}
-                  </p>
-                  <p className="text-sm sm:text-base">{msg.content}</p>
-                  <p
-                    className={`text-xs mt-2 text-right ${
-                      msg.sender === "You" ? "text-blue-100" : "text-gray-500"
+              ) : (
+                messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`max-w-[85%] sm:max-w-[70%] p-3 sm:p-4 rounded-lg shadow-sm ${
+                      msg.sender === "You"
+                        ? "bg-blue-500 text-white ml-auto"
+                        : "bg-gray-100 text-gray-900"
                     }`}
                   >
-                    {msg.timestamp}
-                  </p>
-                </div>
-              ))}
+                    <p className="text-xs sm:text-sm font-semibold mb-1">
+                      {msg.sender}
+                    </p>
+                    <p className="text-sm sm:text-base">{msg.content}</p>
+                    <p
+                      className={`text-xs mt-2 text-right ${
+                        msg.sender === "You" ? "text-blue-100" : "text-gray-500"
+                      }`}
+                    >
+                      {msg.timestamp}
+                    </p>
+                  </div>
+                ))
+              )}
             </div>
 
             <div className="border-t border-gray-200 p-4 sm:p-6 bg-gray-50">
@@ -214,12 +225,7 @@ const ChatPage: React.FC = () => {
                   className="flex-1 border border-gray-300 rounded-lg px-4 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleSendMessage();
-                    }
-                  }}
+                  onKeyDown={handleKeyDown}
                 />
                 <button
                   onClick={handleSendMessage}

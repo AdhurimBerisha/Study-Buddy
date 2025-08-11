@@ -28,9 +28,8 @@ const AllGroups = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const allGroups = useSelector((state: RootState) => state.groups.allGroups);
-  const { isAuthenticated, user } = useSelector(
-    (state: RootState) => state.auth
-  );
+  const { token, user } = useSelector((state: RootState) => state.auth);
+  const isAuthenticated = !!token;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [groupName, setGroupName] = useState("");

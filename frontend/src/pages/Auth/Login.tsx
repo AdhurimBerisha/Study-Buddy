@@ -6,7 +6,7 @@ import { login, clearError } from "../../store/slice/authSlice";
 import AuthLayout from "./AuthLayout";
 import Button from "../../components/Button";
 
-const Login: React.FC = () => {
+const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
