@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import type { RootState, AppDispatch } from "../../store/store";
@@ -56,7 +56,6 @@ const MyGroups = () => {
     }
   };
 
-  
   const handleDeleteGroup = async (id: string) => {
     try {
       const confirmed = window.confirm(
@@ -134,7 +133,7 @@ const MyGroups = () => {
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 mt-4 md:mt-0">
-            <Button variant="outline" onClick={() => navigate("/groups")}> 
+            <Button variant="outline" onClick={() => navigate("/groups")}>
               <FaUsers className="mr-2" />
               Browse All Groups
             </Button>
@@ -184,7 +183,11 @@ const MyGroups = () => {
                 variant="my"
                 onView={() => navigate(`/groups/${group.id}`)}
                 onLeave={() => handleLeaveGroup(group.id)}
-                onDelete={user?.id === group.createdBy.id ? () => handleDeleteGroup(group.id) : undefined}
+                onDelete={
+                  user?.id === group.createdBy.id
+                    ? () => handleDeleteGroup(group.id)
+                    : undefined
+                }
                 isAuthenticated={isAuthenticated}
               />
             ))}

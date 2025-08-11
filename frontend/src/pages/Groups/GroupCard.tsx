@@ -1,11 +1,8 @@
 import {
   FaUsers,
   FaCalendarAlt,
-  FaComments,
-  FaTasks,
   FaLock,
   FaCrown,
-  FaShieldAlt,
   FaTrash,
 } from "react-icons/fa";
 import Button from "../../components/Button";
