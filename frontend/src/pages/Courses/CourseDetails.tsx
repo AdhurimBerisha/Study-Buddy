@@ -224,6 +224,7 @@ const CourseDetails = () => {
                             state={{
                               type: "course",
                               course: {
+                                id: course.id,
                                 title: course.title,
                                 price: course.price,
                               },

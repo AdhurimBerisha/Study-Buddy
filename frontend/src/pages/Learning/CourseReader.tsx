@@ -1,154 +1,240 @@
-import { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import { useParams, Link, NavLink } from "react-router-dom";
-import type { RootState } from "../../store/store";
+import { useSelector } from "react-redux";
 import Button from "../../components/Button";
-import { courses, toCourseSlug } from "../Courses/data";
-import { getCurriculumBySlug } from "../Courses/curriculum";
 import {
-  enrollCourse,
-  toggleLessonComplete,
-  setLastLesson,
-} from "../../store/slice/learningSlice";
-import { FaTrophy, FaLock } from "react-icons/fa";
+  FaTrophy,
+  FaLock,
+  FaCheckCircle,
+  FaPlay,
+  FaArrowLeft,
+  FaArrowRight,
+  FaBookOpen,
+} from "react-icons/fa";
+import { useLearning } from "../../hooks/useLearning";
+import { useAuth } from "../../hooks/useAuth";
+import { selectCourseProgress } from "../../store/slice/learningSlice";
+import type { RootState } from "../../store/store";
 
 const CourseReader = () => {
-  const { slug } = useParams<{ slug: string }>();
-  const dispatch = useDispatch();
-  const {
-    enrolledCourseSlugs,
-    purchasedCourseSlugs,
-    progressByCourseSlug,
-    completedCourseSlugs,
-  } = useSelector((s: RootState) => s.learning);
-  const { user } = useSelector((s: RootState) => s.auth);
+  const { slug: courseId } = useParams<{ slug: string }>();
+  const { user } = useAuth();
   const isAuthenticated = !!user;
 
-  const course = useMemo(
-    () => courses.find((c) => toCourseSlug(c.language) === slug),
-    [slug]
-  );
+  const {
+    currentCourse,
+    currentLesson,
+    loading,
+    error,
+    loadCourseWithLessons,
+    loadCourseProgress,
+    updateLessonProgress,
+    markLessonComplete,
+    markLessonIncomplete,
+    setCurrentLesson,
+    navigateToMyLearning,
+  } = useLearning();
 
-  const progress = slug
-    ? progressByCourseSlug[slug] || { completedLessonIds: [] }
-    : { completedLessonIds: [] };
-  const allLessons = slug ? getCurriculumBySlug(slug) : [];
-  const isPurchased = slug ? purchasedCourseSlugs.includes(slug) : false;
-  const halfCount = Math.max(1, Math.floor(allLessons.length / 2));
-  const lessons = isPurchased ? allLessons : allLessons.slice(0, halfCount);
-  const completedCount = progress.completedLessonIds.length;
-  const totalCount = lessons.length || 1;
-  const percent = Math.min(
-    100,
-    Math.round((completedCount / totalCount) * 100)
-  );
-  const isEnrolled = slug ? enrolledCourseSlugs.includes(slug) : false;
-  const isCompleted = slug ? completedCourseSlugs.includes(slug) : false;
+  // Get course progress directly from Redux for this specific course
+  const courseProgress = useSelector(selectCourseProgress(courseId || ""));
 
-  const initialSelectedId = progress.lastLessonId || (lessons[0]?.id ?? "");
-  const [selectedLessonId, setSelectedLessonId] =
-    useState<string>(initialSelectedId);
+  // Debug logging
+  console.log("🔍 CourseReader - courseId:", courseId);
+  console.log("🔍 CourseReader - courseProgress:", courseProgress);
+  console.log("🔍 CourseReader - currentCourse:", currentCourse);
+
+  const [selectedLessonId, setSelectedLessonId] = useState<string>("");
 
   useEffect(() => {
-    if (selectedLessonId && slug) {
-      dispatch(setLastLesson({ slug, lessonId: selectedLessonId }));
+    if (courseId) {
+      loadCourseWithLessons(courseId);
+      loadCourseProgress(courseId);
     }
-  }, [selectedLessonId, dispatch, slug]);
+  }, [courseId, loadCourseWithLessons, loadCourseProgress]);
 
-  const selectedLesson =
-    lessons.find((l) => l.id === selectedLessonId) || lessons[0];
+  useEffect(() => {
+    if (currentCourse?.lessons.length && !selectedLessonId) {
+      setSelectedLessonId(currentCourse.lessons[0].id);
+    }
+  }, [currentCourse, selectedLessonId]);
 
-  const goPrev = () => {
-    if (!selectedLesson) return;
-    const idx = lessons.findIndex((l) => l.id === selectedLesson.id);
-    if (idx > 0) setSelectedLessonId(lessons[idx - 1].id);
+  useEffect(() => {
+    if (selectedLessonId) {
+      const lesson = currentCourse?.lessons.find(
+        (l) => l.id === selectedLessonId
+      );
+      if (lesson) {
+        setCurrentLesson(lesson);
+      }
+    }
+  }, [selectedLessonId, currentCourse, setCurrentLesson]);
+
+  const handleLessonSelect = (lessonId: string) => {
+    setSelectedLessonId(lessonId);
   };
 
-  const goNext = () => {
-    if (!selectedLesson) return;
-    const idx = lessons.findIndex((l) => l.id === selectedLesson.id);
-    if (idx >= 0 && idx < lessons.length - 1)
-      setSelectedLessonId(lessons[idx + 1].id);
+  const handleLessonComplete = async (
+    lessonId: string,
+    isCompleted: boolean
+  ) => {
+    try {
+      if (isCompleted) {
+        await markLessonComplete(courseId!, lessonId);
+      } else {
+        await markLessonIncomplete(courseId!, lessonId);
+      }
+
+      // Refresh the course progress to get updated data
+      await loadCourseProgress(courseId!);
+    } catch (error) {
+      console.error("Failed to update lesson progress:", error);
+    }
   };
 
-  if (!slug || !course) {
+  const goToPreviousLesson = () => {
+    if (!currentCourse || !selectedLessonId) return;
+
+    const currentIndex = currentCourse.lessons.findIndex(
+      (l) => l.id === selectedLessonId
+    );
+    if (currentIndex > 0) {
+      const prevLesson = currentCourse.lessons[currentIndex - 1];
+      handleLessonSelect(prevLesson.id);
+    }
+  };
+
+  const goToNextLesson = () => {
+    if (!currentCourse || !selectedLessonId) return;
+
+    const currentIndex = currentCourse.lessons.findIndex(
+      (l) => l.id === selectedLessonId
+    );
+    if (currentIndex >= 0 && currentIndex < currentCourse.lessons.length - 1) {
+      const nextLesson = currentCourse.lessons[currentIndex + 1];
+      handleLessonSelect(nextLesson.id);
+    }
+  };
+
+  if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-16 text-center">
-        <p className="text-gray-600 mb-4">Course not found.</p>
-        <Link to="/courses">
-          <Button>Back to courses</Button>
-        </Link>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading course...</p>
       </div>
     );
   }
 
+  if (error) {
+    return (
+      <div className="max-w-4xl mx-auto px-6 py-16 text-center">
+        <p className="text-red-600 mb-4">Error: {error}</p>
+        <Button onClick={() => loadCourseWithLessons(courseId!)}>Retry</Button>
+      </div>
+    );
+  }
+
+  if (!courseId || !currentCourse) {
+    return (
+      <div className="max-w-4xl mx-auto px-6 py-16 text-center">
+        <p className="text-gray-600 mb-4">Course not found.</p>
+        <Button onClick={navigateToMyLearning}>Back to My Learning</Button>
+      </div>
+    );
+  }
+
+  const selectedLesson = currentCourse?.lessons.find(
+    (l) => l.id === selectedLessonId
+  );
+  const isEnrolled = true; // Since we removed enrollment system, all users have access
+  const completionPercentage = courseProgress?.completionPercentage || 0;
+  const isCompleted = completionPercentage === 100;
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
       <aside className="lg:col-span-1 bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-        <h2 className="text-lg font-semibold mb-4">Curriculum</h2>
-        {!isPurchased && allLessons.length > 0 && (
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold">Curriculum</h2>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={navigateToMyLearning}
+            className="flex items-center"
+          >
+            <FaArrowLeft className="mr-2" />
+            Back
+          </Button>
+        </div>
+
+        {!isEnrolled && (
           <div className="mb-3 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3">
-            Demo access: You can view {halfCount} of {allLessons.length}{" "}
-            lessons. Purchase to unlock the full course.
+            <FaLock className="inline mr-1" />
+            You need to enroll in this course to access the lessons.
           </div>
         )}
-        <ul className="space-y-2">
-          {lessons.map((item) => {
-            const done = progress.completedLessonIds.includes(item.id);
-            const isActive = item.id === selectedLessonId;
+
+        <ul className="space-y-3">
+          {currentCourse.lessons.map((lesson) => {
+            const lessonProgress = courseProgress?.lessons[lesson.id];
+            const isCompleted = lessonProgress?.isCompleted || false;
+            const isActive = lesson.id === selectedLessonId;
+
             return (
               <li
-                key={item.id}
-                className={`px-3 py-2 rounded-lg border cursor-pointer transition-colors flex items-center justify-between ${
+                key={lesson.id}
+                className={`px-4 py-3 rounded-lg border cursor-pointer transition-all duration-200 flex items-center justify-between ${
                   isActive
-                    ? "bg-blue-50 border-blue-200"
-                    : done
-                    ? "bg-green-50 border-green-200"
-                    : "bg-gray-50 border-gray-200 hover:bg-gray-100"
+                    ? "bg-blue-50 border-blue-200 shadow-sm"
+                    : isCompleted
+                    ? "bg-green-50 border-green-200 shadow-sm"
+                    : "bg-gray-50 border-gray-200 hover:bg-gray-100 hover:shadow-sm"
                 }`}
-                onClick={() => setSelectedLessonId(item.id)}
+                onClick={() => handleLessonSelect(lesson.id)}
               >
-                <span className="text-sm font-medium truncate">
-                  {item.title}
-                </span>
+                <div className="flex items-center space-x-3 flex-1 min-w-0">
+                  {isCompleted && (
+                    <FaCheckCircle className="text-green-600 text-sm flex-shrink-0" />
+                  )}
+                  <span className="text-sm font-medium truncate">
+                    {lesson.title}
+                  </span>
+                </div>
+
                 {isEnrolled && (
                   <Button
                     size="sm"
-                    variant={done ? "secondary" : "primary"}
+                    variant={isCompleted ? "secondary" : "primary"}
                     onClick={(e) => {
                       e.stopPropagation();
-                      dispatch(
-                        toggleLessonComplete({ slug, lessonId: item.id })
-                      );
+                      handleLessonComplete(lesson.id, !isCompleted);
                     }}
+                    className="flex-shrink-0 ml-3"
                   >
-                    {done ? "Undo" : "Done"}
+                    {isCompleted ? "Undo" : "Done"}
                   </Button>
                 )}
               </li>
             );
           })}
         </ul>
-        {!isPurchased && allLessons.length > lessons.length && (
+
+        {!isEnrolled && (
           <div className="mt-4">
             {isAuthenticated ? (
-              <NavLink
-                to="/checkout"
-                state={{
-                  type: "course",
-                  course: { title: course.language, price: course.price },
+              <Button
+                fullWidth
+                onClick={() => {
+                  /* TODO: Implement enrollment */
                 }}
-                className="block"
               >
-                <Button fullWidth>Buy course to unlock all lessons</Button>
-              </NavLink>
+                Enroll in Course
+              </Button>
             ) : (
               <Button
                 fullWidth
                 className="opacity-75 cursor-not-allowed"
-                onClick={() => alert("Please log in to purchase this course.")}
+                onClick={() => alert("Please log in to enroll in this course.")}
               >
-                <FaLock className="mr-2" /> Login to Buy Course
+                <FaLock className="mr-2" /> Login to Enroll
               </Button>
             )}
           </div>
@@ -157,27 +243,19 @@ const CourseReader = () => {
 
       <main className="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold">{course.language}</h1>
-          {!isEnrolled ? (
-            isAuthenticated ? (
-              <Button onClick={() => dispatch(enrollCourse(slug))}>
-                Enroll
-              </Button>
-            ) : (
-              <Button
-                className="opacity-75 cursor-not-allowed"
-                onClick={() => alert("Please log in to enroll in the demo.")}
-              >
-                <FaLock className="mr-2" /> Login to Enroll (demo)
-              </Button>
-            )
-          ) : (
+          <h1 className="text-2xl font-bold">{currentCourse.title}</h1>
+          {isEnrolled ? (
             <span className="text-sm text-green-700 bg-green-100 px-3 py-1 rounded-full">
               Enrolled
             </span>
+          ) : (
+            <span className="text-sm text-gray-700 bg-gray-100 px-3 py-1 rounded-full">
+              Not Enrolled
+            </span>
           )}
         </div>
-        {isPurchased && (
+
+        {isEnrolled && (
           <div className="mb-6">
             {isCompleted ? (
               <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
@@ -194,67 +272,97 @@ const CourseReader = () => {
               <>
                 <div className="flex items-center justify-between mb-1 text-sm text-gray-600">
                   <span>Progress</span>
-                  <span>{percent}%</span>
+                  <span>{completionPercentage}%</span>
                 </div>
                 <div className="h-2 bg-gray-200 rounded-full">
                   <div
-                    className={`h-2 rounded-full ${
-                      isCompleted ? "bg-green-500" : "bg-blue-500"
-                    }`}
-                    style={{ width: `${percent}%` }}
+                    className="h-2 rounded-full bg-blue-500 transition-all duration-300"
+                    style={{ width: `${completionPercentage}%` }}
                   />
                 </div>
               </>
             )}
           </div>
         )}
-        {selectedLesson && (
-          <>
-            <p className="text-gray-700 leading-relaxed mb-6">
-              This course contains general content, reading materials, and
-              exercises. Use the curriculum on the left to navigate lessons and
-              mark them complete.
-            </p>
 
-            <section className="border-t border-gray-100 pt-6">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold text-gray-900">
-                  {selectedLesson.title}
-                </h3>
-                <div className="flex gap-2">
-                  <Button size="sm" variant="outline" onClick={goPrev}>
-                    Previous
-                  </Button>
-                  <Button size="sm" onClick={goNext}>
-                    Next
-                  </Button>
-                </div>
+        {selectedLesson ? (
+          <>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-semibold text-gray-900">
+                {selectedLesson.title}
+              </h3>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={goToPreviousLesson}
+                  disabled={
+                    currentCourse.lessons.findIndex(
+                      (l) => l.id === selectedLessonId
+                    ) <= 0
+                  }
+                >
+                  <FaArrowLeft className="mr-1" />
+                  Previous
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={goToNextLesson}
+                  disabled={
+                    currentCourse.lessons.findIndex(
+                      (l) => l.id === selectedLessonId
+                    ) >=
+                    currentCourse.lessons.length - 1
+                  }
+                >
+                  Next
+                  <FaArrowRight className="ml-1" />
+                </Button>
               </div>
-              <p className="text-gray-700 mb-3">{selectedLesson.content}</p>
-              {selectedLesson.resources &&
-                selectedLesson.resources.length > 0 && (
-                  <div className="text-sm">
-                    <div className="text-gray-600 font-medium mb-2">
-                      Resources
-                    </div>
-                    <ul className="list-disc list-inside space-y-1">
-                      {selectedLesson.resources.map((r, i) => (
-                        <li key={i}>
-                          <a
-                            href={r.url}
-                            className="text-blue-600 hover:underline"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {r.label}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
+            </div>
+
+            <div className="prose max-w-none">
+              <p className="text-gray-700 leading-relaxed mb-6">
+                {selectedLesson.content}
+              </p>
+
+              {selectedLesson.duration && (
+                <div className="text-sm text-gray-500 mb-4">
+                  <FaPlay className="inline mr-2" />
+                  Duration: {selectedLesson.duration} minutes
+                </div>
+              )}
+
+              {selectedLesson.resources && (
+                <div className="mt-6">
+                  <h4 className="text-gray-800 font-medium mb-3">Resources</h4>
+                  <div className="space-y-2">
+                    {JSON.parse(selectedLesson.resources).map(
+                      (
+                        resource: { label: string; url: string },
+                        index: number
+                      ) => (
+                        <a
+                          key={index}
+                          href={resource.url}
+                          className="block text-blue-600 hover:text-blue-800 hover:underline p-2 rounded border border-gray-200 hover:border-blue-300 transition-colors"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {resource.label}
+                        </a>
+                      )
+                    )}
                   </div>
-                )}
-            </section>
+                </div>
+              )}
+            </div>
           </>
+        ) : (
+          <div className="text-center py-12 text-gray-500">
+            <FaBookOpen className="text-4xl mx-auto mb-4 text-gray-300" />
+            <p>Select a lesson from the curriculum to get started</p>
+          </div>
         )}
       </main>
     </div>

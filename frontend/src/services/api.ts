@@ -62,4 +62,42 @@ export const groupAPI = {
   getMyGroups: () => api.get("/groups/user/my"),
 };
 
+export const lessonAPI = {
+  getCourseLessons: (courseId: string) =>
+    api.get(`/lessons/course/${courseId}`),
+
+  getLesson: (lessonId: string) => api.get(`/lessons/${lessonId}`),
+
+  getCourseProgress: (courseId: string) =>
+    api.get(`/lessons/course/${courseId}/progress`),
+
+  updateLessonProgress: (
+    lessonId: string,
+    data: { isCompleted?: boolean; timeSpent?: number }
+  ) => api.put(`/lessons/${lessonId}/progress`, data),
+};
+
+export const courseAPI = {
+  getAllCourses: () => api.get("/courses"),
+
+  getCourse: (courseId: string) => api.get(`/courses/${courseId}`),
+
+  getMyEnrolledCourses: () => api.get("/courses/my/enrolled"),
+
+  enrollInCourse: (courseId: string) => api.post(`/courses/${courseId}/enroll`),
+
+  purchaseCourse: (courseId: string) =>
+    api.post(`/courses/${courseId}/purchase`), // New purchase method
+
+  unenrollFromCourse: (courseId: string) =>
+    api.delete(`/courses/${courseId}/enroll`),
+};
+
+export const purchaseAPI = {
+  getLearningDashboard: () => api.get("/purchases/dashboard"),
+  getUserPurchases: () => api.get("/purchases/history"),
+  checkCoursePurchase: (courseId: string) =>
+    api.get(`/purchases/check/${courseId}`),
+};
+
 export default api;
