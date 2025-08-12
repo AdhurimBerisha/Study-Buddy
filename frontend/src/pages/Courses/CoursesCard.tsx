@@ -154,7 +154,7 @@ const CoursesCard = (course: CardProps) => {
       {/* Instructor */}
       {instructor && (
         <div className="text-center mb-4">
-          <p className="text-xs text-gray-500">Instructor:</p>
+          <p className="text-xs text-gray-500">Tutor:</p>
           <p className="text-sm font-medium text-gray-700">
             {instructor.firstName} {instructor.lastName}
           </p>
