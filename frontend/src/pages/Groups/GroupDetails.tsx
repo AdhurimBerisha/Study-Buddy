@@ -4,10 +4,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import type { RootState, AppDispatch } from "../../store/store";
 import {
   fetchGroup,
+  updateGroup,
+  deleteGroup,
   joinGroup,
   leaveGroup,
-  deleteGroup,
-  updateGroup,
+  refreshGroupData,
   clearCurrentGroup,
 } from "../../store/slice/groupsSlice";
 
@@ -72,7 +73,8 @@ const GroupDetails = () => {
     if (!id) return;
     try {
       await dispatch(joinGroup(id)).unwrap();
-      dispatch(fetchGroup(id));
+      // Refresh the group data to get updated member count and member list
+      dispatch(refreshGroupData(id));
     } catch (error) {
       console.error("Failed to join group:", error);
     }
