@@ -15,7 +15,7 @@ StudyBuddy is a modern e-learning platform built for aspiring tech professionals
 ## Tech Stack
 
 - Frontend: React, Redux, Tailwind CSS
-- Backend: Node.js, Express.js, MySQL, 
+- Backend: Node.js, Express.js, MySQL, Sequelize
 
 ## Installation
 
