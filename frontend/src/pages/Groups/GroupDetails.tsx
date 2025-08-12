@@ -73,7 +73,7 @@ const GroupDetails = () => {
     if (!id) return;
     try {
       await dispatch(joinGroup(id)).unwrap();
-      // Refresh the group data to get updated member count and member list
+
       dispatch(refreshGroupData(id));
     } catch (error) {
       console.error("Failed to join group:", error);
@@ -105,7 +105,6 @@ const GroupDetails = () => {
   const handleUpdateGroup = async () => {
     if (!id) return;
 
-    // Validate required fields
     if (!editData.name || !editData.category || !editData.level) {
       alert("Please fill in all required fields (Name, Category, and Level)");
       return;

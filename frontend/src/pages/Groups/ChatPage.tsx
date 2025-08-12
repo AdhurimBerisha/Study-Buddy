@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../store/store";
 import {
@@ -11,15 +11,28 @@ import {
 import Button from "../../components/Button";
 import {
   selectGroup as selectGroupAction,
-  sendMessage as sendMessageAction,
   toggleSidebar,
   setSidebarOpen,
+  loadMessages,
 } from "../../store/slice/chatSlice";
 import { fetchMyGroups } from "../../store/slice/groupsSlice";
+import socketService from "../../services/socket";
+import { groupAPI } from "../../services/api";
+
+interface ApiMessage {
+  id: string;
+  groupId: string;
+  content: string;
+  senderId: string;
+  sender: string;
+  timestamp: string;
+}
 
 const ChatPage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { token } = useSelector((state: RootState) => state.auth);
+  const { token, user: currentUser } = useSelector(
+    (state: RootState) => state.auth
+  );
   const isAuthenticated = !!token;
   const { selectedGroupId, messagesByGroupId, isSidebarOpen } = useSelector(
     (state: RootState) => state.chat
@@ -30,8 +43,10 @@ const ChatPage = () => {
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(fetchMyGroups());
+
+      socketService.connect(token);
     }
-  }, [dispatch, isAuthenticated]);
+  }, [dispatch, isAuthenticated, token]);
 
   useEffect(() => {
     if (myGroups.length > 0) {
@@ -41,6 +56,92 @@ const ChatPage = () => {
     }
   }, [myGroups, selectedGroupId, dispatch]);
 
+  const fetchGroupMessages = useCallback(
+    async (groupId: string) => {
+      try {
+        const response = await groupAPI.getGroupMessages(groupId);
+
+        console.log("🔍 Current user:", currentUser);
+        console.log("🔍 Current user ID:", currentUser?.id);
+        console.log("🔍 Current user firstName:", currentUser?.firstName);
+        console.log("🔍 Current user lastName:", currentUser?.lastName);
+        console.log("📨 Messages from API:", response.data);
+
+        const messages = response.data.map((msg: ApiMessage) => {
+          console.log("🔍 Processing message:", msg);
+          console.log("🔍 Message senderId:", msg.senderId);
+          console.log("🔍 Message sender name:", msg.sender);
+
+          const isCurrentUser =
+            currentUser &&
+            ((msg.senderId && msg.senderId === currentUser.id) ||
+              (msg.sender &&
+                currentUser.firstName &&
+                currentUser.lastName &&
+                msg.sender
+                  .toLowerCase()
+                  .includes(currentUser.firstName.toLowerCase()) &&
+                msg.sender
+                  .toLowerCase()
+                  .includes(currentUser.lastName.toLowerCase())));
+
+          console.log(
+            "🔍 Is current user:",
+            isCurrentUser,
+            "for message:",
+            msg.sender
+          );
+          console.log("🔍 ID comparison:", msg.senderId === currentUser?.id);
+          console.log(
+            "🔍 Name comparison:",
+            msg.sender &&
+              currentUser?.firstName &&
+              currentUser?.lastName &&
+              msg.sender
+                .toLowerCase()
+                .includes(currentUser.firstName.toLowerCase()) &&
+              msg.sender
+                .toLowerCase()
+                .includes(currentUser.lastName.toLowerCase())
+          );
+
+          return {
+            id: String(msg.id),
+            sender: isCurrentUser ? "You" : msg.sender,
+            content: msg.content,
+            timestamp: new Date(msg.timestamp).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          };
+        });
+        dispatch(loadMessages({ groupId, messages }));
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    },
+    [currentUser, dispatch]
+  );
+
+  useEffect(() => {
+    if (selectedGroupId && socketService.isSocketConnected()) {
+      socketService.leaveGroup(selectedGroupId);
+
+      socketService.joinGroup(selectedGroupId);
+
+      console.log("🔄 Fetching messages for group:", selectedGroupId);
+      fetchGroupMessages(selectedGroupId);
+    }
+  }, [selectedGroupId, fetchGroupMessages]);
+
+  useEffect(() => {
+    return () => {
+      if (selectedGroupId) {
+        socketService.leaveGroup(selectedGroupId);
+      }
+    };
+  }, [selectedGroupId]);
+
   const selectedGroup =
     myGroups.length > 0
       ? selectedGroupId
@@ -48,9 +149,24 @@ const ChatPage = () => {
         : myGroups[0]
       : null;
 
-  const messages = selectedGroup
-    ? messagesByGroupId[selectedGroup.id] || []
-    : [];
+  const messages = useMemo(() => {
+    return selectedGroup ? messagesByGroupId[selectedGroup.id] || [] : [];
+  }, [selectedGroup, messagesByGroupId]);
+
+  useEffect(() => {
+    console.log("📨 Messages state changed:", messages);
+    console.log("📨 Messages by group ID:", messagesByGroupId);
+    console.log("📨 Selected group ID:", selectedGroupId);
+  }, [messages, messagesByGroupId, selectedGroupId]);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      const chatContainer = document.querySelector(".overflow-y-auto");
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    }
+  }, [messages]);
 
   if (!isAuthenticated) {
     return (
@@ -88,20 +204,22 @@ const ChatPage = () => {
   }
 
   const handleSendMessage = () => {
-    if (newMessage.trim() === "" || !selectedGroup) return;
+    if (!newMessage.trim() || !selectedGroup) return;
 
-    dispatch(
-      sendMessageAction({
-        groupId: selectedGroup.id,
-        content: newMessage.trim(),
-        sender: "You",
-      })
-    );
+    socketService.sendMessage(selectedGroup.id, newMessage.trim());
+
     setNewMessage("");
   };
 
   const selectGroup = (groupId: string) => {
+    if (selectedGroupId) {
+      socketService.leaveGroup(selectedGroupId);
+    }
+
     dispatch(selectGroupAction(groupId));
+
+    socketService.joinGroup(groupId);
+
     if (window.innerWidth < 768) {
       dispatch(setSidebarOpen(false));
     }

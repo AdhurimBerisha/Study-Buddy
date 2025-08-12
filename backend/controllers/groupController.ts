@@ -1,7 +1,8 @@
 import type { Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/requireAuth";
-import { Group, GroupMember, User } from "../models";
+import { Group, GroupMember, User, Message } from "../models";
 import { handleError } from "../helpers/errorHelper";
+import { socketManager } from "../config/socket";
 
 import sequelize from "../config/db";
 
@@ -193,7 +194,6 @@ export const updateGroup = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(404).json({ message: "Group not found" });
     }
 
-    // Check if user is the creator or admin
     const userMembership = await GroupMember.findOne({
       where: { groupId: id, userId },
     });
@@ -207,7 +207,6 @@ export const updateGroup = async (req: AuthenticatedRequest, res: Response) => {
         .json({ message: "Only the creator or admin can update this group" });
     }
 
-    // Update the group
     await group.update({
       name,
       description,
@@ -216,7 +215,6 @@ export const updateGroup = async (req: AuthenticatedRequest, res: Response) => {
       maxMembers,
     });
 
-    // Fetch the updated group with creator info
     const updatedGroup = await Group.findByPk(id, {
       include: [
         {
@@ -227,7 +225,6 @@ export const updateGroup = async (req: AuthenticatedRequest, res: Response) => {
       ],
     });
 
-    // Get member count and check if current user is member
     const memberCount = await GroupMember.count({
       where: { groupId: id },
     });
@@ -318,6 +315,24 @@ export const joinGroup = async (req: AuthenticatedRequest, res: Response) => {
       role: "member",
     });
 
+    const user = await User.findByPk(userId);
+    if (user) {
+      const userData = user.toJSON();
+      socketManager.emitToGroup(id, "member_joined", {
+        type: "member_joined",
+        groupId: id,
+        data: {
+          user: {
+            id: userData.id,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            avatar: userData.avatar,
+          },
+          memberCount: await GroupMember.count({ where: { groupId: id } }),
+        },
+      });
+    }
+
     return res.json({ message: "Successfully joined the group" });
   } catch (error) {
     return handleError(res, error, "Error joining group");
@@ -347,6 +362,24 @@ export const leaveGroup = async (req: AuthenticatedRequest, res: Response) => {
     }
 
     await membership.destroy();
+
+    const user = await User.findByPk(userId);
+    if (user) {
+      const userData = user.toJSON();
+      socketManager.emitToGroup(id, "member_left", {
+        type: "member_left",
+        groupId: id,
+        data: {
+          user: {
+            id: userData.id,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            avatar: userData.avatar,
+          },
+          memberCount: await GroupMember.count({ where: { groupId: id } }),
+        },
+      });
+    }
 
     return res.json({ message: "Successfully left the group" });
   } catch (error) {
@@ -402,5 +435,72 @@ export const getMyGroups = async (req: AuthenticatedRequest, res: Response) => {
     return res.json(myGroups);
   } catch (error) {
     return handleError(res, error, "Error getting user groups");
+  }
+};
+
+export const getGroupMessages = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.id;
+
+    console.log("🔍 getGroupMessages called for group:", id);
+    console.log("🔍 Requesting user ID:", userId);
+
+    const membership = await GroupMember.findOne({
+      where: { groupId: id, userId },
+    });
+
+    if (!membership) {
+      console.log("❌ User not a member of group");
+      return res
+        .status(403)
+        .json({ message: "You must be a member to view messages" });
+    }
+
+    console.log("✅ User is member of group");
+
+    const messages = await Message.findAll({
+      where: { groupId: id },
+      include: [
+        {
+          model: User,
+          as: "sender",
+          attributes: ["id", "firstName", "lastName", "avatar"],
+        },
+      ],
+      order: [["createdAt", "ASC"]],
+      limit: 100,
+    });
+
+    console.log("📨 Found messages:", messages.length);
+    console.log(
+      "📨 Raw messages:",
+      messages.map((m) => m.toJSON())
+    );
+
+    const formattedMessages = messages.map((message) => {
+      const messageData = message.toJSON();
+      const sender = (messageData as any).sender;
+      return {
+        id: messageData.id,
+        groupId: messageData.groupId,
+        content: messageData.content,
+        senderId: messageData.userId,
+        sender: sender
+          ? `${sender.firstName} ${sender.lastName}`
+          : "Unknown User",
+        timestamp: messageData.createdAt,
+      };
+    });
+
+    console.log("📨 Formatted messages:", formattedMessages);
+
+    return res.json(formattedMessages);
+  } catch (error) {
+    console.error("❌ Error in getGroupMessages:", error);
+    return handleError(res, error, "Error in getGroupMessages");
   }
 };

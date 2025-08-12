@@ -8,6 +8,7 @@ import {
   joinGroup,
   leaveGroup,
   refreshGroupData,
+  clearError,
 } from "../../store/slice/groupsSlice";
 
 import Hero from "../../components/Hero";
@@ -63,7 +64,6 @@ const AllGroups = () => {
       return;
     }
 
-    // Optimized validation - check all fields at once
     const requiredFields = { groupName, category, level };
     const missingFields = Object.entries(requiredFields)
       .filter(([_, value]) => !value.trim())
@@ -105,7 +105,6 @@ const AllGroups = () => {
     }
     try {
       await dispatch(joinGroup(id)).unwrap();
-      // Refresh the group data to get updated member count and member list
       dispatch(refreshGroupData(id));
     } catch (error) {
       console.error("Failed to join group:", error);
@@ -119,7 +118,6 @@ const AllGroups = () => {
     }
     try {
       await dispatch(leaveGroup(id)).unwrap();
-      // Refresh the group data to get updated member count and member list
       dispatch(refreshGroupData(id));
     } catch (error) {
       console.error("Failed to leave group:", error);

@@ -58,6 +58,8 @@ export const groupAPI = {
   leaveGroup: (id: string) => api.post(`/groups/${id}/leave`),
 
   getMyGroups: () => api.get("/groups/user/my"),
+
+  getGroupMessages: (groupId: string) => api.get(`/groups/${groupId}/messages`),
 };
 
 export const lessonAPI = {
