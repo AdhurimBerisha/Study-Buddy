@@ -41,13 +41,8 @@ class SocketService {
       return;
     }
 
-    console.log(
-      "🔌 Attempting to connect to Socket.io with token:",
-      token ? "Token present" : "No token"
-    );
-
     this.socket = io(
-      import.meta.env.VITE_BACKEND_URL || "http://localhost:8080",
+      import.meta.env.VITE_SOCKET_URL || "http://localhost:8080",
       {
         auth: {
           token,
@@ -64,8 +59,6 @@ class SocketService {
     if (!this.socket) return;
 
     this.socket.on("new_message", (message: SocketMessage) => {
-      console.log("📨 Received message via Socket.io:", message);
-
       const currentUser = store.getState().auth.user;
       const isCurrentUser =
         currentUser &&
@@ -86,18 +79,10 @@ class SocketService {
     });
 
     this.socket.on("member_joined", (event: GroupEvent) => {
-      console.log(
-        `👥 ${event.data.user.firstName} joined group ${event.groupId}`
-      );
-
       store.dispatch(refreshGroupData(event.groupId));
     });
 
     this.socket.on("member_left", (event: GroupEvent) => {
-      console.log(
-        `👋 ${event.data.user.firstName} left group ${event.groupId}`
-      );
-
       store.dispatch(refreshGroupData(event.groupId));
     });
   }
@@ -106,18 +91,15 @@ class SocketService {
     if (!this.socket) return;
 
     this.socket.on("connect", () => {
-      console.log("🔌 Connected to Socket.io server");
       this.isConnected = true;
       this.reconnectAttempts = 0;
     });
 
     this.socket.on("disconnect", () => {
-      console.log("🔌 Disconnected from Socket.io server");
       this.isConnected = false;
     });
 
     this.socket.on("connect_error", (error) => {
-      console.error("🔌 Socket.io connection error:", error);
       this.isConnected = false;
 
       if (this.reconnectAttempts < this.maxReconnectAttempts) {
@@ -145,15 +127,15 @@ class SocketService {
 
   joinGroup(groupId: string) {
     if (this.socket?.connected) {
+      const roomName = `group_${groupId}`;
       this.socket.emit("join_group", groupId);
-      console.log(`👥 Joined group room: ${groupId}`);
     }
   }
 
   leaveGroup(groupId: string) {
     if (this.socket?.connected) {
+      const roomName = `group_${groupId}`;
       this.socket.emit("leave_group", groupId);
-      console.log(`👋 Left group room: ${groupId}`);
     }
   }
 

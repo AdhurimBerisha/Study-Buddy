@@ -214,6 +214,7 @@ export const refreshGroupData = createAsyncThunk(
     await Promise.all([
       dispatch(fetchGroup(groupId)),
       dispatch(fetchMyGroups()),
+      dispatch(fetchAllGroups()),
     ]);
     return groupId;
   }

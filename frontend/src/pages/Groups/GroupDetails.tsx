@@ -84,6 +84,7 @@ const GroupDetails = () => {
     if (!id) return;
     try {
       await dispatch(leaveGroup(id)).unwrap();
+
       navigate("/groups");
     } catch (error) {
       console.error("Failed to leave group:", error);
