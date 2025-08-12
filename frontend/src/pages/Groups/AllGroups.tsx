@@ -10,6 +10,7 @@ import {
   refreshGroupData,
   clearError,
 } from "../../store/slice/groupsSlice";
+import socketService from "../../services/socket";
 
 import Hero from "../../components/Hero";
 import Button from "../../components/Button";
@@ -46,17 +47,35 @@ const AllGroups = () => {
   const [maxMembers, setMaxMembers] = useState("");
 
   useEffect(() => {
-    dispatch(fetchAllGroups());
-  }, [dispatch]);
+    if (token) {
+      socketService.connect(token);
+    }
+
+    if (
+      allGroups &&
+      allGroups.length > 0 &&
+      socketService.isSocketConnected()
+    ) {
+      allGroups.forEach((group) => {
+        socketService.joinGroup(group.id);
+      });
+    }
+  }, [token, allGroups]);
 
   useEffect(() => {
+    dispatch(fetchAllGroups());
+
     if (error) {
       const timer = setTimeout(() => {
         dispatch(clearError());
       }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [error, dispatch]);
+  }, [dispatch, error]);
+
+  useEffect(() => {
+    return () => {};
+  }, []);
 
   const handleCreateGroup = async () => {
     if (!isAuthenticated) {
@@ -105,6 +124,8 @@ const AllGroups = () => {
     }
     try {
       await dispatch(joinGroup(id)).unwrap();
+
+      socketService.joinGroup(id);
       dispatch(refreshGroupData(id));
     } catch (error) {
       console.error("Failed to join group:", error);
@@ -118,6 +139,8 @@ const AllGroups = () => {
     }
     try {
       await dispatch(leaveGroup(id)).unwrap();
+
+      socketService.leaveGroup(id);
       dispatch(refreshGroupData(id));
     } catch (error) {
       console.error("Failed to leave group:", error);

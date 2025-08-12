@@ -36,21 +36,19 @@ const MyGroups = () => {
     if (isAuthenticated) {
       dispatch(fetchMyGroups());
     }
-  }, [dispatch, isAuthenticated]);
 
-  useEffect(() => {
     if (error) {
       const timer = setTimeout(() => {
         dispatch(clearError());
       }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [error, dispatch]);
+  }, [dispatch, isAuthenticated, error]);
 
   const handleLeaveGroup = async (id: string) => {
     try {
       await dispatch(leaveGroup(id)).unwrap();
-      // Refresh the group data to get updated member count and member list
+
       dispatch(refreshGroupData(id));
     } catch (error) {
       console.error("Failed to leave group:", error);
