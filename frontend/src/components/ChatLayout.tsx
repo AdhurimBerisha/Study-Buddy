@@ -29,18 +29,10 @@ const ChatLayout = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (myGroups.length > 0 && !selectedGroupId) {
-      dispatch(selectGroup(myGroups[0].id));
-    }
-  }, [myGroups, selectedGroupId, dispatch]);
-
-  useEffect(() => {
-    if (
-      myGroups.length > 0 &&
-      selectedGroupId &&
-      !myGroups.find((g) => g.id === selectedGroupId)
-    ) {
-      dispatch(selectGroup(myGroups[0].id));
+    if (myGroups.length > 0) {
+      if (!selectedGroupId || !myGroups.find((g) => g.id === selectedGroupId)) {
+        dispatch(selectGroup(myGroups[0].id));
+      }
     }
   }, [myGroups, selectedGroupId, dispatch]);
 

@@ -34,26 +34,12 @@ const ChatPage = () => {
   }, [dispatch, isAuthenticated]);
 
   useEffect(() => {
-    if (myGroups.length > 0 && !selectedGroupId) {
-      dispatch(selectGroupAction(myGroups[0].id));
+    if (myGroups.length > 0) {
+      if (!selectedGroupId || !myGroups.find((g) => g.id === selectedGroupId)) {
+        dispatch(selectGroupAction(myGroups[0].id));
+      }
     }
   }, [myGroups, selectedGroupId, dispatch]);
-
-  useEffect(() => {
-    if (
-      myGroups.length > 0 &&
-      selectedGroupId &&
-      !myGroups.find((g) => g.id === selectedGroupId)
-    ) {
-      dispatch(selectGroupAction(myGroups[0].id));
-    }
-  }, [myGroups, selectedGroupId, dispatch]);
-
-  useEffect(() => {
-    if (myGroups.length > 0 && selectedGroupId === null) {
-      dispatch(selectGroupAction(myGroups[0].id));
-    }
-  }, [myGroups, dispatch]);
 
   const selectedGroup =
     myGroups.length > 0
