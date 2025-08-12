@@ -12,6 +12,7 @@ export interface CourseAttributes {
   thumbnail?: string | null;
   totalLessons?: number | null;
   createdBy: string;
+  tutorId: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -19,7 +20,7 @@ export interface CourseAttributes {
 export interface CourseCreationAttributes
   extends Optional<
     CourseAttributes,
-    "id" | "thumbnail" | "totalLessons" | "createdAt" | "updatedAt"
+    "id" | "thumbnail" | "totalLessons" | "tutorId" | "createdAt" | "updatedAt"
   > {}
 
 export class Course extends Model<CourseAttributes, CourseCreationAttributes> {}
@@ -80,6 +81,15 @@ Course.init(
         key: "id",
       },
     },
+    tutorId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      field: "tutor_id",
+      references: {
+        model: "tutors",
+        key: "id",
+      },
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -104,6 +114,9 @@ Course.init(
       },
       {
         fields: ["created_by"],
+      },
+      {
+        fields: ["tutor_id"],
       },
     ],
   }

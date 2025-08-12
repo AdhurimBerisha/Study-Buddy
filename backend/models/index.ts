@@ -6,6 +6,7 @@ import Course from "./Course";
 import Lesson from "./Lesson";
 import LessonProgress from "./LessonProgress";
 import Purchase from "./Purchase";
+import Tutor from "./Tutor";
 
 Course.belongsTo(User, {
   foreignKey: "createdBy",
@@ -15,6 +16,27 @@ Course.belongsTo(User, {
 User.hasMany(Course, {
   foreignKey: "createdBy",
   as: "createdCourses",
+});
+
+// Tutor relationships
+User.hasOne(Tutor, {
+  foreignKey: "userId",
+  as: "tutorProfile",
+});
+
+Tutor.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user",
+});
+
+Tutor.hasMany(Course, {
+  foreignKey: "tutorId",
+  as: "courses",
+});
+
+Course.belongsTo(Tutor, {
+  foreignKey: "tutorId",
+  as: "tutor",
 });
 
 Course.hasMany(Lesson, {
@@ -141,4 +163,5 @@ export {
   Lesson,
   LessonProgress,
   Purchase,
+  Tutor,
 };

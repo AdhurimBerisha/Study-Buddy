@@ -1,7 +1,6 @@
 import TutorCard from "./TutorsCard";
 import { FaUserCircle } from "react-icons/fa";
-import { tutors as allTutors } from "./data";
-import type { Tutor } from "./data";
+import type { Tutor } from "../../types/tutor";
 
 type Props = {
   items?: Tutor[];
@@ -9,10 +8,17 @@ type Props = {
 };
 
 const TutorsGrid = ({ items, footer }: Props) => {
-  const list = items && items.length > 0 ? items : allTutors;
+  if (!items || items.length === 0) {
+    return (
+      <section className="max-w-7xl mx-auto px-6 border-b border-gray-300 pb-8 mb-8 mt-0 pt-0 relative z-10 flex flex-col items-center">
+        <p className="text-gray-600 text-center py-8">No tutors found</p>
+      </section>
+    );
+  }
+
   return (
     <section className="max-w-7xl mx-auto px-6 border-b border-gray-300 pb-8 mb-8 mt-0 pt-0 relative z-10 flex flex-col items-center">
-      {list.map((tutor, index) => (
+      {items.map((tutor, index) => (
         <TutorCard key={index} avatar={<FaUserCircle />} {...tutor} />
       ))}
       {footer && <div className="mt-6">{footer}</div>}

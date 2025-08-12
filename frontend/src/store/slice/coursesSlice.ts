@@ -83,6 +83,7 @@ export const createCourse = createAsyncThunk(
     price?: number;
     thumbnail?: string;
     totalLessons?: number;
+    tutorId: string;
   }) => {
     const response = await api.post("/courses", courseData);
     return response.data;
