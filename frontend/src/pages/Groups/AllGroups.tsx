@@ -80,6 +80,7 @@ const AllGroups = () => {
 
     try {
       await dispatch(createGroup(groupData)).unwrap();
+      dispatch(fetchAllGroups());
       setGroupName("");
       setCategory("");
       setLevel("");

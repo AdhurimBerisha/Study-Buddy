@@ -256,8 +256,13 @@ const groupSlice = createSlice({
       })
 
       .addCase(createGroup.fulfilled, (state, action) => {
-        state.allGroups.unshift(action.payload);
-        state.myGroups.unshift(action.payload);
+        const newGroup = {
+          ...action.payload,
+          isMember: true,
+          userRole: "admin",
+        };
+        state.allGroups.unshift(newGroup);
+        state.myGroups.unshift(newGroup);
       })
 
       .addCase(updateGroup.fulfilled, (state, action) => {

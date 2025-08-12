@@ -176,8 +176,19 @@ export const createGroup = async (req: AuthenticatedRequest, res: Response) => {
       ],
     });
 
+    const memberCount = await GroupMember.count({
+      where: { groupId: (result as any).id },
+    });
+
+    const formattedGroup = {
+      ...createdGroup?.toJSON(),
+      memberCount,
+      isMember: true,
+      userRole: "admin",
+    };
+
     console.log("Successfully created group:", (createdGroup as any)?.id);
-    return res.status(201).json(createdGroup);
+    return res.status(201).json(formattedGroup);
   } catch (error) {
     return handleError(res, error, "Error creating group");
   }
