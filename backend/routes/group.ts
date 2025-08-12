@@ -11,6 +11,7 @@ router.get("/user/my", requireAuth, groups.getMyGroups);
 router.post("/", requireAuth, groups.createGroup);
 
 router.get("/:id", requireAuth, groups.getGroup);
+router.put("/:id", requireAuth, groups.updateGroup);
 router.delete("/:id", requireAuth, groups.deleteGroup);
 router.post("/:id/join", requireAuth, groups.joinGroup);
 router.post("/:id/leave", requireAuth, groups.leaveGroup);

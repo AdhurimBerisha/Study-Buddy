@@ -194,6 +194,79 @@ export const createGroup = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+export const updateGroup = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.id;
+    const { name, description, category, level, maxMembers, isPrivate } =
+      req.body;
+
+    if (!userId) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const group = await Group.findByPk(id);
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+
+    // Check if user is the creator or admin
+    const userMembership = await GroupMember.findOne({
+      where: { groupId: id, userId },
+    });
+
+    if (
+      (group as any).createdBy !== userId &&
+      (userMembership as any)?.role !== "admin"
+    ) {
+      return res
+        .status(403)
+        .json({ message: "Only the creator or admin can update this group" });
+    }
+
+    // Update the group
+    await group.update({
+      name,
+      description,
+      category,
+      level,
+      maxMembers,
+      isPrivate,
+    });
+
+    // Fetch the updated group with creator info
+    const updatedGroup = await Group.findByPk(id, {
+      include: [
+        {
+          model: User,
+          as: "creator",
+          attributes: ["id", "firstName", "lastName", "avatar"],
+        },
+      ],
+    });
+
+    // Get member count and check if current user is member
+    const memberCount = await GroupMember.count({
+      where: { groupId: id },
+    });
+
+    const membership = await GroupMember.findOne({
+      where: { groupId: id, userId },
+    });
+
+    const formattedGroup = {
+      ...updatedGroup?.toJSON(),
+      memberCount,
+      isMember: !!membership,
+      userRole: (membership as any)?.role || "admin",
+    };
+
+    return res.json(formattedGroup);
+  } catch (error) {
+    return handleError(res, error, "Error updating group");
+  }
+};
+
 export const deleteGroup = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
