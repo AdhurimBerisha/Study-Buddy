@@ -7,7 +7,7 @@ import {
   createGroup,
   joinGroup,
   leaveGroup,
-  clearError,
+  refreshGroupData,
 } from "../../store/slice/groupsSlice";
 
 import Hero from "../../components/Hero";
@@ -105,7 +105,8 @@ const AllGroups = () => {
     }
     try {
       await dispatch(joinGroup(id)).unwrap();
-      dispatch(fetchAllGroups());
+      // Refresh the group data to get updated member count and member list
+      dispatch(refreshGroupData(id));
     } catch (error) {
       console.error("Failed to join group:", error);
     }
@@ -118,7 +119,8 @@ const AllGroups = () => {
     }
     try {
       await dispatch(leaveGroup(id)).unwrap();
-      dispatch(fetchAllGroups());
+      // Refresh the group data to get updated member count and member list
+      dispatch(refreshGroupData(id));
     } catch (error) {
       console.error("Failed to leave group:", error);
     }

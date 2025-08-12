@@ -5,8 +5,9 @@ import type { RootState, AppDispatch } from "../../store/store";
 import {
   fetchMyGroups,
   leaveGroup,
-  clearError,
   deleteGroup,
+  clearError,
+  refreshGroupData,
 } from "../../store/slice/groupsSlice";
 
 import Hero from "../../components/Hero";
@@ -49,7 +50,8 @@ const MyGroups = () => {
   const handleLeaveGroup = async (id: string) => {
     try {
       await dispatch(leaveGroup(id)).unwrap();
-      dispatch(fetchMyGroups());
+      // Refresh the group data to get updated member count and member list
+      dispatch(refreshGroupData(id));
     } catch (error) {
       console.error("Failed to leave group:", error);
     }

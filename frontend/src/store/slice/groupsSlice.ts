@@ -208,6 +208,17 @@ export const fetchMyGroups = createAsyncThunk(
   }
 );
 
+export const refreshGroupData = createAsyncThunk(
+  "groups/refreshGroupData",
+  async (groupId: string, { dispatch }) => {
+    await Promise.all([
+      dispatch(fetchGroup(groupId)),
+      dispatch(fetchMyGroups()),
+    ]);
+    return groupId;
+  }
+);
+
 const groupSlice = createSlice({
   name: "groups",
   initialState,
@@ -271,32 +282,42 @@ const groupSlice = createSlice({
 
       .addCase(joinGroup.fulfilled, (state, action) => {
         const groupId = action.payload;
+
         const group = state.allGroups.find((g) => g.id === groupId);
         if (group) {
           group.isMember = true;
-          group.memberCount += 1;
           if (!state.myGroups.find((g) => g.id === groupId)) {
             state.myGroups.push(group);
           }
         }
         if (state.currentGroup?.id === groupId) {
           state.currentGroup.isMember = true;
-          state.currentGroup.memberCount += 1;
         }
       })
 
       .addCase(leaveGroup.fulfilled, (state, action) => {
         const groupId = action.payload;
+
         const group = state.allGroups.find((g) => g.id === groupId);
         if (group) {
           group.isMember = false;
-          group.memberCount = Math.max(0, group.memberCount - 1);
         }
         state.myGroups = state.myGroups.filter((g) => g.id !== groupId);
+        if (state.currentGroup?.id === groupId) {
+          state.currentGroup.isMember = false;
+        }
       })
 
       .addCase(fetchMyGroups.fulfilled, (state, action) => {
         state.myGroups = action.payload;
+      })
+
+      .addCase(refreshGroupData.pending, (state) => {
+        state.loading = true;
+      })
+
+      .addCase(refreshGroupData.fulfilled, (state) => {
+        state.loading = false;
       });
   },
 });
