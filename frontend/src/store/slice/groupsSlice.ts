@@ -111,7 +111,6 @@ export const fetchGroup = createAsyncThunk(
       category: string;
       level: string;
       maxMembers?: number;
-      isPrivate: boolean;
       memberCount: number;
       createdBy?: {
         id: string;
