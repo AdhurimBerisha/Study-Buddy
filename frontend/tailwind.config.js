@@ -3,6 +3,13 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        heading: ["Poppins", "ui-sans-serif", "system-ui", "sans-serif"],
+        poppins: ["Poppins", "ui-sans-serif", "system-ui", "sans-serif"],
+        inter: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        cursive: ["Edu NSW ACT Foundation", "cursive"],
+      },
       animation: {
         "gradient-x": "gradient-x 6s ease infinite",
       },
