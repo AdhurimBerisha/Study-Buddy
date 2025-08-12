@@ -63,8 +63,16 @@ const AllGroups = () => {
       return;
     }
 
-    if (!groupName || !category || !level) {
-      alert("Please fill Group Name, Category and Level.");
+    // Optimized validation - check all fields at once
+    const requiredFields = { groupName, category, level };
+    const missingFields = Object.entries(requiredFields)
+      .filter(([_, value]) => !value.trim())
+      .map(([key]) =>
+        key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())
+      );
+
+    if (missingFields.length > 0) {
+      alert(`Please fill in: ${missingFields.join(", ")}`);
       return;
     }
 
@@ -264,13 +272,18 @@ const AllGroups = () => {
         )}
       </div>
 
-      <Features />
-      <Banner
-        imageSrc={bannerBg}
-        title="Find your perfect learning community!"
-        subtitle="Join groups that match your interests and skill level"
-        buttonText="Browse Groups"
-      />
+      {/* Only render heavy components when modal is closed for better performance */}
+      {!isModalOpen && (
+        <>
+          <Features />
+          <Banner
+            imageSrc={bannerBg}
+            title="Find your perfect learning community!"
+            subtitle="Join groups that match your interests and skill level"
+            buttonText="Browse Groups"
+          />
+        </>
+      )}
 
       <Modal
         isOpen={isModalOpen}
@@ -283,19 +296,21 @@ const AllGroups = () => {
             placeholder="Group Name *"
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
-            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            autoComplete="off"
           />
           <input
             type="text"
             placeholder="Category *"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            autoComplete="off"
           />
           <select
             value={level}
             onChange={(e) => setLevel(e.target.value)}
-            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
           >
             <option value="">Select Level *</option>
             <option value="Beginner">Beginner</option>
@@ -307,7 +322,7 @@ const AllGroups = () => {
             placeholder="Description (optional)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors resize-none"
             rows={3}
           />
           <input
@@ -315,14 +330,14 @@ const AllGroups = () => {
             placeholder="Max Members (optional)"
             value={maxMembers}
             onChange={(e) => setMaxMembers(e.target.value)}
-            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
             min="2"
             max="1000"
           />
 
           <button
             onClick={handleCreateGroup}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors font-medium"
           >
             Create Group
           </button>
