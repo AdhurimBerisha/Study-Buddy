@@ -14,7 +14,6 @@ export const listGroups = async (req: AuthenticatedRequest, res: Response) => {
     console.log("Database connection successful");
 
     const groups = await Group.findAll({
-      where: { isPrivate: false },
       include: [
         {
           model: User,
@@ -51,7 +50,6 @@ export const listGroups = async (req: AuthenticatedRequest, res: Response) => {
           category: groupData.category,
           level: groupData.level,
           maxMembers: groupData.maxMembers,
-          isPrivate: groupData.isPrivate,
           memberCount,
           createdBy: (groupData as any).creator,
           createdAt: groupData.createdAt,
@@ -124,8 +122,7 @@ export const getGroup = async (req: AuthenticatedRequest, res: Response) => {
 
 export const createGroup = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { name, description, category, level, maxMembers, isPrivate } =
-      req.body;
+    const { name, description, category, level, maxMembers } = req.body;
     const userId = req.user?.id;
 
     console.log("Creating group with data:", { name, category, level, userId });
@@ -148,7 +145,7 @@ export const createGroup = async (req: AuthenticatedRequest, res: Response) => {
           category,
           level,
           maxMembers,
-          isPrivate: isPrivate || false,
+          isPrivate: false, // Always public groups
           createdBy: userId,
         },
         { transaction: t }
@@ -198,8 +195,7 @@ export const updateGroup = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const userId = req.user?.id;
-    const { name, description, category, level, maxMembers, isPrivate } =
-      req.body;
+    const { name, description, category, level, maxMembers } = req.body;
 
     if (!userId) {
       return res.status(401).json({ message: "User not authenticated" });
@@ -231,7 +227,7 @@ export const updateGroup = async (req: AuthenticatedRequest, res: Response) => {
       category,
       level,
       maxMembers,
-      isPrivate,
+      isPrivate: false, // Always public groups
     });
 
     // Fetch the updated group with creator info

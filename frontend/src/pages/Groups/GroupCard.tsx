@@ -84,12 +84,6 @@ const GroupCard = ({
             <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
               {group.level}
             </span>
-            {group.isPrivate && (
-              <span className="bg-gray-100 text-gray-800 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
-                <FaLock className="text-xs" />
-                Private
-              </span>
-            )}
           </div>
         </div>
 

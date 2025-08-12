@@ -38,7 +38,6 @@ export const groupAPI = {
     category: string;
     level: string;
     maxMembers?: number;
-    isPrivate?: boolean;
   }) => api.post("/groups", data),
 
   updateGroup: (
@@ -49,7 +48,6 @@ export const groupAPI = {
       category?: string;
       level?: string;
       maxMembers?: number;
-      isPrivate?: boolean;
     }
   ) => api.put(`/groups/${id}`, data),
 

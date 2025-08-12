@@ -43,7 +43,6 @@ const AllGroups = () => {
   const [level, setLevel] = useState("");
   const [description, setDescription] = useState("");
   const [maxMembers, setMaxMembers] = useState("");
-  const [isPrivate, setIsPrivate] = useState(false);
 
   useEffect(() => {
     dispatch(fetchAllGroups());
@@ -75,7 +74,6 @@ const AllGroups = () => {
       category,
       level,
       maxMembers: maxMembers ? parseInt(maxMembers) : undefined,
-      isPrivate,
     };
 
     try {
@@ -86,7 +84,6 @@ const AllGroups = () => {
       setLevel("");
       setDescription("");
       setMaxMembers("");
-      setIsPrivate(false);
       setIsModalOpen(false);
     } catch (error) {
       console.error("Failed to create group:", error);
@@ -322,15 +319,7 @@ const AllGroups = () => {
             min="2"
             max="1000"
           />
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={isPrivate}
-              onChange={(e) => setIsPrivate(e.target.checked)}
-              className="rounded focus:ring-2 focus:ring-blue-500"
-            />
-            <span className="text-sm text-gray-700">Private Group</span>
-          </label>
+
           <button
             onClick={handleCreateGroup}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
