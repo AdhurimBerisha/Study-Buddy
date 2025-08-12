@@ -135,12 +135,12 @@ User.hasMany(GroupMember, {
 });
 
 User.hasMany(Message, {
-  foreignKey: "senderId",
+  foreignKey: "userId",
   as: "sentMessages",
 });
 
 Message.belongsTo(User, {
-  foreignKey: "senderId",
+  foreignKey: "userId",
   as: "sender",
 });
 

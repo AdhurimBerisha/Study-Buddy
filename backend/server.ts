@@ -2,6 +2,7 @@ import "dotenv/config";
 
 import express from "express";
 import cors from "cors";
+import { createServer } from "http";
 
 import sequelize from "./config/db";
 import "./models/index";
@@ -12,8 +13,10 @@ import groupRoutes from "./routes/group";
 import tutorRoutes from "./routes/tutor";
 import lessonRoutes from "./routes/lesson";
 import purchaseRoutes from "./routes/purchase";
+import socketManager from "./config/socket";
 
 const app = express();
+const server = createServer(app);
 const PORT = process.env.PORT || 8080;
 
 app.use(cors());
@@ -53,7 +56,11 @@ const connectDatabase = async () => {
 
 connectDatabase();
 
-app.listen(PORT, () => {
+// Initialize Socket.io
+socketManager.initialize(server);
+
+server.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📡 REST base: http://localhost:${PORT}/api`);
+  console.log(`🔌 Socket.io ready for real-time communication`);
 });

@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export type ChatMessage = {
-  id: number;
+  id: string;
   sender: string;
   content: string;
   timestamp: string;
@@ -28,6 +28,7 @@ type SendMessagePayload = {
   groupId: string;
   content: string;
   sender: string;
+  id?: string;
 };
 
 const chatSlice = createSlice({
@@ -38,13 +39,21 @@ const chatSlice = createSlice({
       state.selectedGroupId = action.payload;
     },
     sendMessage: (state, action: PayloadAction<SendMessagePayload>) => {
-      const { groupId, content, sender } = action.payload;
+      const { groupId, content, sender, id } = action.payload;
       if (!state.messagesByGroupId[groupId]) {
         state.messagesByGroupId[groupId] = [];
       }
-      const nextId = state.messagesByGroupId[groupId].length + 1;
+
+      const messageId = id || Date.now().toString();
+      const messageExists = state.messagesByGroupId[groupId].some(
+        (msg) => msg.id === messageId
+      );
+      if (messageExists) {
+        return;
+      }
+
       state.messagesByGroupId[groupId].push({
-        id: nextId,
+        id: messageId,
         sender,
         content,
         timestamp: new Date().toLocaleTimeString([], {
@@ -54,13 +63,30 @@ const chatSlice = createSlice({
       });
     },
     receiveMessage: (state, action: PayloadAction<SendMessagePayload>) => {
-      const { groupId, content, sender } = action.payload;
+      const { groupId, content, sender, id } = action.payload;
+      console.log("🔄 Processing receiveMessage:", {
+        groupId,
+        content,
+        sender,
+        id,
+      });
+
       if (!state.messagesByGroupId[groupId]) {
         state.messagesByGroupId[groupId] = [];
       }
-      const nextId = state.messagesByGroupId[groupId].length + 1;
+
+      const messageId = id || Date.now().toString();
+      const messageExists = state.messagesByGroupId[groupId].some(
+        (msg) => msg.id === messageId
+      );
+      if (messageExists) {
+        console.log("⚠️ Duplicate message detected, skipping:", messageId);
+        return;
+      }
+
+      console.log("✅ Adding new message:", messageId);
       state.messagesByGroupId[groupId].push({
-        id: nextId,
+        id: messageId,
         sender,
         content,
         timestamp: new Date().toLocaleTimeString([], {
@@ -68,6 +94,26 @@ const chatSlice = createSlice({
           minute: "2-digit",
         }),
       });
+    },
+    loadMessages: (
+      state,
+      action: PayloadAction<{ groupId: string; messages: ChatMessage[] }>
+    ) => {
+      const { groupId, messages } = action.payload;
+
+      if (!state.messagesByGroupId[groupId]) {
+        state.messagesByGroupId[groupId] = [];
+      }
+
+      const existingIds = new Set(
+        state.messagesByGroupId[groupId].map((msg) => msg.id)
+      );
+      const newMessages = messages.filter((msg) => !existingIds.has(msg.id));
+
+      state.messagesByGroupId[groupId] = [
+        ...state.messagesByGroupId[groupId],
+        ...newMessages,
+      ];
     },
     setSidebarOpen: (state, action: PayloadAction<boolean>) => {
       state.isSidebarOpen = action.payload;
@@ -88,6 +134,7 @@ export const {
   selectGroup,
   sendMessage,
   receiveMessage,
+  loadMessages,
   setSidebarOpen,
   toggleSidebar,
   setChatWidgetOpen,

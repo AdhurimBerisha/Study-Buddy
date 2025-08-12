@@ -1,13 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../store/store";
 import {
   selectGroup,
-  sendMessage,
   toggleChatWidget,
   setChatWidgetOpen,
+  loadMessages,
 } from "../store/slice/chatSlice";
 import { fetchMyGroups } from "../store/slice/groupsSlice";
+import socketService from "../services/socket";
+import { groupAPI } from "../services/api";
+
+interface ApiMessage {
+  id: string;
+  groupId: string;
+  content: string;
+  senderId: string;
+  sender: string;
+  timestamp: string;
+}
+
 import {
   FaChevronDown,
   FaChevronUp,
@@ -22,11 +34,18 @@ const ChatLayout = () => {
     (state: RootState) => state.chat
   );
   const { myGroups, loading } = useSelector((state: RootState) => state.groups);
+  const { token, user: currentUser } = useSelector(
+    (state: RootState) => state.auth
+  );
   const [newMessage, setNewMessage] = useState("");
 
   useEffect(() => {
     dispatch(fetchMyGroups());
-  }, [dispatch]);
+
+    if (token) {
+      socketService.connect(token);
+    }
+  }, [dispatch, token]);
 
   useEffect(() => {
     if (myGroups.length > 0) {
@@ -36,26 +55,105 @@ const ChatLayout = () => {
     }
   }, [myGroups, selectedGroupId, dispatch]);
 
-  const selectedGroup =
-    myGroups.length > 0
+  const fetchGroupMessages = useCallback(
+    async (groupId: string) => {
+      try {
+        const response = await groupAPI.getGroupMessages(groupId);
+
+        console.log("🔍 Current user (ChatLayout):", currentUser);
+        console.log("📨 Messages from API (ChatLayout):", response.data);
+
+        const messages = response.data.map((msg: ApiMessage) => {
+          console.log("🔍 Processing message (ChatLayout):", msg);
+
+          const isCurrentUser =
+            currentUser &&
+            ((msg.senderId && msg.senderId === currentUser.id) ||
+              (msg.sender &&
+                currentUser.firstName &&
+                currentUser.lastName &&
+                msg.sender
+                  .toLowerCase()
+                  .includes(currentUser.firstName.toLowerCase()) &&
+                msg.sender
+                  .toLowerCase()
+                  .includes(currentUser.lastName.toLowerCase())));
+
+          console.log(
+            "🔍 Is current user (ChatLayout):",
+            isCurrentUser,
+            "for message:",
+            msg.sender
+          );
+
+          return {
+            id: String(msg.id),
+            sender: isCurrentUser ? "You" : msg.sender,
+            content: msg.content,
+            timestamp: new Date(msg.timestamp).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          };
+        });
+        dispatch(loadMessages({ groupId, messages }));
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    },
+    [currentUser, dispatch]
+  );
+
+  useEffect(() => {
+    if (selectedGroupId && socketService.isSocketConnected()) {
+      socketService.leaveGroup(selectedGroupId);
+
+      socketService.joinGroup(selectedGroupId);
+
+      fetchGroupMessages(selectedGroupId);
+    }
+  }, [selectedGroupId, fetchGroupMessages]);
+
+  useEffect(() => {
+    return () => {
+      if (selectedGroupId) {
+        socketService.leaveGroup(selectedGroupId);
+      }
+    };
+  }, [selectedGroupId]);
+
+  const selectedGroup = useMemo(() => {
+    return myGroups.length > 0
       ? selectedGroupId
         ? myGroups.find((g) => g.id === selectedGroupId) || myGroups[0]
         : myGroups[0]
       : null;
+  }, [myGroups, selectedGroupId]);
 
-  const messages = selectedGroup
-    ? messagesByGroupId[selectedGroup.id] || []
-    : [];
+  const messages = useMemo(() => {
+    return selectedGroup ? messagesByGroupId[selectedGroup.id] || [] : [];
+  }, [selectedGroup, messagesByGroupId]);
+
+  useEffect(() => {
+    console.log("📨 Messages state changed (ChatLayout):", messages);
+    console.log("📨 Messages by group ID (ChatLayout):", messagesByGroupId);
+    console.log("📨 Selected group ID (ChatLayout):", selectedGroupId);
+  }, [messages, messagesByGroupId, selectedGroupId]);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      const chatContainer = document.querySelector(".overflow-y-auto");
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    }
+  }, [messages]);
 
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedGroup) return;
-    dispatch(
-      sendMessage({
-        groupId: selectedGroup.id,
-        content: newMessage.trim(),
-        sender: "You",
-      })
-    );
+
+    socketService.sendMessage(selectedGroup.id, newMessage.trim());
+
     setNewMessage("");
   };
 
@@ -136,7 +234,13 @@ const ChatLayout = () => {
             : "border-transparent hover:bg-gray-100 hover:border-gray-300 text-gray-700"
         }`}
                 onClick={() => {
+                  if (selectedGroupId) {
+                    socketService.leaveGroup(selectedGroupId);
+                  }
+
                   dispatch(selectGroup(group.id));
+
+                  socketService.joinGroup(group.id);
                 }}
               >
                 <div className="flex items-center justify-between">
