@@ -1,22 +1,19 @@
-import { Router } from "express";
+import express from "express";
 import * as courses from "../controllers/courseController";
 import { requireAuth } from "../middlewares/requireAuth";
 
-const router = Router();
+const router = express.Router();
 
 // Public routes
 router.get("/", courses.listCourses);
 router.get("/:id", courses.getCourse);
 
-// Protected routes
+// Protected routes (require authentication)
 router.post("/", requireAuth, courses.createCourse);
 router.put("/:id", requireAuth, courses.updateCourse);
 router.delete("/:id", requireAuth, courses.deleteCourse);
 
-// Enrollment routes
-router.post("/:id/enroll", requireAuth, courses.enrollInCourse);
-router.delete("/:id/enroll", requireAuth, courses.unenrollFromCourse);
-router.get("/my/enrolled", requireAuth, courses.getMyCourses);
-router.put("/:id/progress", requireAuth, courses.updateCourseProgress);
+// Purchase course (no enrollment needed)
+router.post("/:id/purchase", requireAuth, courses.purchaseCourse);
 
 export default router;

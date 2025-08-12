@@ -4,10 +4,9 @@
   "main": "src/server.ts",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --watch . --ext ts --exec \"tsx server.ts\"",
-    "build": "tsc",
-    "start": "node dist/server.js",
-    "install-jwt": "npm install jsonwebtoken @types/jsonwebtoken"
+    "dev": "tsx watch server.ts",
+    "start": "tsx server.ts",
+    "sync-db": "tsx syncDb.js"
   },
   "author": "",
   "license": "ISC",

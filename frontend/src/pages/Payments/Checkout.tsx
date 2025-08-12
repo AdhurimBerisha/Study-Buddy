@@ -1,14 +1,13 @@
-import { useMemo } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import React, { useMemo } from "react";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import Button from "../../components/Button";
-import { useDispatch } from "react-redux";
-import { enrollCourse, purchaseCourse } from "../../store/slice/learningSlice";
-import { toCourseSlug } from "../Courses/data";
+import { useLearning } from "../../hooks/useLearning";
+import { useAuth } from "../../hooks/useAuth";
 
 type CheckoutState =
   | {
       type: "course";
-      course: { title: string; price: number };
+      course: { id: string; title: string; price: number };
     }
   | {
       type: "tutor";
@@ -19,7 +18,8 @@ type CheckoutState =
 const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch();
+  const { purchaseCourse } = useLearning();
+  const { isAuthenticated } = useAuth();
 
   const state = useMemo(
     () => (location.state || {}) as CheckoutState,
@@ -30,8 +30,8 @@ const Checkout = () => {
     if (state && state.type === "course") {
       return {
         title: `Purchase: ${state.course.title}`,
-        amount: state.course.price,
-        subtitle: "One-time course purchase",
+        amount: Number(state.course.price) || 0,
+        subtitle: "Full course access - one-time purchase",
       };
     }
     if (state && state.type === "tutor") {
@@ -39,9 +39,11 @@ const Checkout = () => {
         ? state.tutor.trialRate
         : state.tutor.hourlyRate;
       const label = state.booking.isTrial ? "Trial Lesson" : "1 Hour Lesson";
+      // Ensure amount is a valid number
+      const numericAmount = Number(amt) || 0;
       return {
         title: `${label} with ${state.tutor.name}`,
-        amount: amt,
+        amount: numericAmount,
         subtitle: state.booking.isTrial
           ? "Discounted one-time trial lesson"
           : "Standard hourly private lesson",
@@ -50,14 +52,28 @@ const Checkout = () => {
     return { title: "Checkout", amount: 0, subtitle: "" };
   }, [state]);
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
+    if (!isAuthenticated) {
+      alert("Please log in to complete this purchase.");
+      navigate("/login");
+      return;
+    }
+
     alert("Payment successful (demo)");
     if (state && state.type === "course") {
-      const slug = toCourseSlug(state.course.title);
-      dispatch(purchaseCourse(slug));
-      dispatch(enrollCourse(slug));
-      navigate(`/learning/course/${slug}`, { replace: true });
-      return;
+      try {
+        // Purchase the course for full access using the course ID
+        await purchaseCourse(state.course.id);
+
+        // Navigate to the course learning page
+        navigate(`/learning/course/${state.course.id}`, { replace: true });
+        return;
+      } catch (error) {
+        console.error("Failed to purchase course:", error);
+        // Still navigate to learning page even if purchase fails
+        navigate("/learning", { replace: true });
+        return;
+      }
     }
     navigate("/learning", { replace: true });
   };
@@ -70,6 +86,30 @@ const Checkout = () => {
           <Link to="/">
             <Button>Go Home</Button>
           </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if user is authenticated for course purchases
+  if (state.type === "course" && !isAuthenticated) {
+    return (
+      <div className="max-w-3xl mx-auto px-6 py-16">
+        <div className="bg-white rounded-2xl shadow-lg p-10 text-center border border-gray-100">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            Login Required
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Please log in to purchase this course.
+          </p>
+          <div className="space-y-3">
+            <Link to="/login">
+              <Button>Log In</Button>
+            </Link>
+            <Link to="/register">
+              <Button variant="secondary">Create Account</Button>
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -89,7 +129,11 @@ const Checkout = () => {
             <div className="flex items-center justify-between text-lg">
               <span>Total</span>
               <span className="font-bold text-blue-600">
-                ${amount.toFixed(2)}
+                $
+                {(typeof amount === "number" && !isNaN(amount)
+                  ? amount
+                  : 0
+                ).toFixed(2)}
               </span>
             </div>
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -111,7 +155,11 @@ const Checkout = () => {
               />
             </div>
             <Button className="mt-6 w-full" onClick={handleComplete}>
-              Pay ${amount.toFixed(2)}
+              Pay $
+              {(typeof amount === "number" && !isNaN(amount)
+                ? amount
+                : 0
+              ).toFixed(2)}
             </Button>
           </div>
         </div>

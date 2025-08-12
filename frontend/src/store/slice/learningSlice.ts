@@ -1,227 +1,441 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { getCurriculumBySlug } from "../../pages/Courses/curriculum";
 import type { RootState } from "../store";
+import api from "../../services/api";
+import { lessonAPI } from "../../services/api";
 
-type CourseProgress = {
-  completedLessonIds: string[];
-  lastLessonId?: string;
-};
+// Types for the new backend system
+export interface Lesson {
+  id: string;
+  title: string;
+  content: string;
+  order: number;
+  duration?: number;
+  resources?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CourseWithLessons {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  language: string;
+  level: "beginner" | "intermediate" | "advanced";
+  price: number;
+  imageUrl: string;
+  duration: number;
+  createdBy: string;
+  lessons: Lesson[];
+  totalLessons: number;
+}
+
+export interface LessonProgress {
+  lessonId: string;
+  isCompleted: boolean;
+  completedAt?: string;
+  timeSpent?: number;
+  lastAccessedAt?: string;
+}
+
+export interface CourseProgress {
+  courseId: string;
+  totalLessons: number;
+  completedLessons: number;
+  completionPercentage: number;
+  lessons: Record<string, LessonProgress>;
+  lastAccessedAt?: string;
+}
 
 export interface LearningState {
-  activeUserId: string | null;
-  enrolledCourseSlugs: string[];
-  progressByCourseSlug: Record<string, CourseProgress>;
+  // Course data
+  currentCourse: CourseWithLessons | null;
+  currentLesson: Lesson | null;
+
+  // Progress tracking
+  courseProgress: Record<string, CourseProgress>;
+
+  // UI state
+  loading: boolean;
+  error: string | null;
+
+  // Wishlist and following (kept from original)
   wishlist: string[];
   following: string[];
-  purchasedCourseSlugs: string[];
-  completedCourseSlugs: string[];
 }
 
-const LOCAL_STORAGE_KEY = "studybuddy_learning_state_v1";
-const AUTH_STORAGE_KEY = "studybuddy_auth_v1";
+const initialState: LearningState = {
+  currentCourse: null,
+  currentLesson: null,
+  courseProgress: {},
+  loading: false,
+  error: null,
+  wishlist: [],
+  following: [],
+};
 
-function getAuthCurrentUserId(): string | null {
-  try {
-    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as {
-      currentUser?: { id?: string } | null;
-    };
-    return parsed?.currentUser?.id ?? null;
-  } catch (err) {
-    console.log(err);
-    return null;
+// Async thunks for backend integration
+export const fetchCourseWithLessons = createAsyncThunk(
+  "learning/fetchCourseWithLessons",
+  async (courseId: string) => {
+    const response = await lessonAPI.getCourseLessons(courseId);
+    return { ...response.data, courseId };
   }
-}
+);
 
-function storageKeyForUser(userId: string | null): string {
-  return userId
-    ? `${LOCAL_STORAGE_KEY}::${userId}`
-    : `${LOCAL_STORAGE_KEY}::anon`;
-}
-
-function loadStateForUser(userId: string | null): LearningState {
-  try {
-    const raw = localStorage.getItem(storageKeyForUser(userId));
-    if (raw) {
-      const parsed = JSON.parse(raw) as Partial<LearningState>;
-      return {
-        activeUserId: userId,
-        enrolledCourseSlugs: parsed.enrolledCourseSlugs || [],
-        progressByCourseSlug: parsed.progressByCourseSlug || {},
-        wishlist: parsed.wishlist || [],
-        following: parsed.following || [],
-        purchasedCourseSlugs: parsed.purchasedCourseSlugs || [],
-        completedCourseSlugs: parsed.completedCourseSlugs || [],
-      };
-    }
-  } catch (err) {
-    console.log(err);
+export const fetchLesson = createAsyncThunk(
+  "learning/fetchLesson",
+  async (lessonId: string) => {
+    const response = await lessonAPI.getLesson(lessonId);
+    return response.data;
   }
-  return {
-    activeUserId: userId,
-    enrolledCourseSlugs: [],
-    progressByCourseSlug: {},
-    wishlist: [],
-    following: [],
-    purchasedCourseSlugs: [],
-    completedCourseSlugs: [],
-  };
-}
+);
 
-function loadInitialState(): LearningState {
-  const currentUserId = getAuthCurrentUserId();
-  return loadStateForUser(currentUserId);
-}
-
-function persist(state: LearningState) {
-  try {
-    localStorage.setItem(
-      storageKeyForUser(state.activeUserId),
-      JSON.stringify(state)
-    );
-  } catch (err) {
-    console.log(err);
+export const fetchCourseProgress = createAsyncThunk(
+  "learning/fetchCourseProgress",
+  async (courseId: string) => {
+    const response = await lessonAPI.getCourseProgress(courseId);
+    return { ...response.data, courseId };
   }
-}
+);
 
-const initialState: LearningState = loadInitialState();
+export const updateLessonProgress = createAsyncThunk(
+  "learning/updateLessonProgress",
+  async ({
+    courseId,
+    lessonId,
+    isCompleted,
+    timeSpent,
+  }: {
+    courseId: string;
+    lessonId: string;
+    isCompleted?: boolean;
+    timeSpent?: number;
+  }) => {
+    const response = await lessonAPI.updateLessonProgress(lessonId, {
+      isCompleted,
+      timeSpent,
+    });
+    return { ...response.data, courseId };
+  }
+);
+
+export const purchaseCourse = createAsyncThunk(
+  "learning/purchaseCourse",
+  async (courseId: string) => {
+    await api.post(`/courses/${courseId}/purchase`);
+    return courseId;
+  }
+);
 
 const learningSlice = createSlice({
   name: "learning",
   initialState,
   reducers: {
-    setActiveUserId: (state, action: PayloadAction<string | null>) => {
-      const userId = action.payload;
-      const nextState = loadStateForUser(userId);
-      state.activeUserId = nextState.activeUserId;
-      state.enrolledCourseSlugs = nextState.enrolledCourseSlugs;
-      state.progressByCourseSlug = nextState.progressByCourseSlug;
-      state.wishlist = nextState.wishlist;
-      state.following = nextState.following;
-      state.purchasedCourseSlugs = nextState.purchasedCourseSlugs;
-      state.completedCourseSlugs = nextState.completedCourseSlugs;
+    // Clear errors
+    clearError: (state) => {
+      state.error = null;
     },
-    purchaseCourse: (state, action: PayloadAction<string>) => {
-      const slug = action.payload;
-      if (!state.purchasedCourseSlugs.includes(slug)) {
-        state.purchasedCourseSlugs.push(slug);
-      }
-      persist(state);
-    },
-    enrollCourse: (state, action: PayloadAction<string>) => {
-      const slug = action.payload;
-      if (!state.enrolledCourseSlugs.includes(slug)) {
-        state.enrolledCourseSlugs.push(slug);
-      }
-      if (!state.progressByCourseSlug[slug]) {
-        state.progressByCourseSlug[slug] = { completedLessonIds: [] };
-      }
-      persist(state);
-    },
-    unenrollCourse: (state, action: PayloadAction<string>) => {
-      const slug = action.payload;
-      state.enrolledCourseSlugs = state.enrolledCourseSlugs.filter(
-        (s) => s !== slug
-      );
-      delete state.progressByCourseSlug[slug];
-      persist(state);
-    },
-    toggleLessonComplete: (
+
+    // Set current course and lesson
+    setCurrentCourse: (
       state,
-      action: PayloadAction<{ slug: string; lessonId: string }>
+      action: PayloadAction<CourseWithLessons | null>
     ) => {
-      const { slug, lessonId } = action.payload;
-      const progress =
-        state.progressByCourseSlug[slug] ||
-        (state.progressByCourseSlug[slug] = { completedLessonIds: [] });
-      const idx = progress.completedLessonIds.indexOf(lessonId);
-      if (idx >= 0) progress.completedLessonIds.splice(idx, 1);
-      else progress.completedLessonIds.push(lessonId);
+      state.currentCourse = action.payload;
+    },
 
-      const curriculum = getCurriculumBySlug(slug);
-      const totalLessons = curriculum.length;
-      const completedCount = progress.completedLessonIds.length;
+    setCurrentLesson: (state, action: PayloadAction<Lesson | null>) => {
+      state.currentLesson = action.payload;
+    },
 
-      if (completedCount === totalLessons && totalLessons > 0) {
-        if (!state.completedCourseSlugs.includes(slug)) {
-          state.completedCourseSlugs.push(slug);
-        }
-      } else {
-        state.completedCourseSlugs = state.completedCourseSlugs.filter(
-          (s) => s !== slug
+    // Local progress updates (for immediate UI feedback)
+    markLessonComplete: (
+      state,
+      action: PayloadAction<{ courseId: string; lessonId: string }>
+    ) => {
+      const { courseId, lessonId } = action.payload;
+
+      if (!state.courseProgress[courseId]) {
+        state.courseProgress[courseId] = {
+          courseId,
+          totalLessons: 0,
+          completedLessons: 0,
+          completionPercentage: 0,
+          lessons: {},
+        };
+      }
+
+      const progress = state.courseProgress[courseId];
+      if (!progress.lessons[lessonId]) {
+        progress.lessons[lessonId] = {
+          lessonId,
+          isCompleted: false,
+        };
+      }
+
+      progress.lessons[lessonId].isCompleted = true;
+      progress.lessons[lessonId].completedAt = new Date().toISOString();
+
+      // Recalculate completion stats
+      const completedCount = Object.values(progress.lessons).filter(
+        (l) => l.isCompleted
+      ).length;
+      progress.completedLessons = completedCount;
+
+      if (progress.totalLessons > 0) {
+        progress.completionPercentage = Math.round(
+          (completedCount / progress.totalLessons) * 100
         );
       }
+    },
 
-      persist(state);
-    },
-    clearCourseProgress: (state, action: PayloadAction<string>) => {
-      const slug = action.payload;
-      state.progressByCourseSlug[slug] = { completedLessonIds: [] };
-      persist(state);
-    },
-    setLastLesson: (
+    markLessonIncomplete: (
       state,
-      action: PayloadAction<{ slug: string; lessonId: string }>
+      action: PayloadAction<{ courseId: string; lessonId: string }>
     ) => {
-      const { slug, lessonId } = action.payload;
-      const progress =
-        state.progressByCourseSlug[slug] ||
-        (state.progressByCourseSlug[slug] = { completedLessonIds: [] });
-      progress.lastLessonId = lessonId;
-      persist(state);
+      const { courseId, lessonId } = action.payload;
+
+      if (state.courseProgress[courseId]?.lessons[lessonId]) {
+        state.courseProgress[courseId].lessons[lessonId].isCompleted = false;
+        state.courseProgress[courseId].lessons[lessonId].completedAt =
+          undefined;
+
+        // Recalculate completion stats
+        const progress = state.courseProgress[courseId];
+        const completedCount = Object.values(progress.lessons).filter(
+          (l) => l.isCompleted
+        ).length;
+        progress.completedLessons = completedCount;
+
+        if (progress.totalLessons > 0) {
+          progress.completionPercentage = Math.round(
+            (completedCount / progress.totalLessons) * 100
+          );
+        }
+      }
     },
+
+    // Wishlist and following (kept from original)
     toggleFollowCourse: (state, action: PayloadAction<string>) => {
-      const slug = action.payload;
-      const i = state.following.indexOf(slug);
-      if (i >= 0) state.following.splice(i, 1);
-      else state.following.push(slug);
-      persist(state);
+      const courseId = action.payload;
+      const index = state.following.indexOf(courseId);
+      if (index >= 0) {
+        state.following.splice(index, 1);
+      } else {
+        state.following.push(courseId);
+      }
     },
+
     toggleWishlistCourse: (state, action: PayloadAction<string>) => {
-      const slug = action.payload;
-      const i = state.wishlist.indexOf(slug);
-      if (i >= 0) state.wishlist.splice(i, 1);
-      else state.wishlist.push(slug);
-      persist(state);
+      const courseId = action.payload;
+      const index = state.wishlist.indexOf(courseId);
+      if (index >= 0) {
+        state.wishlist.splice(index, 1);
+      } else {
+        state.wishlist.push(courseId);
+      }
     },
-    handleLogin: (state, action: PayloadAction<{ user: { id: string } }>) => {
-      const userId = action.payload.user.id;
-      const nextState = loadStateForUser(userId);
-      state.activeUserId = nextState.activeUserId;
-      state.enrolledCourseSlugs = nextState.enrolledCourseSlugs;
-      state.progressByCourseSlug = nextState.progressByCourseSlug;
-      state.wishlist = nextState.wishlist;
-      state.following = nextState.following;
-      state.purchasedCourseSlugs = nextState.purchasedCourseSlugs;
-      state.completedCourseSlugs = nextState.completedCourseSlugs;
+
+    // Reset state
+    resetLearningState: (state) => {
+      state.currentCourse = null;
+      state.currentLesson = null;
+      state.courseProgress = {};
+      state.loading = false;
+      state.error = null;
     },
-    handleLogout: (state) => {
-      const nextState = loadStateForUser(null);
-      state.activeUserId = nextState.activeUserId;
-      state.enrolledCourseSlugs = nextState.enrolledCourseSlugs;
-      state.progressByCourseSlug = nextState.progressByCourseSlug;
-      state.wishlist = nextState.wishlist;
-      state.following = nextState.following;
-      state.purchasedCourseSlugs = nextState.purchasedCourseSlugs;
-      state.completedCourseSlugs = nextState.completedCourseSlugs;
-    },
+  },
+  extraReducers: (builder) => {
+    // Fetch enrolled courses
+    // Fetch course with lessons
+    builder
+      .addCase(fetchCourseWithLessons.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCourseWithLessons.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentCourse = action.payload.data;
+        state.error = null;
+      })
+      .addCase(fetchCourseWithLessons.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to fetch course lessons";
+      });
+
+    // Fetch lesson
+    builder
+      .addCase(fetchLesson.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchLesson.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentLesson = action.payload.data;
+        state.error = null;
+      })
+      .addCase(fetchLesson.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to fetch lesson";
+      });
+
+    // Fetch course progress
+    builder
+      .addCase(fetchCourseProgress.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCourseProgress.fulfilled, (state, action) => {
+        state.loading = false;
+        const { courseId } = action.payload;
+        const { lessons, progress } = action.payload.data;
+
+        console.log("🔄 Redux: fetchCourseProgress.fulfilled", {
+          courseId,
+          lessons: lessons.length,
+          progress,
+        });
+
+        // Create progress record
+        state.courseProgress[courseId] = {
+          courseId,
+          totalLessons: progress.totalLessons,
+          completedLessons: progress.completedLessons,
+          completionPercentage: progress.completionPercentage,
+          lessons: {},
+        };
+
+        // Map lesson progress
+        lessons.forEach((lesson: { id: string; progress?: LessonProgress }) => {
+          if (lesson.progress) {
+            state.courseProgress[courseId].lessons[lesson.id] = {
+              lessonId: lesson.id,
+              isCompleted: lesson.progress.isCompleted,
+              completedAt: lesson.progress.completedAt,
+              timeSpent: lesson.progress.timeSpent,
+              lastAccessedAt: lesson.progress.lastAccessedAt,
+            };
+          }
+        });
+
+        console.log("✅ Redux: Course progress initialized", {
+          courseId,
+          progressRecord: state.courseProgress[courseId],
+          allCourseProgress: Object.keys(state.courseProgress),
+        });
+
+        state.error = null;
+      })
+      .addCase(fetchCourseProgress.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to fetch course progress";
+      });
+
+    // Update lesson progress
+    builder
+      .addCase(updateLessonProgress.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateLessonProgress.fulfilled, (state, action) => {
+        state.loading = false;
+        const { courseId, lessonId, isCompleted, timeSpent, lastAccessedAt } =
+          action.payload;
+
+        console.log("🔄 Redux: updateLessonProgress.fulfilled", {
+          courseId,
+          lessonId,
+          isCompleted,
+          payload: action.payload,
+        });
+
+        // Use the courseId from the action payload
+        if (courseId && state.courseProgress[courseId]) {
+          if (!state.courseProgress[courseId].lessons[lessonId]) {
+            state.courseProgress[courseId].lessons[lessonId] = {
+              lessonId,
+              isCompleted: false,
+            };
+          }
+
+          const lessonProgress =
+            state.courseProgress[courseId].lessons[lessonId];
+          lessonProgress.isCompleted = isCompleted;
+          lessonProgress.timeSpent = timeSpent;
+          lessonProgress.lastAccessedAt = lastAccessedAt;
+
+          if (isCompleted) {
+            lessonProgress.completedAt = new Date().toISOString();
+          } else {
+            lessonProgress.completedAt = undefined;
+          }
+
+          console.log("✅ Redux: State updated", {
+            courseId,
+            lessonId,
+            lessonProgress: state.courseProgress[courseId].lessons[lessonId],
+            allProgress: state.courseProgress[courseId],
+          });
+        } else {
+          console.log(
+            "❌ Redux: No course progress found for courseId:",
+            courseId
+          );
+        }
+
+        state.error = null;
+      })
+      .addCase(updateLessonProgress.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.error.message || "Failed to update lesson progress";
+      });
+
+    // Purchase course (full access)
+    builder
+      .addCase(purchaseCourse.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(purchaseCourse.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(purchaseCourse.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to purchase course";
+      });
   },
 });
 
 export default learningSlice.reducer;
 
 export const {
-  setActiveUserId,
-  purchaseCourse,
-  enrollCourse,
-  unenrollCourse,
-  toggleLessonComplete,
-  clearCourseProgress,
-  setLastLesson,
+  clearError,
+  setCurrentCourse,
+  setCurrentLesson,
+  markLessonComplete,
+  markLessonIncomplete,
   toggleFollowCourse,
   toggleWishlistCourse,
-  handleLogin,
-  handleLogout,
+  resetLearningState,
 } = learningSlice.actions;
+
+// Selectors
+export const selectCurrentCourse = (state: RootState) =>
+  state.learning.currentCourse;
+export const selectCurrentLesson = (state: RootState) =>
+  state.learning.currentLesson;
+export const selectCourseProgress = (courseId: string) => (state: RootState) =>
+  state.learning.courseProgress[courseId];
+export const selectLessonProgress =
+  (courseId: string, lessonId: string) => (state: RootState) =>
+    state.learning.courseProgress[courseId]?.lessons[lessonId];
+export const selectLearningLoading = (state: RootState) =>
+  state.learning.loading;
+export const selectLearningError = (state: RootState) => state.learning.error;
+export const selectWishlist = (state: RootState) => state.learning.wishlist;
+export const selectFollowing = (state: RootState) => state.learning.following;
