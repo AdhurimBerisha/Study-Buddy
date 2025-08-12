@@ -104,6 +104,13 @@ const GroupDetails = () => {
 
   const handleUpdateGroup = async () => {
     if (!id) return;
+
+    // Validate required fields
+    if (!editData.name || !editData.category || !editData.level) {
+      alert("Please fill in all required fields (Name, Category, and Level)");
+      return;
+    }
+
     try {
       const updateData = {
         name: editData.name,
@@ -116,11 +123,13 @@ const GroupDetails = () => {
         isPrivate: editData.isPrivate,
       };
 
+      console.log("Updating group with data:", updateData);
       await dispatch(updateGroup({ id, data: updateData })).unwrap();
       setIsEditing(false);
       dispatch(fetchGroup(id));
     } catch (error) {
       console.error("Failed to update group:", error);
+      alert("Failed to update group. Please try again.");
     }
   };
 
