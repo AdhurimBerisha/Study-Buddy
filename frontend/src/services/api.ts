@@ -100,4 +100,34 @@ export const purchaseAPI = {
     api.get(`/purchases/check/${courseId}`),
 };
 
+export const tutorAPI = {
+  getAllTutors: (params?: {
+    category?: string;
+    verified?: boolean;
+    limit?: number;
+    offset?: number;
+  }) => api.get("/tutors", { params }),
+
+  getTutor: (id: string) => api.get(`/tutors/${id}`),
+
+  getTutorByUserId: (userId: string) => api.get(`/tutors/user/${userId}`),
+
+  createTutor: (data: {
+    bio: string;
+    expertise: string[];
+    hourlyRate: number;
+  }) => api.post("/tutors", data),
+
+  updateTutor: (
+    id: string,
+    data: {
+      bio?: string;
+      expertise?: string[];
+      hourlyRate?: number;
+    }
+  ) => api.put(`/tutors/${id}`, data),
+
+  deleteTutor: (id: string) => api.delete(`/tutors/${id}`),
+};
+
 export default api;

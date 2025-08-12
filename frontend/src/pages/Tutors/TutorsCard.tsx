@@ -1,30 +1,20 @@
 import type { ReactNode } from "react";
 import Button from "../../components/Button";
 import { Link } from "react-router-dom";
-import { toTutorSlug } from "./data";
+import type { Tutor } from "../../types/tutor";
 
-type TutorCardProps = {
+type TutorCardProps = Tutor & {
   avatar: ReactNode;
-  category: string;
-  rating: number;
-  lessons: number;
-  name: string;
-  headline: string;
-  description: string;
-  speaks: string;
-  hourlyRate: string;
-  trialRate: string;
 };
 
 export default function TutorCard({
   avatar,
-  category,
+  expertise,
   rating,
-  lessons,
-  name,
-  headline,
-  description,
-  speaks,
+  totalLessons,
+  user,
+  bio,
+  hourlyRate,
 }: TutorCardProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-8 py-8 border-b border-gray-200 w-full max-w-4xl">
@@ -33,12 +23,19 @@ export default function TutorCard({
           <div className="w-24 h-24 rounded-full mb-4 flex items-center justify-center bg-gray-200 text-gray-500 text-5xl">
             {avatar}
           </div>
-          <div className="text-sm text-gray-600 mb-2">{category}</div>
-          <div className="text-yellow-500 font-semibold">
-            {rating.toFixed(1)} ★
+          <div className="text-sm text-gray-600 mb-2">
+            {expertise.join(", ")}
           </div>
-          <div className="text-gray-400 text-sm mb-3">{lessons} Lessons</div>
-          <Link to={`/tutors/${toTutorSlug(name)}`} className="w-full">
+          <div className="text-yellow-500 font-semibold">
+            {rating && !isNaN(Number(rating))
+              ? Number(rating).toFixed(1)
+              : "0.0"}{" "}
+            ★
+          </div>
+          <div className="text-gray-400 text-sm mb-3">
+            {totalLessons} Lessons
+          </div>
+          <Link to={`/tutors/${user.id}`} className="w-full">
             <Button fullWidth size="sm">
               Show more
             </Button>
@@ -47,13 +44,13 @@ export default function TutorCard({
       </div>
 
       <div className="md:col-span-8">
-        <h3 className="text-2xl font-medium mb-2">{name}</h3>
-        <p className="text-sm text-gray-600 mb-4">
-          <strong>{headline}</strong> {description}
-        </p>
+        <h3 className="text-2xl font-medium mb-2">
+          {user.firstName} {user.lastName}
+        </h3>
+        <p className="text-sm text-gray-600 mb-4">{bio}</p>
 
-        <div className="text-sm text-gray-500 uppercase mb-1">Speaks:</div>
-        <p className="mb-6">{speaks}</p>
+        <div className="text-sm text-gray-500 uppercase mb-1">Hourly Rate:</div>
+        <p className="mb-6">${hourlyRate}/hour</p>
 
         <div className="flex flex-col gap-4 text-sm" />
       </div>

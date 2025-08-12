@@ -1,6 +1,6 @@
 import type { Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/requireAuth";
-import { Course, User, Purchase } from "../models";
+import { Course, User, Purchase, Tutor } from "../models";
 import { handleError } from "../helpers/errorHelper";
 import sequelize from "../config/db";
 import { Op } from "sequelize";
@@ -9,6 +9,19 @@ const instructorInclude = {
   model: User,
   as: "instructor",
   attributes: ["id", "firstName", "lastName", "avatar"],
+  required: false,
+};
+
+const tutorInclude = {
+  model: Tutor,
+  as: "tutor",
+  include: [
+    {
+      model: User,
+      as: "user",
+      attributes: ["id", "firstName", "lastName", "avatar"],
+    },
+  ],
   required: false,
 };
 
@@ -50,7 +63,7 @@ export const listCourses = async (req: AuthenticatedRequest, res: Response) => {
 
     const courses = await Course.findAll({
       where: whereClause,
-      include: [instructorInclude],
+      include: [instructorInclude, tutorInclude],
       order: [["createdAt", "DESC"]],
     });
 
@@ -65,7 +78,9 @@ export const getCourse = async (req: AuthenticatedRequest, res: Response) => {
     const { id } = req.params;
     const userId = req.user?.id;
 
-    const course = await Course.findByPk(id, { include: [instructorInclude] });
+    const course = await Course.findByPk(id, {
+      include: [instructorInclude, tutorInclude],
+    });
     if (!course) return res.status(404).json({ message: "Course not found" });
 
     res.json(course);
@@ -91,12 +106,35 @@ export const createCourse = async (
       price,
       thumbnail,
       totalLessons,
+      tutorId,
     } = req.body;
 
-    if (!title || !description || !category || !language || !level) {
+    if (
+      !title ||
+      !description ||
+      !category ||
+      !language ||
+      !level ||
+      !tutorId
+    ) {
       return res.status(400).json({
         message:
-          "Title, description, category, language, and level are required",
+          "Title, description, category, language, level, and tutorId are required",
+      });
+    }
+
+    // Check if the user is a tutor
+    const tutor = await Tutor.findOne({ where: { userId } });
+    if (!tutor) {
+      return res.status(403).json({
+        message: "Only tutors can create courses",
+      });
+    }
+
+    // Verify that the tutorId belongs to the authenticated user
+    if ((tutor as any).id !== tutorId) {
+      return res.status(403).json({
+        message: "You can only create courses for your own tutor profile",
       });
     }
 
@@ -110,10 +148,11 @@ export const createCourse = async (
       thumbnail,
       totalLessons,
       createdBy: userId,
+      tutorId,
     });
 
     const createdCourse = await Course.findByPk(course.get("id") as string, {
-      include: [instructorInclude],
+      include: [instructorInclude, tutorInclude],
     });
 
     res.status(201).json(createdCourse);
@@ -135,7 +174,7 @@ export const updateCourse = async (
 
     await course.update(req.body);
     const updatedCourse = await Course.findByPk(id, {
-      include: [instructorInclude],
+      include: [instructorInclude, tutorInclude],
     });
 
     res.json(updatedCourse);
