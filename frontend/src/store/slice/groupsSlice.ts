@@ -22,7 +22,6 @@ export interface Group {
   category: string;
   level: string;
   maxMembers?: number;
-  isPrivate: boolean;
   memberCount: number;
   createdBy: {
     id: string;
@@ -43,7 +42,6 @@ export interface UpdateGroupData {
   category?: string;
   level?: string;
   maxMembers?: number;
-  isPrivate?: boolean;
 }
 
 export interface SendMessageData {
@@ -165,7 +163,6 @@ export const createGroup = createAsyncThunk(
     category: string;
     level: string;
     maxMembers?: number;
-    isPrivate?: boolean;
   }) => {
     const response = await groupAPI.createGroup(groupData);
     return response.data;

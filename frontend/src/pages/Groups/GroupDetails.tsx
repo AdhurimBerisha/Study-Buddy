@@ -44,7 +44,6 @@ const GroupDetails = () => {
     category: "",
     level: "",
     maxMembers: "",
-    isPrivate: false,
   });
 
   useEffect(() => {
@@ -65,7 +64,6 @@ const GroupDetails = () => {
         category: currentGroup.category,
         level: currentGroup.level,
         maxMembers: currentGroup.maxMembers?.toString() || "",
-        isPrivate: currentGroup.isPrivate,
       });
     }
   }, [currentGroup, isEditing]);
@@ -120,7 +118,6 @@ const GroupDetails = () => {
         maxMembers: editData.maxMembers
           ? parseInt(editData.maxMembers)
           : undefined,
-        isPrivate: editData.isPrivate,
       };
 
       console.log("Updating group with data:", updateData);
@@ -190,12 +187,6 @@ const GroupDetails = () => {
                 <h1 className="text-3xl font-bold text-gray-800">
                   {currentGroup.name}
                 </h1>
-                {currentGroup.isPrivate && (
-                  <span className="bg-gray-100 text-gray-800 text-sm font-semibold px-3 py-1 rounded-full flex items-center gap-1">
-                    <FaUser className="text-xs" />
-                    Private
-                  </span>
-                )}
               </div>
               <p className="text-gray-600 text-lg mb-2">
                 {currentGroup.description}
@@ -315,22 +306,6 @@ const GroupDetails = () => {
                     className="border px-3 py-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={3}
                   />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={editData.isPrivate}
-                      onChange={(e) =>
-                        setEditData({
-                          ...editData,
-                          isPrivate: e.target.checked,
-                        })
-                      }
-                      className="rounded focus:ring-2 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-gray-700">Private Group</span>
-                  </label>
                 </div>
               </div>
               <div className="flex gap-3 mt-4">
