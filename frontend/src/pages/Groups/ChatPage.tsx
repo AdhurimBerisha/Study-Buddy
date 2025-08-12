@@ -33,15 +33,37 @@ const ChatPage = () => {
     }
   }, [dispatch, isAuthenticated]);
 
+  useEffect(() => {
+    if (myGroups.length > 0 && !selectedGroupId) {
+      dispatch(selectGroupAction(myGroups[0].id));
+    }
+  }, [myGroups, selectedGroupId, dispatch]);
+
+  useEffect(() => {
+    if (
+      myGroups.length > 0 &&
+      selectedGroupId &&
+      !myGroups.find((g) => g.id === selectedGroupId)
+    ) {
+      dispatch(selectGroupAction(myGroups[0].id));
+    }
+  }, [myGroups, selectedGroupId, dispatch]);
+
+  useEffect(() => {
+    if (myGroups.length > 0 && selectedGroupId === null) {
+      dispatch(selectGroupAction(myGroups[0].id));
+    }
+  }, [myGroups, dispatch]);
+
   const selectedGroup =
     myGroups.length > 0
       ? selectedGroupId
-        ? myGroups.find((g) => Number(g.id) === selectedGroupId) || myGroups[0]
+        ? myGroups.find((g) => g.id === selectedGroupId) || myGroups[0]
         : myGroups[0]
       : null;
 
   const messages = selectedGroup
-    ? messagesByGroupId[Number(selectedGroup.id)] || []
+    ? messagesByGroupId[selectedGroup.id] || []
     : [];
 
   if (!isAuthenticated) {
@@ -84,7 +106,7 @@ const ChatPage = () => {
 
     dispatch(
       sendMessageAction({
-        groupId: Number(selectedGroup.id),
+        groupId: selectedGroup.id,
         content: newMessage.trim(),
         sender: "You",
       })
@@ -93,7 +115,7 @@ const ChatPage = () => {
   };
 
   const selectGroup = (groupId: string) => {
-    dispatch(selectGroupAction(Number(groupId)));
+    dispatch(selectGroupAction(groupId));
     if (window.innerWidth < 768) {
       dispatch(setSidebarOpen(false));
     }
@@ -145,7 +167,7 @@ const ChatPage = () => {
             ) : (
               <div className="space-y-3">
                 {myGroups.map((group) => {
-                  const isSelected = selectedGroup?.id === group.id;
+                  const isSelected = selectedGroupId === group.id;
                   return (
                     <div
                       key={group.id}

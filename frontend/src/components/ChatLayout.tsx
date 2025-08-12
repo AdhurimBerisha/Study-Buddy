@@ -28,22 +28,38 @@ const ChatLayout = () => {
     dispatch(fetchMyGroups());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (myGroups.length > 0 && !selectedGroupId) {
+      dispatch(selectGroup(myGroups[0].id));
+    }
+  }, [myGroups, selectedGroupId, dispatch]);
+
+  useEffect(() => {
+    if (
+      myGroups.length > 0 &&
+      selectedGroupId &&
+      !myGroups.find((g) => g.id === selectedGroupId)
+    ) {
+      dispatch(selectGroup(myGroups[0].id));
+    }
+  }, [myGroups, selectedGroupId, dispatch]);
+
   const selectedGroup =
     myGroups.length > 0
       ? selectedGroupId
-        ? myGroups.find((g) => Number(g.id) === selectedGroupId) || myGroups[0]
+        ? myGroups.find((g) => g.id === selectedGroupId) || myGroups[0]
         : myGroups[0]
       : null;
 
   const messages = selectedGroup
-    ? messagesByGroupId[Number(selectedGroup.id)] || []
+    ? messagesByGroupId[selectedGroup.id] || []
     : [];
 
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedGroup) return;
     dispatch(
       sendMessage({
-        groupId: Number(selectedGroup.id),
+        groupId: selectedGroup.id,
         content: newMessage.trim(),
         sender: "You",
       })
@@ -123,11 +139,13 @@ const ChatLayout = () => {
                 key={group.id}
                 className={`w-full px-3 sm:px-4 py-3 text-left cursor-pointer truncate border-l-4 transition-all duration-200
         ${
-          selectedGroup && group.id === selectedGroup.id
+          selectedGroupId === group.id
             ? "bg-white border-blue-500 text-blue-700 font-semibold shadow-sm"
             : "border-transparent hover:bg-gray-100 hover:border-gray-300 text-gray-700"
         }`}
-                onClick={() => dispatch(selectGroup(Number(group.id)))}
+                onClick={() => {
+                  dispatch(selectGroup(group.id));
+                }}
               >
                 <div className="flex items-center justify-between">
                   <span className="truncate">{group.name}</span>
