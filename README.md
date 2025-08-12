@@ -35,7 +35,31 @@ StudyBuddy is a modern e-learning platform built for aspiring tech professionals
    npm install
    ```
 
-3. Run the development servers
+3. Set up environment variables (see below)
+
+## Environment Variables
+
+This project requires a few environment variables to run properly.
+
+- For the **api**, create a `.env` file.  
+- For the **client**, create a `.env` file.
+
+### backend `.env` variables include:
+
+- `CLOUDINARY_NAME` — your_cloud_name
+- `CLOUDINARY_API_KEY` — your_api_key
+- `CLOUDINARY_SECRET_KEY` — your_api_secret
+- `JWT_SECRET` — your_jwt_secret
+
+- `MYSQL_HOST` — your_mysql_host
+- `MYSQL_USER` — your_mysql_user
+- `MYSQL_PASSWORD` — your_mysql_password
+- `MYSQL_DB` — your_mysql_database
+
+### frontend `.env` variables include:
+- `VITE_API_URL` — http://localhost:8080/api
+
+4. Run the development servers
 
    ```bash
    # Backend
