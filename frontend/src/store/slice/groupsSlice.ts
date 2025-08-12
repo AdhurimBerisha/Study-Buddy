@@ -278,7 +278,6 @@ const groupSlice = createSlice({
             state.myGroups.push(group);
           }
         }
-        // Update currentGroup if it's the same group
         if (state.currentGroup?.id === groupId) {
           state.currentGroup.isMember = true;
           state.currentGroup.memberCount += 1;

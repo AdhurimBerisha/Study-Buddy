@@ -7,16 +7,14 @@ import {
   FaNetworkWired,
   FaCode,
   FaUsers,
+  FaDollarSign,
+  FaGraduationCap,
 } from "react-icons/fa";
 import { SiSpringboot } from "react-icons/si";
 import Button from "../../components/Button";
-import { toCourseSlug } from "./data";
+import type { Course } from "../../store/slice/coursesSlice";
 
-type CardProps = {
-  category: string;
-  language: string;
-  tutors: number;
-};
+type CardProps = Course;
 
 const coursesIcons: Record<string, React.ReactNode> = {
   html: <FaHtml5 className="text-4xl text-orange-500" />,
@@ -67,43 +65,114 @@ const getCategoryColor = (category: string): string => {
   return matchedCategory ? categoryColors[matchedCategory] : "bg-gray-500";
 };
 
-const CoursesCard = ({ category, language, tutors }: CardProps) => {
+const CoursesCard = (course: CardProps) => {
+  const {
+    id,
+    title,
+    category,
+    language,
+    level,
+    price,
+    thumbnail,
+    instructor,
+    enrollmentCount = 0,
+    isEnrolled = false,
+    totalLessons,
+  } = course;
+
   const colorClass = getCategoryColor(category);
 
   return (
     <div className="bg-white border border-gray-200 shadow-md rounded-xl p-6 text-center h-full flex flex-col">
+      {/* Course Image */}
+      {thumbnail && (
+        <div className="mb-4 rounded-lg overflow-hidden">
+          <img
+            src={thumbnail}
+            alt={title}
+            className="w-full h-32 object-cover"
+          />
+        </div>
+      )}
+
+      {/* Category Badge */}
       <div
         className={`${colorClass} text-white px-4 py-2 rounded-full inline-block mb-4 font-bold text-xs uppercase tracking-wide`}
       >
         {category}
       </div>
 
+      {/* Language/Tech Icon */}
       <div className="mb-4 flex justify-center">{getCoursesIcon(language)}</div>
 
-      <Link to="/courses" className="block mb-4">
+      {/* Course Title */}
+      <Link to={`/courses/${id}`} className="block mb-4">
         <h3 className="text-lg font-bold text-gray-800 leading-tight min-h-[4rem] flex items-center justify-center px-2">
-          {language}
+          {title}
         </h3>
       </Link>
 
-      <div className="flex items-center justify-center space-x-2 mb-4">
-        <FaUsers className="text-blue-500 text-sm" />
-        <p className="text-sm font-medium text-gray-600">
-          <span className="text-lg font-bold text-blue-600">{tutors}</span>{" "}
-          Active Tutors
-        </p>
+      {/* Course Language */}
+      <p className="text-sm text-gray-600 mb-3">{language}</p>
+
+      {/* Course Stats */}
+      <div className="space-y-2 mb-4">
+        <div className="flex items-center justify-center space-x-2">
+          <FaUsers className="text-blue-500 text-sm" />
+          <p className="text-sm font-medium text-gray-600">
+            <span className="text-lg font-bold text-blue-600">
+              {enrollmentCount}
+            </span>{" "}
+            Students
+          </p>
+        </div>
+
+        <div className="flex items-center justify-center space-x-2">
+          <FaGraduationCap className="text-green-500 text-sm" />
+          <p className="text-sm font-medium text-gray-600 capitalize">
+            {level} Level
+          </p>
+        </div>
+
+        {totalLessons && (
+          <div className="flex items-center justify-center space-x-2">
+            <FaCode className="text-purple-500 text-sm" />
+            <p className="text-sm font-medium text-gray-600">
+              {totalLessons} Lessons
+            </p>
+          </div>
+        )}
+
+        <div className="flex items-center justify-center space-x-2">
+          <FaDollarSign className="text-yellow-500 text-sm" />
+          <p className="text-sm font-medium text-gray-600">
+            <span className="text-lg font-bold text-green-600">${price}</span>
+          </p>
+        </div>
       </div>
 
+      {/* Instructor */}
+      {instructor && (
+        <div className="text-center mb-4">
+          <p className="text-xs text-gray-500">Instructor:</p>
+          <p className="text-sm font-medium text-gray-700">
+            {instructor.firstName} {instructor.lastName}
+          </p>
+        </div>
+      )}
+
+      {/* Progress Bar */}
       <div className="w-full bg-gray-200 rounded-full h-2 mt-auto mb-4">
         <div
           className={`${colorClass} h-2 rounded-full`}
-          style={{ width: `${Math.min(tutors * 2, 100)}%` }}
+          style={{ width: `${Math.min(enrollmentCount * 2, 100)}%` }}
         ></div>
       </div>
 
-      <Link to={`/courses/${toCourseSlug(language)}`} className="mt-auto">
+      {/* Action Button */}
+      <Link to={`/courses/${id}`} className="mt-auto">
         <Button fullWidth size="sm">
-          Show more
+          {isEnrolled ? "Continue Learning" : "View Details"}
         </Button>
       </Link>
     </div>

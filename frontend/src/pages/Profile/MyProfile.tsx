@@ -64,8 +64,8 @@ const MyProfile = () => {
         phone: user.phone || "",
       });
       setAvatarPreview(user.avatar || null);
-      setSelectedAvatarFile(null); // Clear selected file when user changes
-      setAvatarError(null); // Clear avatar errors when user changes
+      setSelectedAvatarFile(null);
+      setAvatarError(null);
     }
   }, [user, reset, dispatch]);
 
@@ -73,26 +73,22 @@ const MyProfile = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
       setAvatarError("File size must be less than 5MB");
       return;
     }
 
-    // Validate file type
     if (!file.type.startsWith("image/")) {
       setAvatarError("Please select an image file");
       return;
     }
 
-    // Show preview immediately
     const reader = new FileReader();
     reader.onloadend = () => {
       setAvatarPreview(reader.result as string);
     };
     reader.readAsDataURL(file);
 
-    // Store the file for later upload with profile data
     setSelectedAvatarFile(file);
     setAvatarError(null);
   };
@@ -106,7 +102,7 @@ const MyProfile = () => {
         })
       ).unwrap();
       setIsEditing(false);
-      setSelectedAvatarFile(null); // Clear the selected file after successful upload
+      setSelectedAvatarFile(null);
       dispatch(clearError());
     } catch (error) {
       // Error is handled by the slice

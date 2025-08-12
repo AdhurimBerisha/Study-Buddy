@@ -36,16 +36,6 @@ const GroupDetails = () => {
   const { token, user } = useSelector((state: RootState) => state.auth);
   const isAuthenticated = !!token;
 
-  // Debug logging
-  console.log("GroupDetails Debug:", {
-    currentGroup,
-    isAuthenticated,
-    user,
-    token: !!token,
-    isMember: currentGroup?.isMember,
-    userRole: currentGroup?.userRole,
-  });
-
   const [newMessage, setNewMessage] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
@@ -84,7 +74,6 @@ const GroupDetails = () => {
     if (!id) return;
     try {
       await dispatch(joinGroup(id)).unwrap();
-      // Refresh group data
       dispatch(fetchGroup(id));
     } catch (error) {
       console.error("Failed to join group:", error);
@@ -129,7 +118,6 @@ const GroupDetails = () => {
 
       await dispatch(updateGroup({ id, data: updateData })).unwrap();
       setIsEditing(false);
-      // Refresh group data
       dispatch(fetchGroup(id));
     } catch (error) {
       console.error("Failed to update group:", error);

@@ -2,6 +2,8 @@ import User from "./User";
 import Group from "./Group";
 import GroupMember from "./GroupMember";
 import Message from "./Message";
+import Course from "./Course";
+import CourseEnrollment from "./CourseEnrollment";
 
 // User - Group relationships (many-to-many through GroupMember)
 User.belongsToMany(Group, {
@@ -82,4 +84,50 @@ User.hasMany(Group, {
   as: "createdGroups",
 });
 
-export { User, Group, GroupMember, Message };
+// Course - User relationships
+Course.belongsTo(User, {
+  foreignKey: "createdBy",
+  as: "instructor",
+});
+
+User.hasMany(Course, {
+  foreignKey: "createdBy",
+  as: "createdCourses",
+});
+
+// Course - User relationships (many-to-many through CourseEnrollment)
+User.belongsToMany(Course, {
+  through: CourseEnrollment,
+  foreignKey: "userId",
+  as: "enrolledCourses",
+});
+
+Course.belongsToMany(User, {
+  through: CourseEnrollment,
+  foreignKey: "courseId",
+  as: "enrolledStudents",
+});
+
+// User - CourseEnrollment relationships
+User.hasMany(CourseEnrollment, {
+  foreignKey: "userId",
+  as: "courseEnrollments",
+});
+
+CourseEnrollment.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user",
+});
+
+// Course - CourseEnrollment relationships
+Course.hasMany(CourseEnrollment, {
+  foreignKey: "courseId",
+  as: "enrollments",
+});
+
+CourseEnrollment.belongsTo(Course, {
+  foreignKey: "courseId",
+  as: "course",
+});
+
+export { User, Group, GroupMember, Message, Course, CourseEnrollment };

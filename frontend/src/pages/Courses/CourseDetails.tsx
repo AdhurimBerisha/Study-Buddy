@@ -5,31 +5,70 @@ import {
   FaStar,
   FaBook,
   FaUserCircle,
+  FaLock,
+  FaDollarSign,
+  FaGraduationCap,
 } from "react-icons/fa";
 import Button from "../../components/Button";
-import { findCourseBySlug } from "./data";
 import { Link as RouterLink } from "react-router-dom";
 import { tutors as allTutors, toTutorSlug } from "../Tutors/data";
 import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "../../store/store";
-import { FaLock } from "react-icons/fa";
-import { enrollCourse } from "../../store/slice/learningSlice";
-import { toCourseSlug } from "./data";
+import type { RootState, AppDispatch } from "../../store/store";
+import { useEffect } from "react";
+import {
+  fetchCourse,
+  enrollInCourse,
+  clearCurrentCourse,
+} from "../../store/slice/coursesSlice";
 
 const CourseDetails = () => {
-  const { slug } = useParams<{ slug: string }>();
-  const course = slug ? findCourseBySlug(slug) : undefined;
-  const dispatch = useDispatch();
-  const { enrolledCourseSlugs } = useSelector((s: RootState) => s.learning);
+  const { slug: courseId } = useParams<{ slug: string }>();
+  const dispatch = useDispatch<AppDispatch>();
+  const {
+    currentCourse: course,
+    loading,
+    error,
+  } = useSelector((s: RootState) => s.courses);
   const { token } = useSelector((s: RootState) => s.auth);
   const isAuthenticated = !!token;
-  const isEnrolled = !!(slug && enrolledCourseSlugs.includes(slug));
 
-  if (!course) {
+  useEffect(() => {
+    if (courseId) {
+      dispatch(fetchCourse(courseId));
+    }
+
+    return () => {
+      dispatch(clearCurrentCourse());
+    };
+  }, [courseId, dispatch]);
+
+  const handleEnroll = async () => {
+    if (courseId && isAuthenticated) {
+      try {
+        await dispatch(enrollInCourse(courseId)).unwrap();
+        dispatch(fetchCourse(courseId));
+      } catch (error) {
+        console.error("Failed to enroll:", error);
+      }
+    }
+  };
+
+  if (loading) {
     return (
       <div className="max-w-5xl mx-auto px-6 py-16">
         <div className="bg-white rounded-3xl shadow-lg p-10 text-center border border-gray-100">
-          <p className="text-gray-600 mb-6">Course not found.</p>
+          <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full border-blue-500 border-t-transparent"></div>
+          <p className="mt-4 text-gray-600">Loading course...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !course) {
+    return (
+      <div className="max-w-5xl mx-auto px-6 py-16">
+        <div className="bg-white rounded-3xl shadow-lg p-10 text-center border border-gray-100">
+          <p className="text-red-600 mb-6">{error || "Course not found."}</p>
           <Link to="/courses">
             <Button>
               <FaArrowLeft className="mr-2" /> Back to Courses
@@ -50,20 +89,40 @@ const CourseDetails = () => {
                 {course.category}
               </div>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900">
-                {course.language}
+                {course.title}
               </h1>
-              <div className="mt-3 flex items-center gap-3 text-sm text-gray-600">
-                <FaUsers className="text-blue-600" />
-                <span>
-                  <span className="font-semibold text-blue-600">
-                    {course.tutors}
-                  </span>{" "}
-                  Active Tutors
-                </span>
-                <span className="hidden sm:inline">•</span>
-                <span className="hidden sm:flex items-center gap-2">
-                  <FaStar className="text-yellow-500" /> High Rated Path
-                </span>
+              <p className="text-gray-600 mt-2 text-lg">{course.language}</p>
+              <div className="mt-3 flex items-center gap-4 text-sm text-gray-600 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <FaUsers className="text-blue-600" />
+                  <span>
+                    <span className="font-semibold text-blue-600">
+                      {course.enrollmentCount || 0}
+                    </span>{" "}
+                    Students
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaGraduationCap className="text-green-600" />
+                  <span className="capitalize font-semibold">
+                    {course.level} Level
+                  </span>
+                </div>
+                {course.totalLessons && (
+                  <div className="flex items-center gap-2">
+                    <FaBook className="text-purple-600" />
+                    <span>{course.totalLessons} Lessons</span>
+                  </div>
+                )}
+                {course.instructor && (
+                  <div className="flex items-center gap-2">
+                    <FaUserCircle className="text-gray-600" />
+                    <span>
+                      by {course.instructor.firstName}{" "}
+                      {course.instructor.lastName}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
             <div className="w-full sm:w-auto">
@@ -80,8 +139,15 @@ const CourseDetails = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
               <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <FaBook className="text-blue-600" /> What you’ll learn
+                <FaBook className="text-blue-600" /> Course Description
               </h2>
+              <div className="text-gray-700 leading-relaxed mb-6">
+                <p>{course.description}</p>
+              </div>
+
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                What you'll learn
+              </h3>
               <ul className="list-disc list-inside space-y-2 text-gray-700 leading-relaxed">
                 <li>Foundations and core concepts for {course.language}</li>
                 <li>Hands-on projects and real-world scenarios</li>
@@ -96,62 +162,91 @@ const CourseDetails = () => {
               </h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3">
-                  <span className="text-gray-700 font-medium">
+                  <span className="text-gray-700 font-medium flex items-center gap-2">
+                    <FaDollarSign className="text-green-600" />
                     Course price
                   </span>
                   <span className="text-blue-600 font-extrabold text-lg">
-                    ${course.price.toFixed(2)}
+                    ${Number(course.price).toFixed(2)}
                   </span>
                 </div>
-                {isAuthenticated ? (
-                  <RouterLink
-                    to="/checkout"
-                    state={{
-                      type: "course",
-                      course: { title: course.language, price: course.price },
-                    }}
-                  >
-                    <Button fullWidth>Buy course</Button>
-                  </RouterLink>
-                ) : (
-                  <Button
-                    fullWidth
-                    className="opacity-75 cursor-not-allowed"
-                    onClick={() =>
-                      alert("Please log in to purchase this course.")
-                    }
-                  >
-                    <FaLock className="mr-2" /> Login to Buy Course
-                  </Button>
+
+                {course.enrollment && (
+                  <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 mb-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-green-700 font-medium">
+                        Progress
+                      </span>
+                      <span className="text-green-600 font-bold">
+                        {course.enrollment.progress}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-green-200 rounded-full h-2 mt-2">
+                      <div
+                        className="bg-green-600 h-2 rounded-full"
+                        style={{ width: `${course.enrollment.progress}%` }}
+                      />
+                    </div>
+                  </div>
                 )}
-                <div className="space-y-3">
-                  {isEnrolled ? (
-                    <RouterLink to={`/learning/course/${slug}`}>
-                      <Button fullWidth variant="secondary">
-                        Go to course
-                      </Button>
-                    </RouterLink>
-                  ) : isAuthenticated ? (
-                    <Button
-                      fullWidth
-                      variant="outline"
-                      onClick={() =>
-                        dispatch(enrollCourse(toCourseSlug(course.language)))
-                      }
-                    >
-                      Enroll (demo)
-                    </Button>
+
+                <div className="space-y-4">
+                  {course.isEnrolled ? (
+                    <div className="mb-4">
+                      <RouterLink to={`/learning/course/${courseId}`}>
+                        <Button fullWidth>Continue Learning</Button>
+                      </RouterLink>
+                    </div>
                   ) : (
-                    <Button
-                      fullWidth
-                      variant="outline"
-                      className="opacity-75 cursor-not-allowed"
-                      onClick={() =>
-                        alert("Please log in to enroll in the demo.")
-                      }
-                    >
-                      <FaLock className="mr-2" /> Login to Enroll (demo)
-                    </Button>
+                    <>
+                      <div className="mb-4">
+                        {isAuthenticated ? (
+                          <Button fullWidth onClick={handleEnroll}>
+                            Enroll Now
+                          </Button>
+                        ) : (
+                          <Button
+                            fullWidth
+                            className="opacity-75 cursor-not-allowed"
+                            onClick={() =>
+                              alert("Please log in to enroll in this course.")
+                            }
+                          >
+                            <FaLock className="mr-2" /> Login to Enroll
+                          </Button>
+                        )}
+                      </div>
+
+                      <div className="mb-4">
+                        {isAuthenticated ? (
+                          <RouterLink
+                            to="/checkout"
+                            state={{
+                              type: "course",
+                              course: {
+                                title: course.title,
+                                price: course.price,
+                              },
+                            }}
+                          >
+                            <Button fullWidth variant="secondary">
+                              Buy Course - ${Number(course.price).toFixed(2)}
+                            </Button>
+                          </RouterLink>
+                        ) : (
+                          <Button
+                            fullWidth
+                            variant="secondary"
+                            className="opacity-75 cursor-not-allowed"
+                            onClick={() =>
+                              alert("Please log in to purchase this course.")
+                            }
+                          >
+                            <FaLock className="mr-2" /> Login to Buy Course
+                          </Button>
+                        )}
+                      </div>
+                    </>
                   )}
                 </div>
                 <Link to="/groups" className="mt-4 block">
