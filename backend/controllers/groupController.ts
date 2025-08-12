@@ -7,11 +7,9 @@ import sequelize from "../config/db";
 
 export const listGroups = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    console.log("Fetching groups - starting listGroups function");
     const userId = req.user?.id;
 
     await sequelize.authenticate();
-    console.log("Database connection successful");
 
     const groups = await Group.findAll({
       include: [
@@ -23,10 +21,7 @@ export const listGroups = async (req: AuthenticatedRequest, res: Response) => {
         },
       ],
       order: [["createdAt", "DESC"]],
-      logging: console.log,
     });
-
-    console.log(`Found ${groups.length} groups`);
 
     const groupsWithCounts = await Promise.all(
       groups.map(async (group) => {
@@ -59,7 +54,6 @@ export const listGroups = async (req: AuthenticatedRequest, res: Response) => {
       })
     );
 
-    console.log("Successfully formatted groups data");
     return res.json(groupsWithCounts);
   } catch (error) {
     return handleError(res, error, "Error in listGroups");
@@ -70,8 +64,6 @@ export const getGroup = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const userId = req.user?.id;
-
-    console.log(`Fetching group ${id} for user ${userId}`);
 
     const group = await Group.findByPk(id, {
       include: [
@@ -89,7 +81,6 @@ export const getGroup = async (req: AuthenticatedRequest, res: Response) => {
           required: false,
         },
       ],
-      logging: console.log,
     });
 
     if (!group) {
@@ -125,8 +116,6 @@ export const createGroup = async (req: AuthenticatedRequest, res: Response) => {
     const { name, description, category, level, maxMembers } = req.body;
     const userId = req.user?.id;
 
-    console.log("Creating group with data:", { name, category, level, userId });
-
     if (!userId) {
       return res.status(401).json({ message: "User not authenticated" });
     }
@@ -145,7 +134,6 @@ export const createGroup = async (req: AuthenticatedRequest, res: Response) => {
           category,
           level,
           maxMembers,
-          isPrivate: false, // Always public groups
           createdBy: userId,
         },
         { transaction: t }
@@ -184,7 +172,6 @@ export const createGroup = async (req: AuthenticatedRequest, res: Response) => {
       userRole: "admin",
     };
 
-    console.log("Successfully created group:", (createdGroup as any)?.id);
     return res.status(201).json(formattedGroup);
   } catch (error) {
     return handleError(res, error, "Error creating group");
@@ -227,7 +214,6 @@ export const updateGroup = async (req: AuthenticatedRequest, res: Response) => {
       category,
       level,
       maxMembers,
-      isPrivate: false, // Always public groups
     });
 
     // Fetch the updated group with creator info

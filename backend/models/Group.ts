@@ -9,7 +9,6 @@ export interface GroupAttributes {
   category: string;
   level: string;
   maxMembers?: number;
-  isPrivate: boolean;
   createdBy: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -58,11 +57,6 @@ Group.init(
       type: DataTypes.INTEGER,
       allowNull: true,
       validate: { min: 2, max: 1000 },
-    },
-    isPrivate: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
     },
     createdBy: {
       type: DataTypes.UUID,
