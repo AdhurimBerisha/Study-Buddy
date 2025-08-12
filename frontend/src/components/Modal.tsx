@@ -56,28 +56,24 @@ const Modal = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
       onClick={onOverlayClick}
       role="dialog"
       aria-modal="true"
     >
       <div
         ref={modalRef}
-        className={`bg-white rounded-2xl shadow-2xl ${sizes[size]} w-full max-h-[90vh] overflow-hidden relative transform animate-in zoom-in-95 duration-300 ease-out border border-gray-100`}
+        className={`bg-white rounded-xl shadow-lg ${sizes[size]} w-full max-h-[90vh] overflow-hidden relative border border-gray-200`}
         role="document"
-        style={{
-          boxShadow:
-            "0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)",
-        }}
       >
-        {/* Header with gradient background */}
+        {/* Header */}
         {(title || closeOnOverlayClick) && (
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200/50">
+          <div className="bg-gray-50 border-b border-gray-200">
             <div className="flex items-center justify-between p-4 sm:p-6">
               {title && (
                 <h2
                   id="modal-title"
-                  className="text-lg sm:text-xl font-bold text-gray-900 pr-8 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent"
+                  className="text-lg sm:text-xl font-bold text-gray-900 pr-8"
                 >
                   {title}
                 </h2>
@@ -106,13 +102,10 @@ const Modal = ({
           </div>
         )}
 
-        {/* Content with improved styling */}
-        <div className="p-4 sm:p-6 bg-gradient-to-b from-white to-gray-50/30">
+        {/* Content */}
+        <div className="p-4 sm:p-6 bg-white">
           <div className="relative">{children}</div>
         </div>
-
-        {/* Decorative bottom border */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-b-2xl"></div>
       </div>
     </div>
   );
