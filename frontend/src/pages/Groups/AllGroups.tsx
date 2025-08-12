@@ -99,7 +99,6 @@ const AllGroups = () => {
     }
     try {
       await dispatch(joinGroup(id)).unwrap();
-      // Refresh groups after joining
       dispatch(fetchAllGroups());
     } catch (error) {
       console.error("Failed to join group:", error);
@@ -113,7 +112,6 @@ const AllGroups = () => {
     }
     try {
       await dispatch(leaveGroup(id)).unwrap();
-      // Refresh groups after leaving
       dispatch(fetchAllGroups());
     } catch (error) {
       console.error("Failed to leave group:", error);

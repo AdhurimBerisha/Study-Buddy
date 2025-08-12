@@ -49,7 +49,6 @@ const MyGroups = () => {
   const handleLeaveGroup = async (id: string) => {
     try {
       await dispatch(leaveGroup(id)).unwrap();
-      // Refresh groups after leaving
       dispatch(fetchMyGroups());
     } catch (error) {
       console.error("Failed to leave group:", error);

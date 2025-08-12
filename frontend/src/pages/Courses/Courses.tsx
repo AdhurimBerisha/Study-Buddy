@@ -3,31 +3,54 @@ import Features from "../../components/Features";
 import Hero from "../../components/Hero";
 import CoursesGrid from "./CoursesGrid";
 import Button from "../../components/Button";
-import { useMemo, useState } from "react";
-import { courses as allCourses, type Course } from "./data";
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../store/store";
+import { fetchCourses, setFilters } from "../../store/slice/coursesSlice";
 import FilterBar from "../../components/FilterBar";
 import bannerBg from "../../assets/bannerBg.webp";
 
 const Courses = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { courses, loading, error, filters } = useSelector(
+    (state: RootState) => state.courses
+  );
+
   const [visibleCount, setVisibleCount] = useState(8);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string | null>(null);
   const [priceSort, setPriceSort] = useState<"asc" | "desc" | null>(null);
 
-  const filtered: Course[] = useMemo(() => {
-    let list = allCourses.slice();
+  useEffect(() => {
+    dispatch(fetchCourses(filters));
+  }, [dispatch, filters]);
+
+  const handleFilterChange = (newFilters: {
+    category?: string;
+    level?: string;
+    search?: string;
+  }) => {
+    dispatch(setFilters(newFilters));
+  };
+
+  const filtered = useMemo(() => {
+    let list = [...courses];
+
     if (query.trim()) {
       const q = query.toLowerCase();
       list = list.filter(
         (c) =>
           c.language.toLowerCase().includes(q) ||
-          c.category.toLowerCase().includes(q)
+          c.category.toLowerCase().includes(q) ||
+          c.title.toLowerCase().includes(q)
       );
     }
+
     if (category) {
       const cat = category.toLowerCase();
       list = list.filter((c) => c.category.toLowerCase().includes(cat));
     }
+
     if (priceSort) {
       list = list
         .slice()
@@ -35,12 +58,37 @@ const Courses = () => {
           priceSort === "asc" ? a.price - b.price : b.price - a.price
         );
     }
+
     return list;
-  }, [query, category, priceSort]);
+  }, [courses, query, category, priceSort]);
 
   const visible = filtered.slice(0, visibleCount);
   const canShowMore = visibleCount < filtered.length;
   const canShowLess = visibleCount > 8;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full border-blue-500 border-t-transparent"></div>
+          <p className="mt-4 text-gray-600">Loading courses...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Error loading courses: {error}</p>
+          <Button onClick={() => dispatch(fetchCourses(filters))}>
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -52,7 +100,7 @@ const Courses = () => {
         onCategoryChange={setCategory}
         sort={priceSort}
         onSortChange={setPriceSort}
-        searchPlaceholder="Search by course or category"
+        searchPlaceholder="Search by course, category, or title"
         sortLabel="Sort by price"
         ascLabel="Lowest first"
         descLabel="Highest first"
