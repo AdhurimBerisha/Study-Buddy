@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "../../store/store";
+import type { RootState, AppDispatch } from "../../store/store";
 import {
   FaBars,
   FaTimes,
@@ -15,26 +15,33 @@ import {
   toggleSidebar,
   setSidebarOpen,
 } from "../../store/slice/chatSlice";
+import { fetchMyGroups } from "../../store/slice/groupsSlice";
 
 const ChatPage = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { token } = useSelector((state: RootState) => state.auth);
   const isAuthenticated = !!token;
   const { selectedGroupId, messagesByGroupId, isSidebarOpen } = useSelector(
     (state: RootState) => state.chat
   );
-  const groups = useSelector((state: RootState) => state.groups.myGroups);
+  const { myGroups, loading } = useSelector((state: RootState) => state.groups);
   const [newMessage, setNewMessage] = useState("");
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchMyGroups());
+    }
+  }, [dispatch, isAuthenticated]);
+
   const selectedGroup =
-    groups.length > 0
+    myGroups.length > 0
       ? selectedGroupId
-        ? groups.find((g) => g.id === selectedGroupId) || groups[0]
-        : groups[0]
+        ? myGroups.find((g) => Number(g.id) === selectedGroupId) || myGroups[0]
+        : myGroups[0]
       : null;
 
   const messages = selectedGroup
-    ? messagesByGroupId[selectedGroup.id] || []
+    ? messagesByGroupId[Number(selectedGroup.id)] || []
     : [];
 
   if (!isAuthenticated) {
@@ -77,7 +84,7 @@ const ChatPage = () => {
 
     dispatch(
       sendMessageAction({
-        groupId: selectedGroup.id,
+        groupId: Number(selectedGroup.id),
         content: newMessage.trim(),
         sender: "You",
       })
@@ -85,8 +92,8 @@ const ChatPage = () => {
     setNewMessage("");
   };
 
-  const selectGroup = (groupId: number) => {
-    dispatch(selectGroupAction(groupId));
+  const selectGroup = (groupId: string) => {
+    dispatch(selectGroupAction(Number(groupId)));
     if (window.innerWidth < 768) {
       dispatch(setSidebarOpen(false));
     }
@@ -98,6 +105,17 @@ const ChatPage = () => {
       handleSendMessage();
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your groups...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-[calc(100vh-80px)] bg-gray-50">
@@ -117,42 +135,51 @@ const ChatPage = () => {
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-            <div className="space-y-3">
-              {groups.map((group) => {
-                const isSelected = selectedGroup?.id === group.id;
-                return (
-                  <div
-                    key={group.id}
-                    onClick={() => selectGroup(group.id)}
-                    className={`cursor-pointer rounded-lg p-4 border transition-all duration-200 hover:shadow-md ${
-                      isSelected
-                        ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200"
-                        : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-                    }`}
-                  >
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1 min-w-0">
-                        <h2
-                          className={`text-base sm:text-lg font-semibold truncate ${
-                            isSelected ? "text-blue-700" : "text-gray-900"
-                          }`}
-                        >
-                          {group.name}
-                        </h2>
-                        <p className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-2">
-                          {group.description}
-                        </p>
-                        <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
-                          <span>{group.members} members</span>
-                          <span>•</span>
-                          <span>{group.level}</span>
+            {myGroups.length === 0 ? (
+              <div className="text-center text-gray-500 py-8">
+                <p className="text-sm">No groups available.</p>
+                <p className="text-xs mt-1">
+                  Join or create a group to start chatting.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {myGroups.map((group) => {
+                  const isSelected = selectedGroup?.id === group.id;
+                  return (
+                    <div
+                      key={group.id}
+                      onClick={() => selectGroup(group.id)}
+                      className={`cursor-pointer rounded-lg p-4 border transition-all duration-200 hover:shadow-md ${
+                        isSelected
+                          ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200"
+                          : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                      }`}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1 min-w-0">
+                          <h2
+                            className={`text-base sm:text-lg font-semibold truncate ${
+                              isSelected ? "text-blue-700" : "text-gray-900"
+                            }`}
+                          >
+                            {group.name}
+                          </h2>
+                          <p className="text-xs sm:text-sm text-gray-600 mt-1 overflow-hidden text-ellipsis whitespace-nowrap">
+                            {group.description || "No description available"}
+                          </p>
+                          <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
+                            <span>{group.memberCount} members</span>
+                            <span>•</span>
+                            <span>{group.level}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       </aside>
@@ -171,7 +198,7 @@ const ChatPage = () => {
             </h2>
             {selectedGroup && (
               <span className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                {selectedGroup.members} members
+                {selectedGroup.memberCount} members
               </span>
             )}
           </div>

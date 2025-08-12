@@ -4,7 +4,7 @@ import express from "express";
 import cors from "cors";
 
 import sequelize from "./config/db";
-import "./models/index"; // Import models to register them
+import "./models/index";
 import authRoutes from "./routes/auth";
 import userRoutes from "./routes/user";
 import courseRoutes from "./routes/course";
@@ -13,17 +13,13 @@ import tutorRoutes from "./routes/tutor";
 import lessonRoutes from "./routes/lesson";
 import purchaseRoutes from "./routes/purchase";
 
-// dotenv.config();
-
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/courses", courseRoutes);
@@ -36,7 +32,6 @@ app.get("/", (_req, res) => {
   res.send("Server is running! REST API at /api");
 });
 
-// Test endpoint for debugging
 app.get("/api/test", (_req, res) => {
   res.json({
     message: "Backend is working!",

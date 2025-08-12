@@ -5,7 +5,6 @@ import { handleError } from "../helpers/errorHelper";
 import sequelize from "../config/db";
 import { Op } from "sequelize";
 
-// Common instructor include
 const instructorInclude = {
   model: User,
   as: "instructor",
@@ -13,7 +12,6 @@ const instructorInclude = {
   required: false,
 };
 
-// Helper for authentication check
 const checkAuth = (req: AuthenticatedRequest, res: Response) => {
   if (!req.user?.id) {
     res.status(401).json({ message: "User not authenticated" });
@@ -22,7 +20,6 @@ const checkAuth = (req: AuthenticatedRequest, res: Response) => {
   return req.user.id;
 };
 
-// Helper for course ownership check
 const checkCourseOwnership = async (courseId: string, userId: string) => {
   const course = await Course.findByPk(courseId);
   if (!course) throw new Error("Course not found");
@@ -165,7 +162,6 @@ export const deleteCourse = async (
   }
 };
 
-// Purchase course (creates purchase record)
 export const purchaseCourse = async (
   req: AuthenticatedRequest,
   res: Response
@@ -176,13 +172,11 @@ export const purchaseCourse = async (
 
     const { id: courseId } = req.params;
 
-    // Check if course exists
     const course = await Course.findByPk(courseId);
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
 
-    // Check if user already purchased this course
     const existingPurchase = await Purchase.findOne({
       where: { userId, courseId, status: "completed" },
     });
@@ -193,13 +187,12 @@ export const purchaseCourse = async (
       });
     }
 
-    // Create purchase record
     const purchase = await Purchase.create({
       userId,
       courseId,
       amount: course.getDataValue("price"),
       status: "completed",
-      paymentMethod: "demo", // For demo purposes
+      paymentMethod: "demo",
       transactionId: `demo-${Date.now()}`,
     });
 

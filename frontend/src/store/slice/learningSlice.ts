@@ -4,7 +4,6 @@ import type { RootState } from "../store";
 import api from "../../services/api";
 import { lessonAPI } from "../../services/api";
 
-// Types for the new backend system
 export interface Lesson {
   id: string;
   title: string;
@@ -50,18 +49,14 @@ export interface CourseProgress {
 }
 
 export interface LearningState {
-  // Course data
   currentCourse: CourseWithLessons | null;
   currentLesson: Lesson | null;
 
-  // Progress tracking
   courseProgress: Record<string, CourseProgress>;
 
-  // UI state
   loading: boolean;
   error: string | null;
 
-  // Wishlist and following (kept from original)
   wishlist: string[];
   following: string[];
 }
@@ -76,7 +71,6 @@ const initialState: LearningState = {
   following: [],
 };
 
-// Async thunks for backend integration
 export const fetchCourseWithLessons = createAsyncThunk(
   "learning/fetchCourseWithLessons",
   async (courseId: string) => {
@@ -134,12 +128,10 @@ const learningSlice = createSlice({
   name: "learning",
   initialState,
   reducers: {
-    // Clear errors
     clearError: (state) => {
       state.error = null;
     },
 
-    // Set current course and lesson
     setCurrentCourse: (
       state,
       action: PayloadAction<CourseWithLessons | null>
@@ -151,7 +143,6 @@ const learningSlice = createSlice({
       state.currentLesson = action.payload;
     },
 
-    // Local progress updates (for immediate UI feedback)
     markLessonComplete: (
       state,
       action: PayloadAction<{ courseId: string; lessonId: string }>
@@ -179,7 +170,6 @@ const learningSlice = createSlice({
       progress.lessons[lessonId].isCompleted = true;
       progress.lessons[lessonId].completedAt = new Date().toISOString();
 
-      // Recalculate completion stats
       const completedCount = Object.values(progress.lessons).filter(
         (l) => l.isCompleted
       ).length;
@@ -203,7 +193,6 @@ const learningSlice = createSlice({
         state.courseProgress[courseId].lessons[lessonId].completedAt =
           undefined;
 
-        // Recalculate completion stats
         const progress = state.courseProgress[courseId];
         const completedCount = Object.values(progress.lessons).filter(
           (l) => l.isCompleted
@@ -218,7 +207,6 @@ const learningSlice = createSlice({
       }
     },
 
-    // Wishlist and following (kept from original)
     toggleFollowCourse: (state, action: PayloadAction<string>) => {
       const courseId = action.payload;
       const index = state.following.indexOf(courseId);
@@ -239,7 +227,6 @@ const learningSlice = createSlice({
       }
     },
 
-    // Reset state
     resetLearningState: (state) => {
       state.currentCourse = null;
       state.currentLesson = null;
@@ -249,8 +236,6 @@ const learningSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Fetch enrolled courses
-    // Fetch course with lessons
     builder
       .addCase(fetchCourseWithLessons.pending, (state) => {
         state.loading = true;
@@ -266,7 +251,6 @@ const learningSlice = createSlice({
         state.error = action.error.message || "Failed to fetch course lessons";
       });
 
-    // Fetch lesson
     builder
       .addCase(fetchLesson.pending, (state) => {
         state.loading = true;
@@ -282,7 +266,6 @@ const learningSlice = createSlice({
         state.error = action.error.message || "Failed to fetch lesson";
       });
 
-    // Fetch course progress
     builder
       .addCase(fetchCourseProgress.pending, (state) => {
         state.loading = true;
@@ -299,7 +282,6 @@ const learningSlice = createSlice({
           progress,
         });
 
-        // Create progress record
         state.courseProgress[courseId] = {
           courseId,
           totalLessons: progress.totalLessons,
@@ -308,7 +290,6 @@ const learningSlice = createSlice({
           lessons: {},
         };
 
-        // Map lesson progress
         lessons.forEach((lesson: { id: string; progress?: LessonProgress }) => {
           if (lesson.progress) {
             state.courseProgress[courseId].lessons[lesson.id] = {
@@ -334,7 +315,6 @@ const learningSlice = createSlice({
         state.error = action.error.message || "Failed to fetch course progress";
       });
 
-    // Update lesson progress
     builder
       .addCase(updateLessonProgress.pending, (state) => {
         state.loading = true;
@@ -352,7 +332,6 @@ const learningSlice = createSlice({
           payload: action.payload,
         });
 
-        // Use the courseId from the action payload
         if (courseId && state.courseProgress[courseId]) {
           if (!state.courseProgress[courseId].lessons[lessonId]) {
             state.courseProgress[courseId].lessons[lessonId] = {
@@ -394,7 +373,6 @@ const learningSlice = createSlice({
           action.error.message || "Failed to update lesson progress";
       });
 
-    // Purchase course (full access)
     builder
       .addCase(purchaseCourse.pending, (state) => {
         state.loading = true;
@@ -424,7 +402,6 @@ export const {
   resetLearningState,
 } = learningSlice.actions;
 
-// Selectors
 export const selectCurrentCourse = (state: RootState) =>
   state.learning.currentCourse;
 export const selectCurrentLesson = (state: RootState) =>

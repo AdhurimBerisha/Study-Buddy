@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link, NavLink } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Button from "../../components/Button";
 import {
@@ -14,7 +14,6 @@ import {
 import { useLearning } from "../../hooks/useLearning";
 import { useAuth } from "../../hooks/useAuth";
 import { selectCourseProgress } from "../../store/slice/learningSlice";
-import type { RootState } from "../../store/store";
 
 const CourseReader = () => {
   const { slug: courseId } = useParams<{ slug: string }>();
@@ -23,22 +22,19 @@ const CourseReader = () => {
 
   const {
     currentCourse,
-    currentLesson,
     loading,
     error,
     loadCourseWithLessons,
     loadCourseProgress,
-    updateLessonProgress,
+
     markLessonComplete,
     markLessonIncomplete,
     setCurrentLesson,
     navigateToMyLearning,
   } = useLearning();
 
-  // Get course progress directly from Redux for this specific course
   const courseProgress = useSelector(selectCourseProgress(courseId || ""));
 
-  // Debug logging
   console.log("🔍 CourseReader - courseId:", courseId);
   console.log("🔍 CourseReader - courseProgress:", courseProgress);
   console.log("🔍 CourseReader - currentCourse:", currentCourse);
@@ -84,7 +80,6 @@ const CourseReader = () => {
         await markLessonIncomplete(courseId!, lessonId);
       }
 
-      // Refresh the course progress to get updated data
       await loadCourseProgress(courseId!);
     } catch (error) {
       console.error("Failed to update lesson progress:", error);
@@ -145,7 +140,7 @@ const CourseReader = () => {
   const selectedLesson = currentCourse?.lessons.find(
     (l) => l.id === selectedLessonId
   );
-  const isEnrolled = true; // Since we removed enrollment system, all users have access
+  const isEnrolled = true;
   const completionPercentage = courseProgress?.completionPercentage || 0;
   const isCompleted = completionPercentage === 100;
 

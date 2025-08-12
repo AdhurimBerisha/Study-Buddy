@@ -22,10 +22,7 @@ export interface CourseCreationAttributes
     "id" | "thumbnail" | "totalLessons" | "createdAt" | "updatedAt"
   > {}
 
-export class Course extends Model<CourseAttributes, CourseCreationAttributes> {
-  // Sequelize will automatically create getters/setters for all attributes
-  // The interface is just for type checking, not implementation
-}
+export class Course extends Model<CourseAttributes, CourseCreationAttributes> {}
 
 Course.init(
   {

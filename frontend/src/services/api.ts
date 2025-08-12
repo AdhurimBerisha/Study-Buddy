@@ -87,7 +87,7 @@ export const courseAPI = {
   enrollInCourse: (courseId: string) => api.post(`/courses/${courseId}/enroll`),
 
   purchaseCourse: (courseId: string) =>
-    api.post(`/courses/${courseId}/purchase`), // New purchase method
+    api.post(`/courses/${courseId}/purchase`),
 
   unenrollFromCourse: (courseId: string) =>
     api.delete(`/courses/${courseId}/enroll`),

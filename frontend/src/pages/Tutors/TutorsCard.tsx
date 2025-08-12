@@ -25,8 +25,6 @@ export default function TutorCard({
   headline,
   description,
   speaks,
-  hourlyRate: _hourlyRate,
-  trialRate: _trialRate,
 }: TutorCardProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-8 py-8 border-b border-gray-200 w-full max-w-4xl">

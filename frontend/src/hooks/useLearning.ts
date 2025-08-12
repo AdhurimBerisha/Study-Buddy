@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import type { AppDispatch, RootState } from "../store/store";
+import type { AppDispatch } from "../store/store";
 import {
   fetchCourseWithLessons,
   fetchLesson,
@@ -10,14 +10,11 @@ import {
   purchaseCourse,
   setCurrentCourse,
   setCurrentLesson,
-  markLessonComplete,
-  markLessonIncomplete,
   clearError,
   resetLearningState,
   selectCurrentCourse,
   selectCurrentLesson,
   selectCourseProgress,
-  selectLessonProgress,
   selectLearningLoading,
   selectLearningError,
   selectWishlist,
@@ -26,13 +23,12 @@ import {
   toggleWishlistCourse,
 } from "../store/slice/learningSlice";
 import type { CourseWithLessons, Lesson } from "../store/slice/learningSlice";
-import { purchaseAPI, lessonAPI } from "../services/api";
+import { purchaseAPI } from "../services/api";
 
 export const useLearning = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  // Selectors - all hooks must be at the top level
   const currentCourse = useSelector(selectCurrentCourse);
   const currentLesson = useSelector(selectCurrentLesson);
   const loading = useSelector(selectLearningLoading);
@@ -40,17 +36,10 @@ export const useLearning = () => {
   const wishlist = useSelector(selectWishlist);
   const following = useSelector(selectFollowing);
 
-  // Get course progress for current course
   const courseProgress = useSelector(
     selectCourseProgress(currentCourse?.id || "")
   );
 
-  // Function to get course progress for a specific course
-  const getCourseProgress = useCallback((courseId: string) => {
-    return useSelector(selectCourseProgress(courseId));
-  }, []);
-
-  // Actions
   const loadCourseWithLessons = useCallback(
     async (courseId: string) => {
       try {
@@ -132,7 +121,6 @@ export const useLearning = () => {
       try {
         console.log("🎯 Marking lesson as complete:", { courseId, lessonId });
 
-        // Use the Redux async thunk which handles both API call and state update
         await dispatch(
           updateLessonProgress({ courseId, lessonId, isCompleted: true })
         ).unwrap();
@@ -151,7 +139,6 @@ export const useLearning = () => {
       try {
         console.log("🎯 Marking lesson as incomplete:", { courseId, lessonId });
 
-        // Use the Redux async thunk which handles both API call and state update
         await dispatch(
           updateLessonProgress({ courseId, lessonId, isCompleted: false })
         ).unwrap();
@@ -201,7 +188,6 @@ export const useLearning = () => {
     [dispatch]
   );
 
-  // Navigation helpers
   const navigateToCourse = useCallback(
     (courseId: string) => {
       navigate(`/learning/course/${courseId}`);
@@ -220,7 +206,6 @@ export const useLearning = () => {
     navigate("/learning");
   }, [navigate]);
 
-  // Utility functions
   const getCourseById = useCallback(
     (courseId: string) => {
       return currentCourse?.id === courseId ? currentCourse : null;
@@ -231,13 +216,6 @@ export const useLearning = () => {
   const getLessonById = useCallback(
     (lessonId: string) => {
       return currentCourse?.lessons.find((lesson) => lesson.id === lessonId);
-    },
-    [currentCourse]
-  );
-
-  const getLessonByOrder = useCallback(
-    (order: number) => {
-      return currentCourse?.lessons.find((lesson) => lesson.order === order);
     },
     [currentCourse]
   );
@@ -286,15 +264,9 @@ export const useLearning = () => {
     [courseProgress]
   );
 
-  // Auto-load enrolled courses on mount
-  useEffect(() => {
-    // No longer loading enrolled courses, as enrollment is removed.
-    // If specific course progress or lessons need to be loaded,
-    // they should be handled here or in the component using this hook.
-  }, []);
+  useEffect(() => {}, []);
 
   return {
-    // State
     currentCourse,
     currentLesson,
     loading,
@@ -302,7 +274,6 @@ export const useLearning = () => {
     wishlist,
     following,
 
-    // Actions
     loadCourseWithLessons,
     loadLesson,
     loadCourseProgress,
@@ -318,12 +289,10 @@ export const useLearning = () => {
     toggleFollowCourse: toggleFollowCourseAction,
     toggleWishlistCourse: toggleWishlistCourseAction,
 
-    // Navigation
     navigateToCourse,
     navigateToLesson,
     navigateToMyLearning,
 
-    // Utilities
     getCourseById,
     getLessonById,
     getNextLesson,

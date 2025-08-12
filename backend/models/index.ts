@@ -7,7 +7,6 @@ import Lesson from "./Lesson";
 import LessonProgress from "./LessonProgress";
 import Purchase from "./Purchase";
 
-// Course - User relationships
 Course.belongsTo(User, {
   foreignKey: "createdBy",
   as: "instructor",
@@ -18,7 +17,6 @@ User.hasMany(Course, {
   as: "createdCourses",
 });
 
-// Course - Lesson relationships
 Course.hasMany(Lesson, {
   foreignKey: "courseId",
   as: "lessons",
@@ -29,7 +27,6 @@ Lesson.belongsTo(Course, {
   as: "course",
 });
 
-// User - Lesson Progress relationships
 User.hasMany(LessonProgress, {
   foreignKey: "userId",
   as: "lessonProgress",
@@ -50,7 +47,6 @@ LessonProgress.belongsTo(Course, {
   as: "course",
 });
 
-// Purchase relationships
 User.hasMany(Purchase, {
   foreignKey: "userId",
   as: "purchases",
@@ -71,7 +67,6 @@ Purchase.belongsTo(Course, {
   as: "course",
 });
 
-// Group relationships
 User.hasMany(Group, {
   foreignKey: "createdBy",
   as: "createdGroups",
@@ -96,7 +91,27 @@ User.belongsToMany(Group, {
   as: "groups",
 });
 
-// Message relationships
+// Add direct associations for GroupMember
+GroupMember.belongsTo(Group, {
+  foreignKey: "groupId",
+  as: "group",
+});
+
+GroupMember.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user",
+});
+
+Group.hasMany(GroupMember, {
+  foreignKey: "groupId",
+  as: "groupMembers",
+});
+
+User.hasMany(GroupMember, {
+  foreignKey: "userId",
+  as: "groupMemberships",
+});
+
 User.hasMany(Message, {
   foreignKey: "senderId",
   as: "sentMessages",

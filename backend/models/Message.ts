@@ -21,10 +21,7 @@ export interface MessageCreationAttributes
 export class Message extends Model<
   MessageAttributes,
   MessageCreationAttributes
-> {
-  // Sequelize will automatically create getters/setters for all attributes
-  // The interface is just for type checking, not implementation
-}
+> {}
 
 Message.init(
   {

@@ -20,10 +20,7 @@ export interface GroupMemberCreationAttributes
 export class GroupMember extends Model<
   GroupMemberAttributes,
   GroupMemberCreationAttributes
-> {
-  // Sequelize will automatically create getters/setters for all attributes
-  // The interface is just for type checking, not implementation
-}
+> {}
 
 GroupMember.init(
   {

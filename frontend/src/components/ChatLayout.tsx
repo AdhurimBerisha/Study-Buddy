@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../store/store";
 import {
@@ -7,6 +7,7 @@ import {
   toggleChatWidget,
   setChatWidgetOpen,
 } from "../store/slice/chatSlice";
+import { fetchMyGroups } from "../store/slice/groupsSlice";
 import {
   FaChevronDown,
   FaChevronUp,
@@ -15,31 +16,50 @@ import {
   FaPaperPlane,
 } from "react-icons/fa";
 
-const RightSideChat = () => {
+const ChatLayout = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { selectedGroupId, messagesByGroupId, isChatWidgetOpen } = useSelector(
     (state: RootState) => state.chat
   );
-  const groups = useSelector((state: RootState) => state.groups.myGroups);
+  const { myGroups, loading } = useSelector((state: RootState) => state.groups);
   const [newMessage, setNewMessage] = useState("");
 
+  useEffect(() => {
+    dispatch(fetchMyGroups());
+  }, [dispatch]);
+
   const selectedGroup =
-    groups.find((g) => g.id === selectedGroupId) || groups[0];
+    myGroups.length > 0
+      ? selectedGroupId
+        ? myGroups.find((g) => Number(g.id) === selectedGroupId) || myGroups[0]
+        : myGroups[0]
+      : null;
+
   const messages = selectedGroup
-    ? messagesByGroupId[selectedGroup.id] || []
+    ? messagesByGroupId[Number(selectedGroup.id)] || []
     : [];
 
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedGroup) return;
     dispatch(
       sendMessage({
-        groupId: selectedGroup.id,
+        groupId: Number(selectedGroup.id),
         content: newMessage.trim(),
         sender: "You",
       })
     );
     setNewMessage("");
   };
+
+  if (myGroups.length === 0) {
+    return (
+      <div className="fixed bottom-0 right-2 sm:right-4 lg:right-6 z-50 w-64 sm:w-72 h-14 bg-white border border-gray-200 shadow-xl rounded-t-xl flex items-center justify-center">
+        <div className="text-center text-gray-500 text-xs sm:text-sm px-3">
+          {loading ? "Loading groups..." : "No groups available"}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -98,16 +118,16 @@ const RightSideChat = () => {
       {isChatWidgetOpen && (
         <div className="flex flex-1 overflow-hidden">
           <div className="w-1/3 sm:w-64 border-r border-gray-200 bg-gray-50 overflow-y-auto">
-            {groups.map((group) => (
+            {myGroups.map((group) => (
               <button
                 key={group.id}
                 className={`w-full px-3 sm:px-4 py-3 text-left cursor-pointer truncate border-l-4 transition-all duration-200
         ${
-          group.id === selectedGroup.id
+          selectedGroup && group.id === selectedGroup.id
             ? "bg-white border-blue-500 text-blue-700 font-semibold shadow-sm"
             : "border-transparent hover:bg-gray-100 hover:border-gray-300 text-gray-700"
         }`}
-                onClick={() => dispatch(selectGroup(group.id))}
+                onClick={() => dispatch(selectGroup(Number(group.id)))}
               >
                 <div className="flex items-center justify-between">
                   <span className="truncate">{group.name}</span>
@@ -187,4 +207,4 @@ const RightSideChat = () => {
   );
 };
 
-export default RightSideChat;
+export default ChatLayout;

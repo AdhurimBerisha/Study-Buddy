@@ -39,7 +39,6 @@ const userLogin = async (req: Request, res: Response) => {
     if (!user)
       return res.status(401).json({ message: "Invalid email or password" });
 
-    // Fix: Use consistent password access method like in signup
     const userPlain = user.get({ plain: true });
     const isValid = await bcrypt.compare(password, userPlain.password);
 

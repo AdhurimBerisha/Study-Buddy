@@ -34,7 +34,7 @@ const AllGroups = () => {
   const { allGroups, loading, error } = useSelector(
     (state: RootState) => state.groups
   );
-  const { token, user } = useSelector((state: RootState) => state.auth);
+  const { token } = useSelector((state: RootState) => state.auth);
   const isAuthenticated = !!token;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
