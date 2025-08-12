@@ -7,8 +7,8 @@ export interface LessonAttributes {
   title: string;
   content: string;
   order: number;
-  duration?: number; // in minutes
-  resources?: string; // JSON string for lesson resources
+  duration?: number;
+  resources?: string;
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
@@ -20,9 +20,7 @@ export interface LessonCreationAttributes
     "id" | "isActive" | "createdAt" | "updatedAt"
   > {}
 
-export class Lesson extends Model<LessonAttributes, LessonCreationAttributes> {
-  // Sequelize will automatically create getters/setters for all attributes
-}
+export class Lesson extends Model<LessonAttributes, LessonCreationAttributes> {}
 
 Lesson.init(
   {

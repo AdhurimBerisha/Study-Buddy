@@ -4,7 +4,6 @@ import { Purchase, Course, User, LessonProgress, Lesson } from "../models";
 import { handleError } from "../helpers/errorHelper";
 import { Op } from "sequelize";
 
-// Helper for authentication check
 const checkAuth = (req: AuthenticatedRequest, res: Response) => {
   if (!req.user?.id) {
     res.status(401).json({ message: "User not authenticated" });
@@ -13,7 +12,6 @@ const checkAuth = (req: AuthenticatedRequest, res: Response) => {
   return req.user.id;
 };
 
-// Create a new purchase record
 export const createPurchase = async (
   req: AuthenticatedRequest,
   res: Response
@@ -24,20 +22,17 @@ export const createPurchase = async (
 
     const { courseId, amount, paymentMethod, transactionId } = req.body;
 
-    // Validate required fields
     if (!courseId || !amount) {
       return res.status(400).json({
         message: "Course ID and amount are required",
       });
     }
 
-    // Check if course exists
     const course = await Course.findByPk(courseId);
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
 
-    // Check if user already purchased this course
     const existingPurchase = await Purchase.findOne({
       where: { userId, courseId, status: "completed" },
     });
@@ -48,7 +43,6 @@ export const createPurchase = async (
       });
     }
 
-    // Create purchase record
     const purchase = await Purchase.create({
       userId,
       courseId,
@@ -68,7 +62,6 @@ export const createPurchase = async (
   }
 };
 
-// Get user's purchase history
 export const getUserPurchases = async (
   req: AuthenticatedRequest,
   res: Response
@@ -88,7 +81,7 @@ export const getUserPurchases = async (
             "title",
             "description",
             "language",
-            "thumbnail", // Fix: use thumbnail instead of imageUrl
+            "thumbnail",
             "duration",
           ],
         },
@@ -105,7 +98,6 @@ export const getUserPurchases = async (
   }
 };
 
-// Get user's learning dashboard data (purchased courses with progress)
 export const getLearningDashboard = async (
   req: AuthenticatedRequest,
   res: Response
@@ -116,7 +108,6 @@ export const getLearningDashboard = async (
 
     console.log("🔍 Getting learning dashboard for user:", userId);
 
-    // Get all completed purchases
     const purchases = await Purchase.findAll({
       where: { userId, status: "completed" },
       include: [
@@ -132,7 +123,6 @@ export const getLearningDashboard = async (
     console.log("📦 Found purchases:", purchases.length);
     console.log("📦 Purchase details:", JSON.stringify(purchases, null, 2));
 
-    // Get progress for each purchased course
     const coursesWithProgress = await Promise.all(
       purchases.map(async (purchase) => {
         const course = (purchase as any).course;
@@ -140,12 +130,10 @@ export const getLearningDashboard = async (
 
         console.log("📚 Processing course:", courseId, course.title);
 
-        // Get total lessons for this course
         const totalLessons = await Lesson.count({
           where: { courseId, isActive: true },
         });
 
-        // Get completed lessons
         const completedLessons = await LessonProgress.count({
           where: {
             userId,
@@ -154,13 +142,11 @@ export const getLearningDashboard = async (
           },
         });
 
-        // Calculate progress percentage
         const progressPercentage =
           totalLessons > 0
             ? Math.round((completedLessons / totalLessons) * 100)
             : 0;
 
-        // Get last accessed lesson
         const lastProgress = await LessonProgress.findOne({
           where: { userId, courseId },
           order: [["lastAccessedAt", "DESC"]],
@@ -206,7 +192,6 @@ export const getLearningDashboard = async (
   }
 };
 
-// Check if user has purchased a specific course
 export const checkCoursePurchase = async (
   req: AuthenticatedRequest,
   res: Response
@@ -233,7 +218,6 @@ export const checkCoursePurchase = async (
   }
 };
 
-// Helper function to format time ago
 function formatTimeAgo(date: Date): string {
   const now = new Date();
   const diffInMs = now.getTime() - new Date(date).getTime();

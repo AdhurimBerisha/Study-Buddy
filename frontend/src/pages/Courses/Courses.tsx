@@ -6,7 +6,7 @@ import Button from "../../components/Button";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store/store";
-import { fetchCourses, setFilters } from "../../store/slice/coursesSlice";
+import { fetchCourses } from "../../store/slice/coursesSlice";
 import FilterBar from "../../components/FilterBar";
 import bannerBg from "../../assets/bannerBg.webp";
 
@@ -24,14 +24,6 @@ const Courses = () => {
   useEffect(() => {
     dispatch(fetchCourses(filters));
   }, [dispatch, filters]);
-
-  const handleFilterChange = (newFilters: {
-    category?: string;
-    level?: string;
-    search?: string;
-  }) => {
-    dispatch(setFilters(newFilters));
-  };
 
   const filtered = useMemo(() => {
     let list = [...courses];

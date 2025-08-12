@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import Button from "../../components/Button";
 import { useLearning } from "../../hooks/useLearning";
@@ -39,7 +39,7 @@ const Checkout = () => {
         ? state.tutor.trialRate
         : state.tutor.hourlyRate;
       const label = state.booking.isTrial ? "Trial Lesson" : "1 Hour Lesson";
-      // Ensure amount is a valid number
+
       const numericAmount = Number(amt) || 0;
       return {
         title: `${label} with ${state.tutor.name}`,
@@ -62,15 +62,13 @@ const Checkout = () => {
     alert("Payment successful (demo)");
     if (state && state.type === "course") {
       try {
-        // Purchase the course for full access using the course ID
         await purchaseCourse(state.course.id);
 
-        // Navigate to the course learning page
         navigate(`/learning/course/${state.course.id}`, { replace: true });
         return;
       } catch (error) {
         console.error("Failed to purchase course:", error);
-        // Still navigate to learning page even if purchase fails
+
         navigate("/learning", { replace: true });
         return;
       }
@@ -91,7 +89,6 @@ const Checkout = () => {
     );
   }
 
-  // Check if user is authenticated for course purchases
   if (state.type === "course" && !isAuthenticated) {
     return (
       <div className="max-w-3xl mx-auto px-6 py-16">

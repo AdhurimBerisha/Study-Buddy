@@ -8,7 +8,7 @@ export interface LessonProgressAttributes {
   courseId: string;
   isCompleted: boolean;
   completedAt?: Date;
-  timeSpent?: number; // in seconds
+  timeSpent?: number;
   lastAccessedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
@@ -23,9 +23,7 @@ export interface LessonProgressCreationAttributes
 export class LessonProgress extends Model<
   LessonProgressAttributes,
   LessonProgressCreationAttributes
-> {
-  // Sequelize will automatically create getters/setters for all attributes
-}
+> {}
 
 LessonProgress.init(
   {

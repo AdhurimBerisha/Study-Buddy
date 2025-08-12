@@ -309,31 +309,29 @@ export const getMyGroups = async (req: AuthenticatedRequest, res: Response) => {
               attributes: ["id", "firstName", "lastName", "avatar"],
               required: false,
             },
+            {
+              model: GroupMember,
+              as: "groupMembers",
+              attributes: ["id"],
+            },
           ],
         },
       ],
       order: [["joinedAt", "DESC"]],
     });
 
-    const myGroups = await Promise.all(
-      memberships.map(async (membership) => {
-        const membershipData = membership.toJSON();
-        const groupData = (membershipData as any).group;
+    const myGroups = memberships.map((membership) => {
+      const membershipData = membership.toJSON();
+      const groupData = (membershipData as any).group;
 
-        const memberCount = await GroupMember.count({
-          where: { groupId: groupData.id },
-        });
-
-        const result = {
-          ...groupData,
-          memberCount,
-          userRole: membershipData.role,
-          joinedAt: membershipData.joinedAt,
-          createdBy: groupData.creator || null,
-        };
-        return result;
-      })
-    );
+      return {
+        ...groupData,
+        userRole: membershipData.role,
+        joinedAt: membershipData.joinedAt,
+        createdBy: groupData.creator || null,
+        memberCount: groupData.groupMembers?.length || 0,
+      };
+    });
 
     return res.json(myGroups);
   } catch (error) {

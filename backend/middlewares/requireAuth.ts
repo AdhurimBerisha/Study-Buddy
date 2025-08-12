@@ -2,7 +2,6 @@ import type { Request, Response, NextFunction } from "express";
 import sequelize from "../config/db";
 import { verifyToken } from "../utils/jwt";
 
-// Extend Express Request interface to include user property
 export interface AuthenticatedRequest extends Request {
   user?: {
     id: string;

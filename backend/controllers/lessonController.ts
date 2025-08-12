@@ -4,7 +4,6 @@ import { Lesson, Course, LessonProgress } from "../models";
 import { handleError } from "../helpers/errorHelper";
 import { Op } from "sequelize";
 
-// Helper for authentication check
 const checkAuth = (req: AuthenticatedRequest, res: Response) => {
   if (!req.user?.id) {
     res.status(401).json({ message: "User not authenticated" });
@@ -13,7 +12,6 @@ const checkAuth = (req: AuthenticatedRequest, res: Response) => {
   return req.user.id;
 };
 
-// Helper for course ownership check
 const checkCourseOwnership = async (courseId: string, userId: string) => {
   const course = await Course.findByPk(courseId);
   if (!course) throw new Error("Course not found");
@@ -25,7 +23,6 @@ const checkCourseOwnership = async (courseId: string, userId: string) => {
   return course;
 };
 
-// Get all lessons for a course
 export const getCourseLessons = async (
   req: AuthenticatedRequest,
   res: Response
@@ -34,13 +31,11 @@ export const getCourseLessons = async (
     const { courseId } = req.params;
     const userId = req.user?.id;
 
-    // Check if course exists
     const course = await Course.findByPk(courseId);
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
 
-    // Get lessons ordered by order field
     const lessons = await Lesson.findAll({
       where: {
         courseId,
@@ -59,7 +54,6 @@ export const getCourseLessons = async (
       ],
     });
 
-    // If user is authenticated, get their progress
     let userProgress: Record<string, any> = {};
     if (userId) {
       const progress = await LessonProgress.findAll({
@@ -83,7 +77,6 @@ export const getCourseLessons = async (
       }, {} as Record<string, any>);
     }
 
-    // Add progress info to lessons
     const lessonsWithProgress = lessons.map((lesson) => {
       const lessonData = lesson.toJSON();
       return {
@@ -111,7 +104,6 @@ export const getCourseLessons = async (
   }
 };
 
-// Get a specific lesson
 export const getLesson = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { lessonId } = req.params;
@@ -135,7 +127,6 @@ export const getLesson = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(404).json({ message: "Lesson not found" });
     }
 
-    // Get user progress for this lesson
     let userProgress = null;
     if (userId) {
       userProgress = await LessonProgress.findOne({
@@ -146,7 +137,6 @@ export const getLesson = async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
-    // Update last accessed time if user is authenticated
     if (userId && userProgress) {
       await userProgress.update({
         lastAccessedAt: new Date(),
@@ -166,7 +156,6 @@ export const getLesson = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Create a new lesson (instructor only)
 export const createLesson = async (
   req: AuthenticatedRequest,
   res: Response
@@ -178,17 +167,14 @@ export const createLesson = async (
     const { courseId } = req.params;
     const { title, content, order, duration, resources } = req.body;
 
-    // Validate required fields
     if (!title || !content || order === undefined) {
       return res.status(400).json({
         message: "Title, content, and order are required",
       });
     }
 
-    // Check if user owns the course
     await checkCourseOwnership(courseId, userId);
 
-    // Check if order is already taken
     const existingLesson = await Lesson.findOne({
       where: { courseId, order },
     });
@@ -217,7 +203,6 @@ export const createLesson = async (
   }
 };
 
-// Update a lesson (instructor only)
 export const updateLesson = async (
   req: AuthenticatedRequest,
   res: Response
@@ -243,7 +228,6 @@ export const updateLesson = async (
       return res.status(404).json({ message: "Lesson not found" });
     }
 
-    // Check if user owns the course
     const courseData = (lesson as any).course;
     if (courseData.createdBy !== userId) {
       return res.status(403).json({
@@ -251,7 +235,6 @@ export const updateLesson = async (
       });
     }
 
-    // Handle resources field
     if (updateData.resources) {
       updateData.resources = JSON.stringify(updateData.resources);
     }
@@ -267,7 +250,6 @@ export const updateLesson = async (
   }
 };
 
-// Delete a lesson (instructor only)
 export const deleteLesson = async (
   req: AuthenticatedRequest,
   res: Response
@@ -292,7 +274,6 @@ export const deleteLesson = async (
       return res.status(404).json({ message: "Lesson not found" });
     }
 
-    // Check if user owns the course
     const courseData = (lesson as any).course;
     if (courseData.createdBy !== userId) {
       return res.status(403).json({
@@ -300,7 +281,6 @@ export const deleteLesson = async (
       });
     }
 
-    // Soft delete by setting isActive to false
     await lesson.update({ isActive: false });
 
     res.json({
@@ -312,7 +292,6 @@ export const deleteLesson = async (
   }
 };
 
-// Update lesson progress
 export const updateLessonProgress = async (
   req: AuthenticatedRequest,
   res: Response
@@ -330,13 +309,11 @@ export const updateLessonProgress = async (
     const { lessonId } = req.params;
     const { isCompleted, timeSpent } = req.body;
 
-    // Validate lesson exists
     const lesson = await Lesson.findByPk(lessonId);
     if (!lesson) {
       return res.status(404).json({ message: "Lesson not found" });
     }
 
-    // Find or create progress record
     const [progress, created] = await LessonProgress.findOrCreate({
       where: { userId, lessonId },
       defaults: {
@@ -347,7 +324,6 @@ export const updateLessonProgress = async (
       },
     });
 
-    // Update progress
     const updateData: any = {};
     if (isCompleted !== undefined) {
       updateData.isCompleted = isCompleted;
@@ -381,7 +357,6 @@ export const updateLessonProgress = async (
   }
 };
 
-// Get user's course progress
 export const getCourseProgress = async (
   req: AuthenticatedRequest,
   res: Response
@@ -392,13 +367,11 @@ export const getCourseProgress = async (
 
     const { courseId } = req.params;
 
-    // Check if course exists
     const course = await Course.findByPk(courseId);
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
 
-    // Get all lessons for the course
     const lessons = await Lesson.findAll({
       where: {
         courseId,
@@ -408,13 +381,11 @@ export const getCourseProgress = async (
       attributes: ["id", "title", "order"],
     });
 
-    // Get user's progress for all lessons
     const progress = await LessonProgress.findAll({
       where: { userId, courseId },
       attributes: ["lessonId", "isCompleted", "completedAt", "timeSpent"],
     });
 
-    // Calculate completion statistics
     const totalLessons = lessons.length;
     const completedLessons = progress.filter((p) =>
       p.getDataValue("isCompleted")
@@ -424,13 +395,11 @@ export const getCourseProgress = async (
         ? Math.round((completedLessons / totalLessons) * 100)
         : 0;
 
-    // Create progress map
     const progressMap = progress.reduce((acc, p) => {
       acc[p.getDataValue("lessonId")] = p.toJSON();
       return acc;
     }, {} as Record<string, any>);
 
-    // Add progress to lessons
     const lessonsWithProgress = lessons.map((lesson) => {
       const lessonData = lesson.toJSON();
       return {

@@ -19,10 +19,7 @@ export interface UserCreationAttributes
     "id" | "phone" | "avatar" | "createdAt" | "updatedAt"
   > {}
 
-export class User extends Model<UserAttributes, UserCreationAttributes> {
-  // Sequelize will automatically create getters/setters for all attributes
-  // The interface is just for type checking, not implementation
-}
+export class User extends Model<UserAttributes, UserCreationAttributes> {}
 
 User.init(
   {

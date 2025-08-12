@@ -39,7 +39,6 @@ const App = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [location.pathname]);
 
-  // Auto-fetch user profile if token exists but no user data
   useEffect(() => {
     if (token && !user) {
       dispatch(fetchProfile());
