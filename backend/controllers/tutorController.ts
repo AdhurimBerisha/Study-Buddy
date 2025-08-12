@@ -13,7 +13,6 @@ export const createTutor = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    // Check if user already has a tutor profile
     const existingTutor = await Tutor.findOne({ where: { userId } });
     if (existingTutor) {
       return res
@@ -140,7 +139,6 @@ export const updateTutor = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(404).json({ message: "Tutor not found" });
     }
 
-    // Only the tutor can update their own profile
     if ((tutor as any).userId !== userId) {
       return res.status(403).json({ message: "Forbidden" });
     }
@@ -184,7 +182,6 @@ export const deleteTutor = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(404).json({ message: "Tutor not found" });
     }
 
-    // Only the tutor can update their own profile
     if ((tutor as any).userId !== userId) {
       return res.status(403).json({ message: "Forbidden" });
     }

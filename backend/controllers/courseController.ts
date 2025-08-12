@@ -123,7 +123,6 @@ export const createCourse = async (
       });
     }
 
-    // Check if the user is a tutor
     const tutor = await Tutor.findOne({ where: { userId } });
     if (!tutor) {
       return res.status(403).json({
@@ -131,7 +130,6 @@ export const createCourse = async (
       });
     }
 
-    // Verify that the tutorId belongs to the authenticated user
     if ((tutor as any).id !== tutorId) {
       return res.status(403).json({
         message: "You can only create courses for your own tutor profile",
