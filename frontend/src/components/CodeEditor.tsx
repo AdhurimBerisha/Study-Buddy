@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   SandpackCodeEditor,
   SandpackPreview,
@@ -7,7 +7,6 @@ import {
   SandpackFileExplorer,
   SandpackConsole,
 } from "@codesandbox/sandpack-react";
-import Button from "./Button";
 
 interface CodeEditorProps {
   files?: Record<string, string>;
@@ -126,28 +125,23 @@ const CodeEditor = ({
   return (
     <div className={`w-full ${className}`}>
       <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
-        {/* Enhanced Header */}
         <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 px-6 py-4 flex items-center justify-between relative overflow-hidden">
-          {/* Background Pattern */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600"></div>
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-300 rounded-full -translate-y-16 translate-x-16 opacity-20"></div>
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-400 rounded-full translate-y-12 -translate-x-12 opacity-30"></div>
           </div>
 
-          {/* Window Controls */}
           <div className="flex items-center gap-2 relative z-10">
             <div className="w-3 h-3 bg-red-400 rounded-full shadow-inner"></div>
             <div className="w-3 h-3 bg-yellow-400 rounded-full shadow-inner"></div>
             <div className="w-3 h-3 bg-green-400 rounded-full shadow-inner"></div>
           </div>
 
-          {/* Title */}
           <h3 className="text-white font-bold text-lg font-heading relative z-10 flex items-center gap-2">
             Code Editor
           </h3>
 
-          {/* Template Selector */}
           <div className="flex items-center gap-3 relative z-10">
             <div className="flex gap-2">
               {(
@@ -224,7 +218,6 @@ const CodeEditor = ({
           </div>
         </div>
 
-        {/* Editor Container */}
         <div style={{ height }} data-editor-container>
           <SandpackProvider
             template={selectedTemplate}
@@ -267,7 +260,6 @@ const CodeEditor = ({
                 >
                   <SandpackCodeEditor className="font-mono border-none w-full" />
 
-                  {/* Editor Status Bar */}
                   <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-t border-blue-100 flex items-center justify-between px-3 text-xs text-blue-700">
                     <span className="font-medium">JavaScript</span>
                     <div className="flex items-center gap-4">
@@ -329,7 +321,6 @@ const CodeEditor = ({
                     </h4>
                     <button
                       onClick={() => {
-                        // Try multiple selectors to find the console content
                         const selectors = [
                           "[data-sandpack-console]",
                           ".sp-console",
@@ -351,7 +342,6 @@ const CodeEditor = ({
                           });
                         }
 
-                        // Also try to clear any console-like elements
                         const allElements = document.querySelectorAll("*");
                         allElements.forEach((el) => {
                           if (
@@ -390,7 +380,6 @@ const CodeEditor = ({
           </SandpackProvider>
         </div>
 
-        {/* Bottom Status Bar */}
         <div className="bg-gradient-to-r from-gray-50 to-blue-50 border-t border-gray-200 px-4 py-2 flex items-center justify-between text-xs text-gray-600">
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1">
