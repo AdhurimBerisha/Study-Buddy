@@ -106,8 +106,6 @@ export const getLearningDashboard = async (
     const userId = checkAuth(req, res);
     if (!userId) return;
 
-    console.log("🔍 Getting learning dashboard for user:", userId);
-
     const purchases = await Purchase.findAll({
       where: { userId, status: "completed" },
       include: [
@@ -120,15 +118,10 @@ export const getLearningDashboard = async (
       order: [["purchaseDate", "DESC"]],
     });
 
-    console.log("📦 Found purchases:", purchases.length);
-    console.log("📦 Purchase details:", JSON.stringify(purchases, null, 2));
-
     const coursesWithProgress = await Promise.all(
       purchases.map(async (purchase) => {
         const course = (purchase as any).course;
         const courseId = course.id;
-
-        console.log("📚 Processing course:", courseId, course.title);
 
         const totalLessons = await Lesson.count({
           where: { courseId, isActive: true },
@@ -168,19 +161,8 @@ export const getLearningDashboard = async (
           purchaseDate: purchase.purchaseDate,
         };
 
-        console.log("✅ Final course data:", courseData);
         return courseData;
       })
-    );
-
-    console.log(
-      "🎯 Sending response with",
-      coursesWithProgress.length,
-      "courses"
-    );
-    console.log(
-      "🎯 Response data:",
-      JSON.stringify(coursesWithProgress, null, 2)
     );
 
     res.json({
