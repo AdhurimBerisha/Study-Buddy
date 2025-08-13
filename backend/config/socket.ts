@@ -45,8 +45,6 @@ class SocketManager {
 
     this.setupMiddleware();
     this.setupEventHandlers();
-
-    console.log("✅ Socket.io server initialized");
   }
 
   private setupMiddleware() {
@@ -58,37 +56,23 @@ class SocketManager {
           socket.handshake.auth.token || socket.handshake.headers.authorization;
 
         if (!token) {
-          console.log("❌ No token provided in socket connection");
           return next(new Error("Authentication error"));
         }
 
         const cleanToken = token.replace("Bearer ", "");
         const decoded = jwt.verify(cleanToken, process.env.JWT_SECRET!) as any;
 
-        console.log("🔍 Decoded JWT token:", decoded);
-
         if (!decoded.userId) {
-          console.log("❌ JWT token missing userId:", decoded);
           return next(new Error("Invalid token structure"));
         }
 
         const user = await UserModel.findByPk(decoded.userId);
         if (!user) {
-          console.log(
-            "❌ User not found in database for userId:",
-            decoded.userId
-          );
           return next(new Error("User not found"));
         }
 
         socket.user = user;
 
-        const userData = user.toJSON();
-        console.log(
-          "✅ Socket authenticated for user:",
-          userData.firstName,
-          userData.lastName
-        );
         next();
       } catch (error) {
         console.error("❌ Socket authentication error:", error);
@@ -101,12 +85,6 @@ class SocketManager {
     if (!this.io) return;
 
     this.io.on("connection", (socket: AuthenticatedSocket) => {
-      console.log(
-        `🔌 User connected: ${
-          socket.user ? socket.user.toJSON().firstName : "Unknown"
-        } ${socket.user ? socket.user.toJSON().lastName : "User"}`
-      );
-
       if (socket.user) {
         const userData = socket.user.toJSON();
         this.userSockets.set(userData.id, socket.id);
@@ -119,9 +97,6 @@ class SocketManager {
           this.groupRooms.set(groupId, new Set());
         }
         this.groupRooms.get(groupId)!.add(socket.id);
-
-        const userData = socket.user?.toJSON();
-        console.log(`👥 User ${userData?.firstName} joined group ${groupId}`);
       });
 
       socket.on("leave_group", (groupId: string) => {
@@ -134,9 +109,6 @@ class SocketManager {
             this.groupRooms.delete(groupId);
           }
         }
-
-        const userData = socket.user?.toJSON();
-        console.log(`👋 User ${userData?.firstName} left group ${groupId}`);
       });
 
       socket.on(
@@ -170,12 +142,8 @@ class SocketManager {
             };
 
             this.io!.to(`group_${data.groupId}`).emit("new_message", message);
-
-            console.log(
-              `💬 Message saved and sent in group ${data.groupId} by ${userData.firstName}`
-            );
           } catch (error) {
-            console.error("❌ Error saving message:", error);
+            // Error handling
           }
         }
       );
@@ -194,11 +162,6 @@ class SocketManager {
             }
           });
         }
-
-        const userData = socket.user?.toJSON();
-        console.log(
-          `🔌 User disconnected: ${userData?.firstName} ${userData?.lastName}`
-        );
       });
     });
   }
