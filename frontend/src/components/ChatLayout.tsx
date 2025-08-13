@@ -60,12 +60,7 @@ const ChatLayout = () => {
       try {
         const response = await groupAPI.getGroupMessages(groupId);
 
-        console.log("🔍 Current user (ChatLayout):", currentUser);
-        console.log("📨 Messages from API (ChatLayout):", response.data);
-
         const messages = response.data.map((msg: ApiMessage) => {
-          console.log("🔍 Processing message (ChatLayout):", msg);
-
           const isCurrentUser =
             currentUser &&
             ((msg.senderId && msg.senderId === currentUser.id) ||
@@ -78,13 +73,6 @@ const ChatLayout = () => {
                 msg.sender
                   .toLowerCase()
                   .includes(currentUser.lastName.toLowerCase())));
-
-          console.log(
-            "🔍 Is current user (ChatLayout):",
-            isCurrentUser,
-            "for message:",
-            msg.sender
-          );
 
           return {
             id: String(msg.id),
@@ -133,12 +121,6 @@ const ChatLayout = () => {
   const messages = useMemo(() => {
     return selectedGroup ? messagesByGroupId[selectedGroup.id] || [] : [];
   }, [selectedGroup, messagesByGroupId]);
-
-  useEffect(() => {
-    console.log("📨 Messages state changed (ChatLayout):", messages);
-    console.log("📨 Messages by group ID (ChatLayout):", messagesByGroupId);
-    console.log("📨 Selected group ID (ChatLayout):", selectedGroupId);
-  }, [messages, messagesByGroupId, selectedGroupId]);
 
   useEffect(() => {
     if (messages.length > 0) {
