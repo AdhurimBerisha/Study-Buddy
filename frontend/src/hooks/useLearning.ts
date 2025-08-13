@@ -119,8 +119,6 @@ export const useLearning = () => {
   const markLessonCompleteAction = useCallback(
     async (courseId: string, lessonId: string) => {
       try {
-        console.log("🎯 Marking lesson as complete:", { courseId, lessonId });
-
         await dispatch(
           updateLessonProgress({ courseId, lessonId, isCompleted: true })
         ).unwrap();
@@ -137,8 +135,6 @@ export const useLearning = () => {
   const markLessonIncompleteAction = useCallback(
     async (courseId: string, lessonId: string) => {
       try {
-        console.log("🎯 Marking lesson as incomplete:", { courseId, lessonId });
-
         await dispatch(
           updateLessonProgress({ courseId, lessonId, isCompleted: false })
         ).unwrap();

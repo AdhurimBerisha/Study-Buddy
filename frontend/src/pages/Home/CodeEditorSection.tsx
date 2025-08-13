@@ -41,7 +41,6 @@ const CodeEditorSection = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-12">
-          {/* Left side - Features */}
           <div className="space-y-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {features.map((feature, index) => (
@@ -72,10 +71,8 @@ const CodeEditorSection = () => {
             </div>
           </div>
 
-          {/* Right side - Code Preview */}
           <div className="relative">
             <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
-              {/* Editor Header */}
               <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-4 py-3 flex items-center gap-2">
                 <div className="flex gap-2">
                   <div className="w-3 h-3 bg-red-400 rounded-full"></div>
@@ -87,7 +84,6 @@ const CodeEditorSection = () => {
                 </span>
               </div>
 
-              {/* Code Content */}
               <div className="p-6 bg-gray-900 text-gray-100 font-mono text-sm">
                 <div className="space-y-2">
                   <div className="text-blue-400">
@@ -98,22 +94,18 @@ const CodeEditorSection = () => {
                   <div className="ml-8 text-orange-400">"Hello, World!"</div>
                   <div className="ml-4 text-green-400">);</div>
                   <div>{"}"}</div>
-                  <div className="text-gray-500">
-                    // Try changing this message!
-                  </div>
+                  <div className="text-gray-500"></div>
                   <div className="text-blue-400">greet</div>
                   <div className="text-gray-500">();</div>
                 </div>
               </div>
             </div>
 
-            {/* Floating Elements */}
             <div className="absolute -top-4 -right-4 w-8 h-8 bg-green-400 rounded-full animate-pulse"></div>
             <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-blue-400 rounded-full animate-pulse delay-1000"></div>
           </div>
         </div>
 
-        {/* Bottom CTA */}
         <div className="text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
             <FaCode className="w-4 h-4" />

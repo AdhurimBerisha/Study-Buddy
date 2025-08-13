@@ -276,12 +276,6 @@ const learningSlice = createSlice({
         const { courseId } = action.payload;
         const { lessons, progress } = action.payload.data;
 
-        console.log("🔄 Redux: fetchCourseProgress.fulfilled", {
-          courseId,
-          lessons: lessons.length,
-          progress,
-        });
-
         state.courseProgress[courseId] = {
           courseId,
           totalLessons: progress.totalLessons,
@@ -302,12 +296,6 @@ const learningSlice = createSlice({
           }
         });
 
-        console.log("✅ Redux: Course progress initialized", {
-          courseId,
-          progressRecord: state.courseProgress[courseId],
-          allCourseProgress: Object.keys(state.courseProgress),
-        });
-
         state.error = null;
       })
       .addCase(fetchCourseProgress.rejected, (state, action) => {
@@ -324,13 +312,6 @@ const learningSlice = createSlice({
         state.loading = false;
         const { courseId, lessonId, isCompleted, timeSpent, lastAccessedAt } =
           action.payload;
-
-        console.log("🔄 Redux: updateLessonProgress.fulfilled", {
-          courseId,
-          lessonId,
-          isCompleted,
-          payload: action.payload,
-        });
 
         if (courseId && state.courseProgress[courseId]) {
           if (!state.courseProgress[courseId].lessons[lessonId]) {
@@ -351,13 +332,6 @@ const learningSlice = createSlice({
           } else {
             lessonProgress.completedAt = undefined;
           }
-
-          console.log("✅ Redux: State updated", {
-            courseId,
-            lessonId,
-            lessonProgress: state.courseProgress[courseId].lessons[lessonId],
-            allProgress: state.courseProgress[courseId],
-          });
         } else {
           console.log(
             "❌ Redux: No course progress found for courseId:",

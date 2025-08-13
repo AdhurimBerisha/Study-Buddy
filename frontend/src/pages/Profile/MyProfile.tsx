@@ -162,7 +162,6 @@ const MyProfile = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 sm:py-12 lg:py-16">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header Section */}
         <div className="text-center mb-8 sm:mb-12">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-900 bg-clip-text text-transparent mb-4">
             Profile Settings
@@ -172,9 +171,7 @@ const MyProfile = () => {
           </p>
         </div>
 
-        {/* Profile Card */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-          {/* Avatar Section */}
           <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-8 text-center relative">
             <div className="relative inline-block">
               {avatarPreview ? (
@@ -189,7 +186,6 @@ const MyProfile = () => {
                 </div>
               )}
 
-              {/* Camera Icon Overlay */}
               <label
                 htmlFor="avatar-upload"
                 className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg cursor-pointer hover:bg-gray-50 transition-colors duration-200 group"
@@ -205,7 +201,6 @@ const MyProfile = () => {
               />
             </div>
 
-            {/* Avatar Upload Error */}
             {avatarError && (
               <div className="mt-3 bg-red-50 border border-red-200 text-red-600 px-3 py-2 rounded-md text-sm">
                 {avatarError}
@@ -220,7 +215,6 @@ const MyProfile = () => {
             </div>
           </div>
 
-          {/* Form Section */}
           <div className="p-6 sm:p-8">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg sm:text-xl font-semibold text-gray-900">

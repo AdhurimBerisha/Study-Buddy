@@ -61,17 +61,7 @@ const ChatPage = () => {
       try {
         const response = await groupAPI.getGroupMessages(groupId);
 
-        console.log("🔍 Current user:", currentUser);
-        console.log("🔍 Current user ID:", currentUser?.id);
-        console.log("🔍 Current user firstName:", currentUser?.firstName);
-        console.log("🔍 Current user lastName:", currentUser?.lastName);
-        console.log("📨 Messages from API:", response.data);
-
         const messages = response.data.map((msg: ApiMessage) => {
-          console.log("🔍 Processing message:", msg);
-          console.log("🔍 Message senderId:", msg.senderId);
-          console.log("🔍 Message sender name:", msg.sender);
-
           const isCurrentUser =
             currentUser &&
             ((msg.senderId && msg.senderId === currentUser.id) ||
@@ -84,26 +74,6 @@ const ChatPage = () => {
                 msg.sender
                   .toLowerCase()
                   .includes(currentUser.lastName.toLowerCase())));
-
-          console.log(
-            "🔍 Is current user:",
-            isCurrentUser,
-            "for message:",
-            msg.sender
-          );
-          console.log("🔍 ID comparison:", msg.senderId === currentUser?.id);
-          console.log(
-            "🔍 Name comparison:",
-            msg.sender &&
-              currentUser?.firstName &&
-              currentUser?.lastName &&
-              msg.sender
-                .toLowerCase()
-                .includes(currentUser.firstName.toLowerCase()) &&
-              msg.sender
-                .toLowerCase()
-                .includes(currentUser.lastName.toLowerCase())
-          );
 
           return {
             id: String(msg.id),
@@ -129,7 +99,6 @@ const ChatPage = () => {
 
       socketService.joinGroup(selectedGroupId);
 
-      console.log("🔄 Fetching messages for group:", selectedGroupId);
       fetchGroupMessages(selectedGroupId);
     }
   }, [selectedGroupId, fetchGroupMessages]);
@@ -152,12 +121,6 @@ const ChatPage = () => {
   const messages = useMemo(() => {
     return selectedGroup ? messagesByGroupId[selectedGroup.id] || [] : [];
   }, [selectedGroup, messagesByGroupId]);
-
-  useEffect(() => {
-    console.log("📨 Messages state changed:", messages);
-    console.log("📨 Messages by group ID:", messagesByGroupId);
-    console.log("📨 Selected group ID:", selectedGroupId);
-  }, [messages, messagesByGroupId, selectedGroupId]);
 
   useEffect(() => {
     if (messages.length > 0) {

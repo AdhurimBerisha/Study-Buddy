@@ -63,9 +63,7 @@ const CourseDetails = () => {
 
           try {
             const response = await purchaseAPI.checkCoursePurchase(courseId);
-            console.log("🔍 Direct API response:", response.data);
             const purchased = response.data.purchased || false;
-            console.log("🔍 Direct API purchased value:", purchased);
             setIsPurchased(purchased);
           } catch (directError) {
             console.error("Direct API failed:", directError);
@@ -114,7 +112,6 @@ const CourseDetails = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Course Header */}
         <div className="bg-white rounded-xl shadow-md p-6 mb-6">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div className="flex-1">

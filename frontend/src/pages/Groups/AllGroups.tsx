@@ -295,7 +295,6 @@ const AllGroups = () => {
         )}
       </div>
 
-      {/* Only render heavy components when modal is closed for better performance */}
       {!isModalOpen && (
         <>
           <Features />

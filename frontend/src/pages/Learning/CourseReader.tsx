@@ -35,10 +35,6 @@ const CourseReader = () => {
 
   const courseProgress = useSelector(selectCourseProgress(courseId || ""));
 
-  console.log("🔍 CourseReader - courseId:", courseId);
-  console.log("🔍 CourseReader - courseProgress:", courseProgress);
-  console.log("🔍 CourseReader - currentCourse:", currentCourse);
-
   const [selectedLessonId, setSelectedLessonId] = useState<string>("");
 
   useEffect(() => {
