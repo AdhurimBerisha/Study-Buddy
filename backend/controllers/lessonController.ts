@@ -297,14 +297,8 @@ export const updateLessonProgress = async (
   res: Response
 ) => {
   try {
-    console.log("🔄 Updating lesson progress...");
-    console.log("📝 Request body:", req.body);
-    console.log("📝 Request params:", req.params);
-
     const userId = checkAuth(req, res);
     if (!userId) return;
-
-    console.log("👤 User ID:", userId);
 
     const { lessonId } = req.params;
     const { isCompleted, timeSpent } = req.body;
@@ -340,13 +334,7 @@ export const updateLessonProgress = async (
 
     updateData.lastAccessedAt = new Date();
 
-    console.log("📊 Update data:", updateData);
-    console.log("📊 Progress record before update:", progress.toJSON());
-
     await progress.update(updateData);
-
-    console.log("✅ Progress updated successfully");
-    console.log("📊 Progress record after update:", progress.toJSON());
 
     res.json({
       success: true,

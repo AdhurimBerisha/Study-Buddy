@@ -446,9 +446,6 @@ export const getGroupMessages = async (
     const { id } = req.params;
     const userId = req.user?.id;
 
-    console.log("🔍 getGroupMessages called for group:", id);
-    console.log("🔍 Requesting user ID:", userId);
-
     const membership = await GroupMember.findOne({
       where: { groupId: id, userId },
     });
@@ -459,8 +456,6 @@ export const getGroupMessages = async (
         .status(403)
         .json({ message: "You must be a member to view messages" });
     }
-
-    console.log("✅ User is member of group");
 
     const messages = await Message.findAll({
       where: { groupId: id },
@@ -489,8 +484,6 @@ export const getGroupMessages = async (
         timestamp: messageData.createdAt,
       };
     });
-
-    console.log("📨 Formatted messages:", formattedMessages);
 
     return res.json(formattedMessages);
   } catch (error) {

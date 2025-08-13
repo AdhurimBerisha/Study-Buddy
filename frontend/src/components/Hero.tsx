@@ -139,7 +139,6 @@ const Hero = () => {
           {text.title}
         </h1>
 
-        {/* Code Editor CTA - Only show on home page */}
         {route === "/" && (
           <div className="mt-6 sm:mt-8 lg:mt-10">
             <Link

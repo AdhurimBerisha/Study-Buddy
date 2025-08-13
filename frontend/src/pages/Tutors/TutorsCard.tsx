@@ -7,7 +7,7 @@ type TutorCardProps = Tutor & {
   avatar: ReactNode;
 };
 
-export default function TutorCard({
+const TutorCard = ({
   avatar,
   expertise,
   rating,
@@ -15,7 +15,7 @@ export default function TutorCard({
   user,
   bio,
   hourlyRate,
-}: TutorCardProps) {
+}: TutorCardProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-8 py-8 border-b border-gray-200 w-full max-w-4xl">
       <div className="md:col-span-4 flex justify-center md:justify-start">
@@ -56,4 +56,6 @@ export default function TutorCard({
       </div>
     </div>
   );
-}
+};
+
+export default TutorCard;

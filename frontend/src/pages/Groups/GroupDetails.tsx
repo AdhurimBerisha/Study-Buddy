@@ -122,7 +122,6 @@ const GroupDetails = () => {
           : undefined,
       };
 
-      console.log("Updating group with data:", updateData);
       await dispatch(updateGroup({ id, data: updateData })).unwrap();
       setIsEditing(false);
       dispatch(fetchGroup(id));
@@ -181,7 +180,6 @@ const GroupDetails = () => {
           </div>
         )}
 
-        {/* Group Header */}
         <div className="bg-white rounded-xl shadow-md p-6 mb-6">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div className="flex-1">
@@ -252,7 +250,6 @@ const GroupDetails = () => {
             </div>
           </div>
 
-          {/* Edit Form */}
           {isEditing && (
             <div className="mt-6 p-4 bg-gray-50 rounded-lg">
               <h3 className="text-lg font-semibold mb-4">Edit Group</h3>
@@ -323,7 +320,6 @@ const GroupDetails = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Members List */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-md p-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
@@ -388,7 +384,6 @@ const GroupDetails = () => {
             </div>
           </div>
 
-          {/* Chat Section */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-md p-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
@@ -409,7 +404,6 @@ const GroupDetails = () => {
                 </div>
               ) : (
                 <>
-                  {/* Messages */}
                   <div className="h-96 overflow-y-auto mb-4 border rounded-lg p-4 bg-gray-50">
                     {messages.length === 0 ? (
                       <div className="text-center py-8 text-gray-500">
@@ -456,7 +450,6 @@ const GroupDetails = () => {
                     )}
                   </div>
 
-                  {/* Message Input */}
                   <form className="flex gap-3">
                     <input
                       type="text"

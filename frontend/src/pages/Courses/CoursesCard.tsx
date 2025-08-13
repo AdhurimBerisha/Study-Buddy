@@ -84,7 +84,6 @@ const CoursesCard = (course: CardProps) => {
 
   return (
     <div className="bg-white border border-gray-200 shadow-md rounded-xl p-6 text-center h-full flex flex-col">
-      {/* Course Image */}
       {thumbnail && (
         <div className="mb-4 rounded-lg overflow-hidden">
           <img
@@ -95,27 +94,22 @@ const CoursesCard = (course: CardProps) => {
         </div>
       )}
 
-      {/* Category Badge */}
       <div
         className={`${colorClass} text-white px-4 py-2 rounded-full inline-block mb-4 font-bold text-xs uppercase tracking-wide`}
       >
         {category}
       </div>
 
-      {/* Language/Tech Icon */}
       <div className="mb-4 flex justify-center">{getCoursesIcon(language)}</div>
 
-      {/* Course Title */}
       <Link to={`/courses/${id}`} className="block mb-4">
         <h3 className="text-lg font-bold text-gray-800 leading-tight min-h-[4rem] flex items-center justify-center px-2">
           {title}
         </h3>
       </Link>
 
-      {/* Course Language */}
       <p className="text-sm text-gray-600 mb-3">{language}</p>
 
-      {/* Course Stats */}
       <div className="space-y-2 mb-4">
         <div className="flex items-center justify-center space-x-2">
           <FaUsers className="text-blue-500 text-sm" />
@@ -151,7 +145,6 @@ const CoursesCard = (course: CardProps) => {
         </div>
       </div>
 
-      {/* Instructor */}
       {instructor && (
         <div className="text-center mb-4">
           <p className="text-xs text-gray-500">Tutor:</p>
@@ -161,7 +154,6 @@ const CoursesCard = (course: CardProps) => {
         </div>
       )}
 
-      {/* Progress Bar */}
       <div className="w-full bg-gray-200 rounded-full h-2 mt-auto mb-4">
         <div
           className={`${colorClass} h-2 rounded-full`}
@@ -169,7 +161,6 @@ const CoursesCard = (course: CardProps) => {
         ></div>
       </div>
 
-      {/* Action Button */}
       <Link to={`/courses/${id}`} className="mt-auto">
         <Button fullWidth size="sm">
           {isEnrolled ? "Continue Learning" : "View Details"}

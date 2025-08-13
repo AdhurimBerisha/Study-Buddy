@@ -31,7 +31,6 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 w-full bg-white/30 backdrop-blur-md shadow-md z-30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <div className="flex-shrink-0">
             <NavLink to="/" className="block">
               <img
@@ -42,7 +41,6 @@ const Navbar = () => {
             </NavLink>
           </div>
 
-          {/* Desktop Navigation */}
           <div className="hidden lg:block">
             <div className="ml-10 flex items-baseline space-x-8">
               <NavLink
@@ -113,7 +111,6 @@ const Navbar = () => {
                 Tutors
               </NavLink>
 
-              {/* Desktop Groups Dropdown */}
               <div className="relative group">
                 <button
                   type="button"
@@ -204,7 +201,6 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Desktop User Menu */}
           <div className="hidden lg:block">
             <div className="ml-4 flex items-center md:ml-6">
               {isAuthenticated ? (
@@ -273,7 +269,6 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Mobile menu button */}
           <div className="lg:hidden">
             <button
               onClick={toggleMenu}
@@ -291,7 +286,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {isMenuOpen && (
         <div className="lg:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-black bg-opacity-90 backdrop-blur-sm">
@@ -309,7 +303,6 @@ const Navbar = () => {
               Home
             </NavLink>
 
-            {/* Mobile Courses Dropdown */}
             <div className="relative">
               <button
                 onClick={() => setIsMobileCoursesDropdownOpen((v) => !v)}
@@ -379,7 +372,6 @@ const Navbar = () => {
               Tutors
             </NavLink>
 
-            {/* Mobile Groups Dropdown */}
             <div className="relative">
               <button
                 onClick={toggleMobileGroupsDropdown}
@@ -492,7 +484,6 @@ const Navbar = () => {
               Contact
             </NavLink>
 
-            {/* Mobile User Menu */}
             <div className="pt-4 pb-3 border-t border-gray-600">
               <div className="flex flex-col items-center space-y-3">
                 {isAuthenticated ? (

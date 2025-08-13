@@ -1,0 +1,31 @@
+export const customTheme = {
+  colors: {
+    surface1: "#ffffff",
+    surface2: "#f8fafc",
+    surface3: "#f1f5f9",
+    clickable: "#64748b",
+    base: "#334155",
+    disabled: "#94a3b8",
+    hover: "#475569",
+    accent: "#2563eb",
+    error: "#dc2626",
+    errorSurface: "#fef2f2",
+  },
+  syntax: {
+    plain: "#334155",
+    comment: "#94a3b8",
+    keyword: "#2563eb",
+    definition: "#7c3aed",
+    punctuation: "#64748b",
+    property: "#059669",
+    tag: "#dc2626",
+    static: "#7c2d12",
+    string: "#059669",
+  },
+  font: {
+    body: "Inter, ui-sans-serif, system-ui, sans-serif",
+    mono: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
+    size: "14px",
+    lineHeight: "1.5",
+  },
+};

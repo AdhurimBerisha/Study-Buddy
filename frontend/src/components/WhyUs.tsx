@@ -7,7 +7,6 @@ const WhyUs = () => {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start">
-        {/* Left Column */}
         <div className="flex-1 space-y-6 sm:space-y-8">
           <div className="space-y-4">
             <h2 className="text-lg sm:text-xl font-light text-blue-600">
@@ -65,7 +64,6 @@ const WhyUs = () => {
           </div>
         </div>
 
-        {/* Right Column */}
         <div className="flex-1 p-0 lg:p-2">
           <div className="space-y-4 sm:space-y-6">
             <h2 className="text-lg sm:text-xl font-light text-blue-600">

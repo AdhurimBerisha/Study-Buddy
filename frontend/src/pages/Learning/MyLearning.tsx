@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../../components/Button";
 import { FaBookOpen, FaArrowRight, FaClock } from "react-icons/fa";
@@ -17,7 +17,7 @@ interface PurchasedCourse {
   purchaseDate: string;
 }
 
-const MyLearning: React.FC = () => {
+const MyLearning = () => {
   const { loadLearningDashboard } = useLearning();
   const { user } = useAuth();
   const [purchasedCourses, setPurchasedCourses] = useState<PurchasedCourse[]>(
@@ -29,11 +29,7 @@ const MyLearning: React.FC = () => {
   useEffect(() => {
     const fetchPurchasedCourses = async () => {
       try {
-        console.log("Fetching purchased courses...");
-        console.log("User:", user);
-        console.log("Token:", localStorage.getItem("token"));
         const courses = await loadLearningDashboard();
-        console.log("Received courses:", courses);
         setPurchasedCourses(courses);
       } catch (error) {
         console.error("Failed to fetch purchased courses:", error);
@@ -86,7 +82,6 @@ const MyLearning: React.FC = () => {
           Continue where you left off with your purchased courses
         </p>
 
-        {/* Learning Summary */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white rounded-xl p-4 border border-gray-200">
             <div className="text-2xl font-bold text-blue-600">
@@ -116,7 +111,6 @@ const MyLearning: React.FC = () => {
         </div>
       </div>
 
-      {/* Completion Status Filter */}
       <div className="mb-4">
         <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-fit">
           <button
@@ -210,7 +204,6 @@ const MyLearning: React.FC = () => {
                   {course.title}
                 </h3>
 
-                {/* Course Completion Message */}
                 {course.progress === 100 && (
                   <div className="mb-4 bg-green-50 border border-green-200 rounded-xl p-3">
                     <div className="flex items-center text-green-700">

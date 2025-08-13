@@ -66,7 +66,6 @@ const Modal = ({
         className={`bg-white rounded-xl shadow-lg ${sizes[size]} w-full max-h-[90vh] overflow-hidden relative border border-gray-200`}
         role="document"
       >
-        {/* Header */}
         {(title || closeOnOverlayClick) && (
           <div className="bg-gray-50 border-b border-gray-200">
             <div className="flex items-center justify-between p-4 sm:p-6">
@@ -102,7 +101,6 @@ const Modal = ({
           </div>
         )}
 
-        {/* Content */}
         <div className="p-4 sm:p-6 bg-white">
           <div className="relative">{children}</div>
         </div>
