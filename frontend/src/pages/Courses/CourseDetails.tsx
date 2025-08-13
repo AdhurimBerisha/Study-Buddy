@@ -285,7 +285,7 @@ const CourseDetails = () => {
                     </div>
                     <div className="text-sm text-gray-700 flex items-center gap-1">
                       <FaStar className="text-yellow-500" />{" "}
-                      {tutor.rating.toFixed(1)}
+                      {Number(tutor.rating).toFixed(1)}
                     </div>
                   </div>
                   <div className="mt-3 text-sm text-gray-600">

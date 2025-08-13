@@ -1,20 +1,30 @@
 import { Router } from "express";
-import * as groups from "../controllers/groupController";
+import {
+  listGroups,
+  getGroup,
+  createGroup,
+  updateGroup,
+  deleteGroup,
+  joinGroup,
+  leaveGroup,
+  getMyGroups,
+  getGroupMessages,
+} from "../controllers/groupController";
 import { requireAuth } from "../middlewares/requireAuth";
 
 const router = Router();
 
-router.get("/", requireAuth, groups.listGroups);
+router.get("/", requireAuth, listGroups);
 
-router.get("/user/my", requireAuth, groups.getMyGroups);
+router.get("/user/my", requireAuth, getMyGroups);
 
-router.post("/", requireAuth, groups.createGroup);
+router.post("/", requireAuth, createGroup);
 
-router.get("/:id", requireAuth, groups.getGroup);
-router.get("/:id/messages", requireAuth, groups.getGroupMessages);
-router.put("/:id", requireAuth, groups.updateGroup);
-router.delete("/:id", requireAuth, groups.deleteGroup);
-router.post("/:id/join", requireAuth, groups.joinGroup);
-router.post("/:id/leave", requireAuth, groups.leaveGroup);
+router.get("/:id", requireAuth, getGroup);
+router.get("/:id/messages", requireAuth, getGroupMessages);
+router.put("/:id", requireAuth, updateGroup);
+router.delete("/:id", requireAuth, deleteGroup);
+router.post("/:id/join", requireAuth, joinGroup);
+router.post("/:id/leave", requireAuth, leaveGroup);
 
 export default router;

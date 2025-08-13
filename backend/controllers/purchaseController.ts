@@ -12,10 +12,7 @@ const checkAuth = (req: AuthenticatedRequest, res: Response) => {
   return req.user.id;
 };
 
-export const createPurchase = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
+const createPurchase = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = checkAuth(req, res);
     if (!userId) return;
@@ -62,10 +59,7 @@ export const createPurchase = async (
   }
 };
 
-export const getUserPurchases = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
+const getUserPurchases = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = checkAuth(req, res);
     if (!userId) return;
@@ -98,7 +92,7 @@ export const getUserPurchases = async (
   }
 };
 
-export const getLearningDashboard = async (
+const getLearningDashboard = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
@@ -174,7 +168,7 @@ export const getLearningDashboard = async (
   }
 };
 
-export const checkCoursePurchase = async (
+const checkCoursePurchase = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
@@ -219,3 +213,10 @@ function formatTimeAgo(date: Date): string {
     return "Just now";
   }
 }
+
+export {
+  createPurchase,
+  getUserPurchases,
+  getLearningDashboard,
+  checkCoursePurchase,
+};

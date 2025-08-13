@@ -8,6 +8,7 @@ type TutorCardProps = Tutor & {
 };
 
 const TutorCard = ({
+  id,
   avatar,
   expertise,
   rating,
@@ -35,7 +36,7 @@ const TutorCard = ({
           <div className="text-gray-400 text-sm mb-3">
             {totalLessons} Lessons
           </div>
-          <Link to={`/tutors/${user.id}`} className="w-full">
+          <Link to={`/tutors/${id}`} className="w-full">
             <Button fullWidth size="sm">
               Show more
             </Button>

@@ -6,7 +6,7 @@ import { socketManager } from "../config/socket";
 
 import sequelize from "../config/db";
 
-export const listGroups = async (req: AuthenticatedRequest, res: Response) => {
+const listGroups = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user?.id;
 
@@ -61,7 +61,7 @@ export const listGroups = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export const getGroup = async (req: AuthenticatedRequest, res: Response) => {
+const getGroup = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const userId = req.user?.id;
@@ -112,7 +112,7 @@ export const getGroup = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export const createGroup = async (req: AuthenticatedRequest, res: Response) => {
+const createGroup = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { name, description, category, level, maxMembers } = req.body;
     const userId = req.user?.id;
@@ -179,7 +179,7 @@ export const createGroup = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export const updateGroup = async (req: AuthenticatedRequest, res: Response) => {
+const updateGroup = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const userId = req.user?.id;
@@ -246,7 +246,7 @@ export const updateGroup = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export const deleteGroup = async (req: AuthenticatedRequest, res: Response) => {
+const deleteGroup = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const userId = req.user?.id;
@@ -277,7 +277,7 @@ export const deleteGroup = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export const joinGroup = async (req: AuthenticatedRequest, res: Response) => {
+const joinGroup = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const userId = req.user?.id;
@@ -339,7 +339,7 @@ export const joinGroup = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export const leaveGroup = async (req: AuthenticatedRequest, res: Response) => {
+const leaveGroup = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const userId = req.user?.id;
@@ -387,7 +387,7 @@ export const leaveGroup = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export const getMyGroups = async (req: AuthenticatedRequest, res: Response) => {
+const getMyGroups = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user?.id;
 
@@ -438,10 +438,7 @@ export const getMyGroups = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export const getGroupMessages = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
+const getGroupMessages = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const userId = req.user?.id;
@@ -490,4 +487,16 @@ export const getGroupMessages = async (
     console.error("❌ Error in getGroupMessages:", error);
     return handleError(res, error, "Error in getGroupMessages");
   }
+};
+
+export {
+  listGroups,
+  getGroup,
+  createGroup,
+  updateGroup,
+  deleteGroup,
+  joinGroup,
+  leaveGroup,
+  getMyGroups,
+  getGroupMessages,
 };
