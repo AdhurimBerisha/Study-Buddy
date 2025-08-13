@@ -3,6 +3,7 @@ import {
   FaUsers,
   FaDollarSign,
   FaUserCheck,
+  FaCode,
 } from "react-icons/fa";
 
 const features = [
@@ -17,6 +18,12 @@ const features = [
     title: "Verified Profiles",
     description:
       "All our tutors undergo thorough verification processes to ensure quality and reliability for your learning journey.",
+  },
+  {
+    icon: <FaCode />,
+    title: "Interactive Code Editor",
+    description:
+      "Practice coding in real-time with our built-in editor supporting multiple languages and live preview functionality.",
   },
   {
     icon: <FaUserCheck />,

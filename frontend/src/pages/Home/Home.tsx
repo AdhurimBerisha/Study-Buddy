@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store/store";
 import { fetchCourses } from "../../store/slice/coursesSlice";
+import CodeEditorSection from "./CodeEditorSection";
 
 const Home = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -23,6 +24,7 @@ const Home = () => {
       <Hero />
       <CoursesGrid items={loading ? [] : courses.slice(0, 4)} />
       <HowItWorks />
+      <CodeEditorSection />
       <Features />
       <WhyUs />
       <Banner

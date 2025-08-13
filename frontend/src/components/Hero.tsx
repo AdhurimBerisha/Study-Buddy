@@ -1,4 +1,5 @@
 import { useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import bg from "../assets/bg.webp";
 import coursesBg from "../assets/coursesBg.webp";
 import groupsBg from "../assets/groupsBg.webp";
@@ -137,6 +138,36 @@ const Hero = () => {
         <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light leading-tight sm:leading-tight md:leading-tight lg:leading-tight xl:leading-tight px-2 sm:px-4">
           {text.title}
         </h1>
+
+        {/* Code Editor CTA - Only show on home page */}
+        {route === "/" && (
+          <div className="mt-6 sm:mt-8 lg:mt-10">
+            <Link
+              to="/code-editor"
+              className="inline-flex items-center gap-3 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                />
+              </svg>
+              Try Our Code Editor
+            </Link>
+            <p className="mt-3 text-sm text-gray-300">
+              Practice coding with live preview • Multiple languages • No setup
+              required
+            </p>
+          </div>
+        )}
+
         <div className="mt-4 sm:mt-6 lg:mt-8 text-lg sm:text-xl lg:text-2xl animate-bounce">
           <svg
             className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 mx-auto"

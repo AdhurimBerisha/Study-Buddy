@@ -475,12 +475,6 @@ export const getGroupMessages = async (
       limit: 100,
     });
 
-    console.log("📨 Found messages:", messages.length);
-    console.log(
-      "📨 Raw messages:",
-      messages.map((m) => m.toJSON())
-    );
-
     const formattedMessages = messages.map((message) => {
       const messageData = message.toJSON();
       const sender = (messageData as any).sender;
