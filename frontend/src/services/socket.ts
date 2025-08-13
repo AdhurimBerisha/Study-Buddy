@@ -99,7 +99,7 @@ class SocketService {
       this.isConnected = false;
     });
 
-    this.socket.on("connect_error", (error) => {
+    this.socket.on("connect_error", () => {
       this.isConnected = false;
 
       if (this.reconnectAttempts < this.maxReconnectAttempts) {
@@ -127,14 +127,12 @@ class SocketService {
 
   joinGroup(groupId: string) {
     if (this.socket?.connected) {
-      const roomName = `group_${groupId}`;
       this.socket.emit("join_group", groupId);
     }
   }
 
   leaveGroup(groupId: string) {
     if (this.socket?.connected) {
-      const roomName = `group_${groupId}`;
       this.socket.emit("leave_group", groupId);
     }
   }
