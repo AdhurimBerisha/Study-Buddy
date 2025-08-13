@@ -1,126 +1,190 @@
-# StudyBuddy Code Editor
+# Code Editor Component
 
-## Overview
-
-The StudyBuddy Code Editor is a standalone, in-browser code editor that allows users to practice coding in their free time. It's completely separate from the lesson system and provides a professional coding environment.
+A powerful, customizable in-browser code editor built with Sandpack React that perfectly matches your StudyBuddy application's theme.
 
 ## Features
 
-### 🎯 Core Functionality
+- 🎨 **Theme Integration**: Seamlessly matches your app's blue gradient theme
+- 📁 **File Management**: Built-in file explorer with support for multiple file types
+- 🔍 **Live Preview**: Real-time preview of your code changes
+- 📝 **Console Output**: Built-in console for debugging and output
+- 🖥️ **Fullscreen Mode**: Toggle between embedded and fullscreen editing
+- 🎯 **Multiple Templates**: Support for React, TypeScript, Vanilla JS, and more
+- 📱 **Responsive Design**: Works perfectly on all device sizes
+- 🎭 **Customizable**: Easy to modify themes, layouts, and functionality
 
-- **Monaco Editor Integration**: Professional-grade code editor (same as VS Code)
-- **Multiple Language Support**: JavaScript, TypeScript, Python, Java, C++, C#, PHP, HTML, CSS, JSON
-- **Real-time Code Execution**: Run JavaScript code directly in the browser
-- **Syntax Highlighting**: Full support for all supported languages
+## Component
 
-### 🛠️ Editor Features
+### CodeEditor
 
-- **Language Selection**: Switch between programming languages
-- **Code Templates**: Quick-start templates for common patterns
-- **Code Actions**: Copy, download, and reset code
-- **Responsive Design**: Works on all screen sizes
+Full-featured code editor with all panels and features.
 
-### 📱 User Experience
+```tsx
+import CodeEditor from "./components/CodeEditor";
 
-- **Clean Interface**: Matches StudyBuddy's design theme
-- **Intuitive Controls**: Easy-to-use buttons and controls
-- **Output Panel**: Clear display of code execution results
-- **Helpful Tips**: Built-in coding guidance
+<CodeEditor
+  files={yourFiles}
+  template="react"
+  showFileExplorer={true}
+  showConsole={true}
+  showPreview={true}
+  height="600px"
+/>;
+```
 
-## Usage
+## Props
 
-### Accessing the Editor
+| Prop               | Type                     | Default        | Description                          |
+| ------------------ | ------------------------ | -------------- | ------------------------------------ |
+| `files`            | `Record<string, string>` | `defaultFiles` | Object mapping file paths to content |
+| `template`         | `string`                 | `'react'`      | Sandpack template to use             |
+| `showFileExplorer` | `boolean`                | `true`         | Show/hide file explorer panel        |
+| `showConsole`      | `boolean`                | `true`         | Show/hide console panel              |
+| `showPreview`      | `boolean`                | `true`         | Show/hide preview panel              |
+| `height`           | `string`                 | `'600px'`      | Height of the editor container       |
+| `className`        | `string`                 | `''`           | Additional CSS classes               |
 
-1. Navigate to `/code-editor` in your browser
-2. Or click "Code Editor" in the main navigation
+## Available Templates
 
-### Writing Code
+- `react` - React with JavaScript
+- `react-ts` - React with TypeScript
+- `vanilla` - Vanilla JavaScript
+- `vanilla-ts` - Vanilla TypeScript
+- `angular` - Angular
+- `vue` - Vue.js
+- `vue-ts` - Vue.js with TypeScript
 
-1. Select your preferred programming language
-2. Write or paste your code in the editor
-3. Use the templates to get started quickly
-4. Click "Run Code" to execute JavaScript
+## Custom Hook
 
-### Available Actions
+Use the `useCodeEditor` hook for managing code editor state:
 
-- **Run Code**: Execute your JavaScript code
-- **Reset**: Clear the editor and start fresh
-- **Copy**: Copy code to clipboard
-- **Download**: Save code as a file
-- **Clear Output**: Clear the output panel
+```tsx
+import useCodeEditor from "./hooks/useCodeEditor";
 
-## Technical Details
+const { files, activeFile, addFile, updateFile, removeFile } = useCodeEditor({
+  "/App.js": 'console.log("Hello World!");',
+  "/styles.css": "body { color: blue; }",
+});
 
-### Dependencies
+// Add a new file
+addFile("/utils.js", "export const helper = () => {};");
 
-- `@monaco-editor/react`: Monaco Editor React wrapper
-- `react-icons`: Icon library for UI elements
-- `tailwindcss`: Styling framework
+// Update existing file
+updateFile("/App.js", 'console.log("Updated!");');
+
+// Remove file
+removeFile("/styles.css");
+```
+
+## Theme Customization
+
+The editor automatically uses your app's theme colors:
+
+- **Primary**: Blue gradient (`from-blue-600 to-blue-700`)
+- **Background**: White with rounded corners and shadows
+- **Text**: Inter and Poppins fonts
+- **Accents**: Blue-600 for highlights and interactions
+
+## Example Usage
+
+### Basic Implementation
+
+```tsx
+import CodeEditor from "./components/CodeEditor";
+
+const MyComponent = () => {
+  const files = {
+    "/App.js": `
+import React from 'react';
+
+export default function App() {
+  return <h1>Hello World!</h1>;
+}
+    `,
+    "/styles.css": `
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+    `,
+  };
+
+  return <CodeEditor files={files} template="react" height="500px" />;
+};
+```
+
+### Advanced Implementation
+
+```tsx
+import CodeEditor from "./components/CodeEditor";
+import useCodeEditor from "./hooks/useCodeEditor";
+
+const AdvancedEditor = () => {
+  const { files, addFile, updateFile } = useCodeEditor({
+    "/App.js": 'console.log("Start coding!");',
+  });
+
+  const handleAddFile = () => {
+    addFile("/new-file.js", "// New file content");
+  };
+
+  return (
+    <div>
+      <button onClick={handleAddFile}>Add File</button>
+      <CodeEditor
+        files={files}
+        template="react"
+        showFileExplorer={true}
+        showConsole={true}
+        showPreview={true}
+        height="700px"
+      />
+    </div>
+  );
+};
+```
+
+## Demo Page
+
+Visit `/code-editor` to see the editor in action with:
+
+- Multiple template examples (React, TypeScript, Vanilla JS)
+- Interactive controls for toggling panels
+- Real-time code execution
+- Responsive design showcase
+
+## Integration Tips
+
+1. **Performance**: The editor is optimized for smooth performance even with large files
+2. **Accessibility**: Built with accessibility in mind, supporting keyboard navigation
+3. **Mobile**: Responsive design works great on mobile devices
+4. **Customization**: Easy to extend with additional features and themes
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Editor not loading**: Ensure Sandpack React is properly installed
+2. **Theme not matching**: Check that Tailwind CSS is properly configured
+3. **Files not updating**: Verify the files prop is being passed correctly
 
 ### Browser Support
 
-- Modern browsers with ES6+ support
-- JavaScript execution requires browser compatibility
-- Monaco Editor works in all modern browsers
+- Chrome/Edge: Full support
+- Firefox: Full support
+- Safari: Full support
+- Mobile browsers: Full support
 
-### Security Notes
+## Contributing
 
-- JavaScript execution uses `Function` constructor (client-side only)
-- Other languages show syntax highlighting but don't execute
-- For production, consider backend code execution services
+To extend the code editor:
 
-## Future Enhancements
+1. Modify the theme in `CodeEditor.tsx`
+2. Add new templates in the demo page
+3. Extend the `useCodeEditor` hook for additional functionality
+4. Update the documentation as needed
 
-### Planned Features
+## License
 
-- **Backend Integration**: Support for Python, Java, C++ execution
-- **Code Saving**: Save snippets to user profiles
-- **Code Sharing**: Share code with other users
-- **Collaborative Coding**: Real-time pair programming
-- **Code History**: Track coding sessions and progress
-
-### Backend Requirements
-
-- Code execution service (e.g., Docker containers)
-- Language-specific compilers and interpreters
-- Security sandboxing for safe code execution
-- Rate limiting and resource management
-
-## File Structure
-
-```
-frontend/
-├── src/
-│   ├── components/
-│   │   └── FreeCodeEditor.tsx      # Main editor component
-│   └── pages/
-│       └── CodeEditor/
-│           └── CodeEditorPage.tsx  # Page wrapper
-```
-
-## Integration
-
-- Added to main navigation (`/code-editor`)
-- Follows StudyBuddy's design patterns
-- Uses existing Button component
-- Responsive design with Tailwind CSS
-- No authentication required (public access)
-
-## Development
-
-### Running Locally
-
-1. Ensure `@monaco-editor/react` is installed
-2. Start the development server: `npm run dev`
-3. Navigate to `/code-editor`
-
-### Building
-
-The code editor is included in the main build process and will be available in production builds.
-
-## Support
-
-For issues or questions about the code editor, refer to:
-
-- Monaco Editor documentation: https://microsoft.github.io/monaco-editor/
-- StudyBuddy development team
+This component is part of the StudyBuddy application and follows the same licensing terms.

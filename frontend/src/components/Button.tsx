@@ -1,3 +1,5 @@
+import React from "react";
+
 type ButtonProps = {
   children: React.ReactNode;
   variant?: "primary" | "outline" | "secondary";
