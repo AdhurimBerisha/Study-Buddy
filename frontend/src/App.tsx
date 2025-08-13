@@ -24,6 +24,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Checkout from "./pages/Payments/Checkout";
 import MyLearning from "./pages/Learning/MyLearning";
 import CourseReader from "./pages/Learning/CourseReader";
+import CodeEditorPage from "./pages/CodeEditor/CodeEditorPage";
 import { useEffect } from "react";
 
 const App = () => {
@@ -92,6 +93,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="/code-editor" element={<CodeEditorPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />

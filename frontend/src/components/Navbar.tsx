@@ -164,6 +164,19 @@ const Navbar = () => {
               </div>
 
               <NavLink
+                to="/code-editor"
+                className={({ isActive }) =>
+                  `px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                    isActive
+                      ? "text-blue-600 font-semibold"
+                      : "text-gray-900 hover:text-blue-500"
+                  }`
+                }
+              >
+                Code Editor
+              </NavLink>
+
+              <NavLink
                 to="/about"
                 className={({ isActive }) =>
                   `px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
@@ -436,6 +449,20 @@ const Navbar = () => {
                 </div>
               )}
             </div>
+
+            <NavLink
+              to="/code-editor"
+              onClick={toggleMenu}
+              className={({ isActive }) =>
+                `block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+                  isActive
+                    ? "text-blue-400 font-semibold"
+                    : "text-white hover:text-blue-300"
+                }`
+              }
+            >
+              Code Editor
+            </NavLink>
 
             <NavLink
               to="/about"
