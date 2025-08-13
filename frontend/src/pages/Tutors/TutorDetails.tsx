@@ -79,7 +79,7 @@ const TutorDetails = () => {
               <div className="flex items-center gap-3 text-sm text-gray-600 mt-1">
                 <span className="flex items-center gap-1">
                   <FaStar className="text-yellow-500" />{" "}
-                  {tutor.rating.toFixed(1)}
+                  {Number(tutor.rating).toFixed(1)}
                 </span>
                 <span>•</span>
                 <span>{tutor.totalLessons} lessons</span>
@@ -152,7 +152,7 @@ const TutorDetails = () => {
               </p>
               <div className="space-y-2">
                 <p className="text-sm text-gray-600">
-                  <strong>Hourly Rate:</strong> ${tutor.hourlyRate}/hour
+                  <strong>Hourly Rate:</strong> ${Number(tutor.hourlyRate).toFixed(2)}/hour
                 </p>
                 <p className="text-sm text-gray-600">
                   <strong>Total Students:</strong> {tutor.totalStudents}

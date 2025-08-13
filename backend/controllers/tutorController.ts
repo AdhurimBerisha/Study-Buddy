@@ -4,7 +4,7 @@ import { Tutor, User, Course } from "../models";
 import { handleError } from "../helpers/errorHelper";
 import { Op } from "sequelize";
 
-export const createTutor = async (req: AuthenticatedRequest, res: Response) => {
+const createTutor = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { bio, expertise, hourlyRate } = req.body;
     const userId = req.user?.id;
@@ -46,7 +46,7 @@ export const createTutor = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export const getTutor = async (req: AuthenticatedRequest, res: Response) => {
+const getTutor = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -83,10 +83,7 @@ export const getTutor = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export const getAllTutors = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
+const getAllTutors = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { category, verified, limit = 20, offset = 0 } = req.query;
 
@@ -124,7 +121,7 @@ export const getAllTutors = async (
   }
 };
 
-export const updateTutor = async (req: AuthenticatedRequest, res: Response) => {
+const updateTutor = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { bio, expertise, hourlyRate } = req.body;
@@ -168,7 +165,7 @@ export const updateTutor = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export const deleteTutor = async (req: AuthenticatedRequest, res: Response) => {
+const deleteTutor = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const userId = req.user?.id;
@@ -194,10 +191,7 @@ export const deleteTutor = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export const getTutorByUserId = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
+const getTutorByUserId = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { userId } = req.params;
 
@@ -233,4 +227,13 @@ export const getTutorByUserId = async (
   } catch (error) {
     handleError(res, error);
   }
+};
+
+export {
+  createTutor,
+  getTutor,
+  getAllTutors,
+  updateTutor,
+  deleteTutor,
+  getTutorByUserId,
 };

@@ -23,10 +23,7 @@ const checkCourseOwnership = async (courseId: string, userId: string) => {
   return course;
 };
 
-export const getCourseLessons = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
+const getCourseLessons = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { courseId } = req.params;
     const userId = req.user?.id;
@@ -104,7 +101,7 @@ export const getCourseLessons = async (
   }
 };
 
-export const getLesson = async (req: AuthenticatedRequest, res: Response) => {
+const getLesson = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { lessonId } = req.params;
     const userId = req.user?.id;
@@ -156,10 +153,7 @@ export const getLesson = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export const createLesson = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
+const createLesson = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = checkAuth(req, res);
     if (!userId) return;
@@ -203,10 +197,7 @@ export const createLesson = async (
   }
 };
 
-export const updateLesson = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
+const updateLesson = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = checkAuth(req, res);
     if (!userId) return;
@@ -250,10 +241,7 @@ export const updateLesson = async (
   }
 };
 
-export const deleteLesson = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
+const deleteLesson = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = checkAuth(req, res);
     if (!userId) return;
@@ -292,7 +280,7 @@ export const deleteLesson = async (
   }
 };
 
-export const updateLessonProgress = async (
+const updateLessonProgress = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
@@ -345,10 +333,7 @@ export const updateLessonProgress = async (
   }
 };
 
-export const getCourseProgress = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
+const getCourseProgress = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = checkAuth(req, res);
     if (!userId) return;
@@ -415,4 +400,14 @@ export const getCourseProgress = async (
   } catch (error) {
     handleError(res, error);
   }
+};
+
+export {
+  getCourseLessons,
+  getLesson,
+  createLesson,
+  updateLesson,
+  deleteLesson,
+  updateLessonProgress,
+  getCourseProgress,
 };

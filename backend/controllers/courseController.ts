@@ -44,7 +44,7 @@ const checkCourseOwnership = async (courseId: string, userId: string) => {
   return course;
 };
 
-export const listCourses = async (req: AuthenticatedRequest, res: Response) => {
+const listCourses = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { category, level, search } = req.query;
     const userId = req.user?.id;
@@ -73,7 +73,7 @@ export const listCourses = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export const getCourse = async (req: AuthenticatedRequest, res: Response) => {
+const getCourse = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const userId = req.user?.id;
@@ -89,10 +89,7 @@ export const getCourse = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export const createCourse = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
+const createCourse = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = checkAuth(req, res);
     if (!userId) return;
@@ -159,10 +156,7 @@ export const createCourse = async (
   }
 };
 
-export const updateCourse = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
+const updateCourse = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = checkAuth(req, res);
     if (!userId) return;
@@ -181,10 +175,7 @@ export const updateCourse = async (
   }
 };
 
-export const deleteCourse = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
+const deleteCourse = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = checkAuth(req, res);
     if (!userId) return;
@@ -199,10 +190,7 @@ export const deleteCourse = async (
   }
 };
 
-export const purchaseCourse = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
+const purchaseCourse = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = checkAuth(req, res);
     if (!userId) return;
@@ -241,4 +229,13 @@ export const purchaseCourse = async (
   } catch (error) {
     handleError(res, error);
   }
+};
+
+export {
+  listCourses,
+  getCourse,
+  createCourse,
+  updateCourse,
+  deleteCourse,
+  purchaseCourse,
 };

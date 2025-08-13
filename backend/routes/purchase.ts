@@ -1,17 +1,22 @@
 import express from "express";
-import * as purchases from "../controllers/purchaseController";
+import {
+  createPurchase,
+  getUserPurchases,
+  getLearningDashboard,
+  checkCoursePurchase,
+} from "../controllers/purchaseController";
 import { requireAuth } from "../middlewares/requireAuth";
 
 const router = express.Router();
 
 router.use(requireAuth);
 
-router.post("/", purchases.createPurchase);
+router.post("/", createPurchase);
 
-router.get("/history", purchases.getUserPurchases);
+router.get("/history", getUserPurchases);
 
-router.get("/dashboard", purchases.getLearningDashboard);
+router.get("/dashboard", getLearningDashboard);
 
-router.get("/check/:courseId", purchases.checkCoursePurchase);
+router.get("/check/:courseId", checkCoursePurchase);
 
 export default router;
