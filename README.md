@@ -58,6 +58,7 @@ This project requires a few environment variables to run properly.
 
 ### frontend `.env` variables include:
 - `VITE_API_URL` — http://localhost:8080/api
+- `VITE_SOCKET_URL` — http://localhost:8080
 
 4. Run the development servers
 
