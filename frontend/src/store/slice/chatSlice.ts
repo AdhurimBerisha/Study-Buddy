@@ -13,6 +13,7 @@ export type MessagesByGroupId = Record<string, ChatMessage[]>;
 interface ChatState {
   selectedGroupId: string | null;
   messagesByGroupId: MessagesByGroupId;
+  unreadCountsByGroupId: Record<string, number>;
   isSidebarOpen: boolean;
   isChatWidgetOpen: boolean;
 }
@@ -20,6 +21,7 @@ interface ChatState {
 const initialState: ChatState = {
   selectedGroupId: null,
   messagesByGroupId: {},
+  unreadCountsByGroupId: {},
   isSidebarOpen: false,
   isChatWidgetOpen: false,
 };
@@ -36,6 +38,20 @@ const chatSlice = createSlice({
   initialState,
   reducers: {
     selectGroup: (state, action: PayloadAction<string>) => {
+      // Only reset unread count if we're switching to a different group
+      if (state.selectedGroupId !== action.payload) {
+        // Mark previous group as read
+        if (
+          state.selectedGroupId &&
+          state.unreadCountsByGroupId[state.selectedGroupId]
+        ) {
+          state.unreadCountsByGroupId[state.selectedGroupId] = 0;
+        }
+        // Mark new group as read
+        if (state.unreadCountsByGroupId[action.payload]) {
+          state.unreadCountsByGroupId[action.payload] = 0;
+        }
+      }
       state.selectedGroupId = action.payload;
     },
     sendMessage: (state, action: PayloadAction<SendMessagePayload>) => {
@@ -52,6 +68,7 @@ const chatSlice = createSlice({
         return;
       }
 
+      // Add message to local state immediately for better UX
       state.messagesByGroupId[groupId].push({
         id: messageId,
         sender,
@@ -64,12 +81,6 @@ const chatSlice = createSlice({
     },
     receiveMessage: (state, action: PayloadAction<SendMessagePayload>) => {
       const { groupId, content, sender, id } = action.payload;
-      console.log("🔄 Processing receiveMessage:", {
-        groupId,
-        content,
-        sender,
-        id,
-      });
 
       if (!state.messagesByGroupId[groupId]) {
         state.messagesByGroupId[groupId] = [];
@@ -80,11 +91,9 @@ const chatSlice = createSlice({
         (msg) => msg.id === messageId
       );
       if (messageExists) {
-        console.log("⚠️ Duplicate message detected, skipping:", messageId);
         return;
       }
 
-      console.log("✅ Adding new message:", messageId);
       state.messagesByGroupId[groupId].push({
         id: messageId,
         sender,
@@ -94,6 +103,14 @@ const chatSlice = createSlice({
           minute: "2-digit",
         }),
       });
+
+      // Increment unread count for messages from other users
+      // This ensures badges show up for new messages even when group is selected
+      if (sender !== "You") {
+        const currentCount = state.unreadCountsByGroupId[groupId] || 0;
+        const newCount = currentCount + 1;
+        state.unreadCountsByGroupId[groupId] = newCount;
+      }
     },
     loadMessages: (
       state,
@@ -115,6 +132,10 @@ const chatSlice = createSlice({
         ...newMessages,
       ];
     },
+    markGroupAsRead: (state, action: PayloadAction<string>) => {
+      const groupId = action.payload;
+      state.unreadCountsByGroupId[groupId] = 0;
+    },
     setSidebarOpen: (state, action: PayloadAction<boolean>) => {
       state.isSidebarOpen = action.payload;
     },
@@ -135,6 +156,7 @@ export const {
   sendMessage,
   receiveMessage,
   loadMessages,
+  markGroupAsRead,
   setSidebarOpen,
   toggleSidebar,
   setChatWidgetOpen,
