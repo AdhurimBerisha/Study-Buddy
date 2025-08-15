@@ -27,13 +27,13 @@ const CodeEditorSection = () => {
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <section className="py-16 bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
             Practice Coding in Real-Time
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
             Our interactive code editor lets you write, test, and debug code
             instantly. Perfect for learning, practicing, or prototyping your
             next project.
@@ -45,14 +45,14 @@ const CodeEditorSection = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {features.map((feature, index) => (
                 <div key={index} className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                  <div className="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400">
                     {feature.icon}
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
                       {feature.title}
                     </h3>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                       {feature.description}
                     </p>
                   </div>
@@ -72,7 +72,7 @@ const CodeEditorSection = () => {
           </div>
 
           <div className="relative">
-            <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
               <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-4 py-3 flex items-center gap-2">
                 <div className="flex gap-2">
                   <div className="w-3 h-3 bg-red-400 rounded-full"></div>

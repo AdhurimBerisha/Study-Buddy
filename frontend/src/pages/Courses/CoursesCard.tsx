@@ -83,7 +83,7 @@ const CoursesCard = (course: CardProps) => {
   const colorClass = getCategoryColor(category);
 
   return (
-    <div className="bg-white border border-gray-200 shadow-md rounded-xl p-6 text-center h-full flex flex-col">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-md rounded-xl p-6 text-center h-full flex flex-col">
       {thumbnail && (
         <div className="mb-4 rounded-lg overflow-hidden">
           <img
@@ -103,18 +103,20 @@ const CoursesCard = (course: CardProps) => {
       <div className="mb-4 flex justify-center">{getCoursesIcon(language)}</div>
 
       <Link to={`/courses/${id}`} className="block mb-4">
-        <h3 className="text-lg font-bold text-gray-800 leading-tight min-h-[4rem] flex items-center justify-center px-2">
+        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 leading-tight min-h-[4rem] flex items-center justify-center px-2">
           {title}
         </h3>
       </Link>
 
-      <p className="text-sm text-gray-600 mb-3">{language}</p>
+      <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+        {language}
+      </p>
 
       <div className="space-y-2 mb-4">
         <div className="flex items-center justify-center space-x-2">
           <FaUsers className="text-blue-500 text-sm" />
-          <p className="text-sm font-medium text-gray-600">
-            <span className="text-lg font-bold text-blue-600">
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
               {enrollmentCount}
             </span>{" "}
             Students
@@ -123,7 +125,7 @@ const CoursesCard = (course: CardProps) => {
 
         <div className="flex items-center justify-center space-x-2">
           <FaGraduationCap className="text-green-500 text-sm" />
-          <p className="text-sm font-medium text-gray-600 capitalize">
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400 capitalize">
             {level} Level
           </p>
         </div>
@@ -131,7 +133,7 @@ const CoursesCard = (course: CardProps) => {
         {totalLessons && (
           <div className="flex items-center justify-center space-x-2">
             <FaCode className="text-purple-500 text-sm" />
-            <p className="text-sm font-medium text-gray-600">
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
               {totalLessons} Lessons
             </p>
           </div>
@@ -139,22 +141,24 @@ const CoursesCard = (course: CardProps) => {
 
         <div className="flex items-center justify-center space-x-2">
           <FaDollarSign className="text-yellow-500 text-sm" />
-          <p className="text-sm font-medium text-gray-600">
-            <span className="text-lg font-bold text-green-600">${price}</span>
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            <span className="text-lg font-bold text-green-600 dark:text-green-400">
+              ${price}
+            </span>
           </p>
         </div>
       </div>
 
       {instructor && (
         <div className="text-center mb-4">
-          <p className="text-xs text-gray-500">Tutor:</p>
-          <p className="text-sm font-medium text-gray-700">
+          <p className="text-xs text-gray-500 dark:text-gray-400">Tutor:</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
             {instructor.firstName} {instructor.lastName}
           </p>
         </div>
       )}
 
-      <div className="w-full bg-gray-200 rounded-full h-2 mt-auto mb-4">
+      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-auto mb-4">
         <div
           className={`${colorClass} h-2 rounded-full`}
           style={{ width: `${Math.min(enrollmentCount * 2, 100)}%` }}

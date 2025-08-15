@@ -80,11 +80,13 @@ const Tutors = () => {
       {loading ? (
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading tutors...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">
+            Loading tutors...
+          </p>
         </div>
       ) : error ? (
         <div className="text-center py-8">
-          <p className="text-red-600">{error}</p>
+          <p className="text-red-600 dark:text-red-400">{error}</p>
           <Button onClick={() => window.location.reload()} className="mt-4">
             Try Again
           </Button>

@@ -53,7 +53,7 @@ const GroupCard = ({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
       <div className="p-6">
         <div className="flex justify-between items-start">
           <div className="flex-1">
@@ -62,36 +62,40 @@ const GroupCard = ({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="px-2 py-1 text-xs border-red-600 text-red-600 hover:bg-red-50"
+                  className="px-2 py-1 text-xs border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                   onClick={onDelete}
                   title="Delete group"
                 >
                   <FaTrash />
                 </Button>
               )}
-              <h2 className="text-xl font-bold text-gray-800">{group.name}</h2>
+              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+                {group.name}
+              </h2>
               {group.userRole && getRoleIcon(group.userRole)}
             </div>
-            <p className="text-gray-600">{group.category}</p>
+            <p className="text-gray-600 dark:text-gray-400">{group.category}</p>
             {group.createdBy && (
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 Created by {group.createdBy.firstName}{" "}
                 {group.createdBy.lastName}
               </p>
             )}
           </div>
           <div className="flex flex-col items-end gap-2">
-            <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
+            <span className="bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 text-xs font-semibold px-3 py-1 rounded-full">
               {group.level}
             </span>
           </div>
         </div>
 
         {variant === "all" && group.description && (
-          <p className="mt-3 text-gray-700 line-clamp-2">{group.description}</p>
+          <p className="mt-3 text-gray-700 dark:text-gray-300 line-clamp-2">
+            {group.description}
+          </p>
         )}
 
-        <div className="flex items-center justify-between mt-4 text-gray-600">
+        <div className="flex items-center justify-between mt-4 text-gray-600 dark:text-gray-400">
           <div className="flex items-center">
             <FaUsers className="mr-2" />
             <span>{group.memberCount} </span>
@@ -99,7 +103,7 @@ const GroupCard = ({
               <span className=" ml-1">/ {group.maxMembers} members</span>
             )}
           </div>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-gray-500 dark:text-gray-400">
             {formatDate(group.createdAt)}
           </span>
         </div>
@@ -110,8 +114,10 @@ const GroupCard = ({
               <div className="flex items-center">
                 <FaCalendarAlt className="text-green-500 mr-2" />
                 <div>
-                  <p className="text-xs text-gray-500">Joined</p>
-                  <p className="text-sm font-medium">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Joined
+                  </p>
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     {formatDate(group.createdAt)}
                   </p>
                 </div>
@@ -119,8 +125,10 @@ const GroupCard = ({
               <div className="flex items-center">
                 <FaUsers className="text-blue-500 mr-2" />
                 <div>
-                  <p className="text-xs text-gray-500">Role</p>
-                  <p className="text-sm font-medium capitalize">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Role
+                  </p>
+                  <p className="text-sm font-medium capitalize text-gray-700 dark:text-gray-300">
                     {group.userRole || "Member"}
                   </p>
                 </div>
@@ -143,8 +151,8 @@ const GroupCard = ({
                 Login to Join
               </Button>
             ) : group.isMember ? (
-              <div className="text-center py-2 px-4 bg-green-50 border border-green-200 rounded-lg">
-                <span className="text-green-700 font-medium">
+              <div className="text-center py-2 px-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg">
+                <span className="text-green-700 dark:text-green-300 font-medium">
                   You are already a member
                 </span>
               </div>

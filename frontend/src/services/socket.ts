@@ -68,7 +68,6 @@ class SocketService {
           `${message.sender.firstName} ${message.sender.lastName}` ===
             `${currentUser.firstName} ${currentUser.lastName}`);
 
-      // Show notification for messages not from current user
       if (!isCurrentUser) {
         const senderName = `${message.sender.firstName} ${message.sender.lastName}`;
         showNewMessageNotification(senderName, message.content);
@@ -123,7 +122,7 @@ class SocketService {
       toast.warning("Disconnected from chat server");
     });
 
-    this.socket.on("connect_error", (error) => {
+    this.socket.on("connect_error", () => {
       this.isConnected = false;
       toast.error("Failed to connect to chat server");
 

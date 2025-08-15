@@ -80,12 +80,12 @@ const MyGroups = () => {
       <div>
         <Hero />
         <div className="max-w-4xl mx-auto px-6 py-12 text-center">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-8">
-            <FaSignInAlt className="text-6xl text-blue-600 mx-auto mb-6" />
-            <h1 className="text-3xl font-bold text-blue-900 mb-4">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-8">
+            <FaSignInAlt className="text-6xl text-blue-600 dark:text-blue-400 mx-auto mb-6" />
+            <h1 className="text-3xl font-bold text-blue-900 dark:text-blue-300 mb-4">
               Login Required
             </h1>
-            <p className="text-blue-700 mb-6 text-lg">
+            <p className="text-blue-700 dark:text-blue-300 mb-6 text-lg">
               Please log in to view and manage your groups.
             </p>
             <Button
@@ -108,7 +108,9 @@ const MyGroups = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <FaSpinner className="animate-spin text-4xl text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading your groups...</p>
+          <p className="text-gray-600 dark:text-gray-400">
+            Loading your groups...
+          </p>
         </div>
       </div>
     );
@@ -120,18 +122,22 @@ const MyGroups = () => {
 
       <div className="max-w-7xl mx-auto px-6 py-12">
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-4 mb-6">
             <div className="flex items-center gap-3">
-              <FaExclamationTriangle className="text-red-600 text-xl" />
-              <span className="text-red-800 font-medium">{error}</span>
+              <FaExclamationTriangle className="text-red-600 dark:text-red-400 text-xl" />
+              <span className="text-red-800 dark:text-red-300 font-medium">
+                {error}
+              </span>
             </div>
           </div>
         )}
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800">My Groups</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+              My Groups
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">
               Manage and participate in your learning communities
             </p>
           </div>
@@ -144,15 +150,15 @@ const MyGroups = () => {
         </div>
 
         <div className="flex flex-wrap justify-center items-center gap-6 mb-12">
-          <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
-            <FaUsers className="text-blue-600 text-xl" />
-            <span className="text-gray-700 font-semibold">
+          <div className="flex items-center space-x-3 bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-lg">
+            <FaUsers className="text-blue-600 dark:text-blue-400 text-xl" />
+            <span className="text-gray-700 dark:text-gray-200 font-semibold">
               {myGroups.length} Active Groups
             </span>
           </div>
-          <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
+          <div className="flex items-center space-x-3 bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-lg">
             <FaUsers className="text-green-500 text-xl" />
-            <span className="text-gray-700 font-semibold">
+            <span className="text-gray-700 dark:text-gray-200 font-semibold">
               {myGroups.reduce((acc, g) => acc + g.memberCount, 0)}+ Total
               Members
             </span>
@@ -161,13 +167,13 @@ const MyGroups = () => {
 
         {myGroups.length === 0 ? (
           <div className="text-center py-16">
-            <div className="bg-gray-50 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-              <FaUsers className="text-4xl text-gray-400" />
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+              <FaUsers className="text-4xl text-gray-400 dark:text-gray-500" />
             </div>
-            <h3 className="text-xl font-medium text-gray-700 mb-4">
+            <h3 className="text-xl font-medium text-gray-700 dark:text-gray-300 mb-4">
               You haven't joined any groups yet
             </h3>
-            <p className="text-gray-500 mb-6 max-w-md mx-auto">
+            <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
               Start by exploring available groups.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

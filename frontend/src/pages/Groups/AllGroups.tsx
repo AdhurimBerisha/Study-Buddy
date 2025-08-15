@@ -172,7 +172,7 @@ const AllGroups = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <FaSpinner className="animate-spin text-4xl text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading groups...</p>
+          <p className="text-gray-600 dark:text-gray-400">Loading groups...</p>
         </div>
       </div>
     );
@@ -184,16 +184,20 @@ const AllGroups = () => {
 
       <div className="max-w-7xl mx-auto px-6 py-12">
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-4 mb-6">
             <div className="flex items-center gap-3">
-              <FaExclamationTriangle className="text-red-600 text-xl" />
-              <span className="text-red-800 font-medium">{error}</span>
+              <FaExclamationTriangle className="text-red-600 dark:text-red-400 text-xl" />
+              <span className="text-red-800 dark:text-red-300 font-medium">
+                {error}
+              </span>
             </div>
           </div>
         )}
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">All Groups</h1>
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+            All Groups
+          </h1>
           <div className="flex flex-col sm:flex-row gap-4 mt-4 md:mt-0">
             <Button
               onClick={handleCreateGroupClick}
@@ -221,35 +225,35 @@ const AllGroups = () => {
         </div>
 
         <div className="flex flex-wrap justify-center items-center gap-6 mb-12">
-          <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
-            <FaUsers className="text-blue-600 text-xl" />
-            <span className="text-gray-700 font-semibold">
+          <div className="flex items-center space-x-3 bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-lg">
+            <FaUsers className="text-blue-600 dark:text-blue-400 text-xl" />
+            <span className="text-gray-700 dark:text-gray-200 font-semibold">
               {totalMembers}+ Active Members
             </span>
           </div>
-          <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
+          <div className="flex items-center space-x-3 bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-lg">
             <FaStar className="text-yellow-500 text-xl" />
-            <span className="text-gray-700 font-semibold">
+            <span className="text-gray-700 dark:text-gray-200 font-semibold">
               {allGroups?.length || 0} Specialized Groups
             </span>
           </div>
-          <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
+          <div className="flex items-center space-x-3 bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-lg">
             <FaClock className="text-green-500 text-xl" />
-            <span className="text-gray-700 font-semibold">
+            <span className="text-gray-700 dark:text-gray-200 font-semibold">
               Weekly Events & Activities
             </span>
           </div>
         </div>
 
         {!isAuthenticated && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-6 mb-8">
             <div className="flex items-center gap-3 mb-3">
-              <FaSignInAlt className="text-blue-600 text-xl" />
-              <h3 className="text-lg font-semibold text-blue-900">
+              <FaSignInAlt className="text-blue-600 dark:text-blue-400 text-xl" />
+              <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300">
                 Login Required
               </h3>
             </div>
-            <p className="text-blue-700 mb-4">
+            <p className="text-blue-700 dark:text-blue-300 mb-4">
               Please log in to create groups, join discussions, and access all
               features.
             </p>
@@ -279,10 +283,10 @@ const AllGroups = () => {
 
         {(!allGroups || allGroups.length === 0) && !loading && (
           <div className="text-center py-12">
-            <h3 className="text-xl font-medium text-gray-700 mb-4">
+            <h3 className="text-xl font-medium text-gray-700 dark:text-gray-300 mb-4">
               No groups available yet
             </h3>
-            <p className="text-gray-500 mb-6">
+            <p className="text-gray-500 dark:text-gray-400 mb-6">
               {isAuthenticated
                 ? "Be the first to create a new group"
                 : "Login to create the first group"}
@@ -323,7 +327,7 @@ const AllGroups = () => {
             placeholder="Group Name *"
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
-            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            className="border border-gray-300 dark:border-gray-600 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
             autoComplete="off"
           />
           <input
@@ -331,13 +335,13 @@ const AllGroups = () => {
             placeholder="Category *"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            className="border border-gray-300 dark:border-gray-600 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
             autoComplete="off"
           />
           <select
             value={level}
             onChange={(e) => setLevel(e.target.value)}
-            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            className="border border-gray-300 dark:border-gray-600 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           >
             <option value="">Select Level *</option>
             <option value="Beginner">Beginner</option>
@@ -349,7 +353,7 @@ const AllGroups = () => {
             placeholder="Description (optional)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors resize-none"
+            className="border border-gray-300 dark:border-gray-600 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors resize-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
             rows={3}
           />
           <input
@@ -357,7 +361,7 @@ const AllGroups = () => {
             placeholder="Max Members (optional)"
             value={maxMembers}
             onChange={(e) => setMaxMembers(e.target.value)}
-            className="border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            className="border border-gray-300 dark:border-gray-600 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
             min="2"
             max="1000"
           />

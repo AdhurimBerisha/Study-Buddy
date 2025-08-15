@@ -28,11 +28,13 @@ import CodeEditorDemo from "./pages/CodeEditorDemo/CodeEditorDemo";
 import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useTheme } from "./hooks/useTheme";
 
 const App = () => {
   const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
   const { token, user } = useSelector((state: RootState) => state.auth);
+  const { theme } = useTheme();
   const isAuthenticated = !!token;
 
   const showChatLayout =
@@ -49,7 +51,7 @@ const App = () => {
   }, [token, user, dispatch]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-200 via-neutral-100 to-blue-50 bg-[length:200%_200%] animate-gradient-x pt-20">
+    <div className="min-h-screen bg-gradient-to-br from-blue-200 via-neutral-100 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 bg-[length:200%_200%] animate-gradient-x pt-20">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -112,7 +114,7 @@ const App = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="light"
+        theme={theme}
       />
     </div>
   );

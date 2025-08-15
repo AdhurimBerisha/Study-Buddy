@@ -80,8 +80,10 @@ const Checkout = () => {
   if (!state) {
     return (
       <div className="max-w-3xl mx-auto px-6 py-16">
-        <div className="bg-white rounded-2xl shadow-lg p-10 text-center border border-gray-100">
-          <p className="text-gray-600 mb-6">Nothing to checkout.</p>
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-10 text-center border border-gray-100 dark:border-gray-700">
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            Nothing to checkout.
+          </p>
           <Link to="/">
             <Button>Go Home</Button>
           </Link>
@@ -93,11 +95,11 @@ const Checkout = () => {
   if (state.type === "course" && !isAuthenticated) {
     return (
       <div className="max-w-3xl mx-auto px-6 py-16">
-        <div className="bg-white rounded-2xl shadow-lg p-10 text-center border border-gray-100">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-10 text-center border border-gray-100 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
             Login Required
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
             Please log in to purchase this course.
           </p>
           <div className="space-y-3">
@@ -115,18 +117,18 @@ const Checkout = () => {
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-12">
-      <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-        <div className="p-8 sm:p-10 bg-gradient-to-br from-blue-50 to-indigo-50 border-b border-gray-100">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
+      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div className="p-8 sm:p-10 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-b border-gray-100 dark:border-gray-600">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-gray-100">
             {title}
           </h1>
-          <p className="text-gray-600 mt-2">{subtitle}</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">{subtitle}</p>
         </div>
         <div className="p-6 sm:p-10">
-          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-            <div className="flex items-center justify-between text-lg">
+          <div className="bg-white dark:bg-gray-700 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-gray-600">
+            <div className="flex items-center justify-between text-lg text-gray-900 dark:text-gray-100">
               <span>Total</span>
-              <span className="font-bold text-blue-600">
+              <span className="font-bold text-blue-600 dark:text-blue-400">
                 $
                 {(typeof amount === "number" && !isNaN(amount)
                   ? amount
@@ -136,19 +138,19 @@ const Checkout = () => {
             </div>
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <input
-                className="border rounded-lg px-4 py-3"
+                className="border rounded-lg px-4 py-3 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 border-gray-300 dark:border-gray-500"
                 placeholder="Card number"
               />
               <input
-                className="border rounded-lg px-4 py-3"
+                className="border rounded-lg px-4 py-3 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 border-gray-300 dark:border-gray-500"
                 placeholder="MM/YY"
               />
               <input
-                className="border rounded-lg px-4 py-3"
+                className="border rounded-lg px-4 py-3 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 border-gray-300 dark:border-gray-500"
                 placeholder="CVC"
               />
               <input
-                className="border rounded-lg px-4 py-3"
+                className="border rounded-lg px-4 py-3 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 border-gray-300 dark:border-gray-500"
                 placeholder="Cardholder name"
               />
             </div>

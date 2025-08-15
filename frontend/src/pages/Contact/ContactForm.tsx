@@ -46,20 +46,20 @@ const ContactForm = () => {
     <div className="max-w-3xl mx-auto">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full space-y-6 sm:space-y-8 bg-white/80 backdrop-blur p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100"
+        className="w-full space-y-6 sm:space-y-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
       >
         <div className="text-center sm:text-left">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">
             Send us a message
           </h2>
-          <p className="mt-1 text-sm sm:text-base text-gray-600">
-            We’ll get back to you as soon as we can.
+          <p className="mt-1 text-sm sm:text-base text-gray-600 dark:text-gray-400">
+            We'll get back to you as soon as we can.
           </p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
           <div className="flex flex-col w-full">
-            <label className="font-semibold text-sm sm:text-base mb-2 text-gray-700">
+            <label className="font-semibold text-sm sm:text-base mb-2 text-gray-700 dark:text-gray-300">
               Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -72,10 +72,10 @@ const ContactForm = () => {
                   message: "First name must be at least 2 characters",
                 },
               })}
-              className={`border rounded-lg px-4 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-colors duration-200 ${
+              className={`border rounded-lg px-4 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-colors duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 ${
                 errors.firstName
-                  ? "border-red-500 bg-red-50"
-                  : "border-gray-300 hover:border-gray-400"
+                  ? "border-red-500 bg-red-50 dark:bg-red-900/20"
+                  : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
               }`}
             />
             {errors.firstName && (
@@ -86,7 +86,7 @@ const ContactForm = () => {
           </div>
 
           <div className="flex flex-col w-full">
-            <label className="font-semibold text-sm sm:text-base mb-2 text-gray-700 invisible sm:visible">
+            <label className="font-semibold text-sm sm:text-base mb-2 text-gray-700 dark:text-gray-300 invisible sm:visible">
               Last Name
             </label>
             <input
@@ -99,10 +99,10 @@ const ContactForm = () => {
                   message: "Last name must be at least 2 characters",
                 },
               })}
-              className={`border rounded-lg px-4 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-colors duration-200 ${
+              className={`border rounded-lg px-4 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-colors duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 ${
                 errors.lastName
-                  ? "border-red-500 bg-red-50"
-                  : "border-gray-300 hover:border-gray-400"
+                  ? "border-red-500 bg-red-50 dark:bg-red-900/20"
+                  : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
               }`}
             />
             {errors.lastName && (
@@ -114,7 +114,7 @@ const ContactForm = () => {
         </div>
 
         <div>
-          <label className="font-semibold text-sm sm:text-base mb-2 block text-gray-700">
+          <label className="font-semibold text-sm sm:text-base mb-2 block text-gray-700 dark:text-gray-300">
             Email <span className="text-red-500">*</span>
           </label>
           <input
@@ -127,10 +127,10 @@ const ContactForm = () => {
                 message: "Invalid email address",
               },
             })}
-            className={`border rounded-lg px-4 py-3 text-sm sm:text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-colors duration-200 ${
+            className={`border rounded-lg px-4 py-3 text-sm sm:text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-colors duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 ${
               errors.email
-                ? "border-red-500 bg-red-50"
-                : "border-gray-300 hover:border-gray-400"
+                ? "border-red-500 bg-red-50 dark:bg-red-900/20"
+                : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
             }`}
           />
           {errors.email && (
@@ -141,7 +141,7 @@ const ContactForm = () => {
         </div>
 
         <div>
-          <label className="font-semibold text-sm sm:text-base mb-2 block text-gray-700">
+          <label className="font-semibold text-sm sm:text-base mb-2 block text-gray-700 dark:text-gray-300">
             Message <span className="text-red-500">*</span>
           </label>
           <textarea
@@ -154,10 +154,10 @@ const ContactForm = () => {
                 message: "Message must be at least 10 characters",
               },
             })}
-            className={`border rounded-lg px-4 py-3 text-sm sm:text-base w-full resize-vertical focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-colors duration-200 ${
+            className={`border rounded-lg px-4 py-3 text-sm sm:text-base w-full resize-vertical focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-colors duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 ${
               errors.message
-                ? "border-red-500 bg-red-50"
-                : "border-gray-300 hover:border-gray-400"
+                ? "border-red-500 bg-red-50 dark:bg-red-900/20"
+                : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
             }`}
           />
           {errors.message && (
