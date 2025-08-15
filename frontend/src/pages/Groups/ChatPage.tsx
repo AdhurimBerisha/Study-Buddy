@@ -47,18 +47,12 @@ const ChatPage = () => {
   const { myGroups, loading } = useSelector((state: RootState) => state.groups);
   const [newMessage, setNewMessage] = useState("");
 
-  // Update browser tab title with unread count - temporarily disabled
-  // useUnreadCount();
-
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(fetchMyGroups());
 
       socketService.connect(token);
     }
-
-    // Request notification permission - temporarily disabled
-    // requestNotificationPermission();
   }, [dispatch, isAuthenticated, token]);
 
   useEffect(() => {

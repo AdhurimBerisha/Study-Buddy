@@ -3,6 +3,7 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import Button from "../../components/Button";
 import { useLearning } from "../../hooks/useLearning";
 import { useAuth } from "../../hooks/useAuth";
+import { toast } from "react-toastify";
 
 type CheckoutState =
   | {
@@ -54,21 +55,21 @@ const Checkout = () => {
 
   const handleComplete = async () => {
     if (!isAuthenticated) {
-      alert("Please log in to complete this purchase.");
+      toast.error("Please log in to complete this purchase.");
       navigate("/login");
       return;
     }
 
-    alert("Payment successful (demo)");
+    toast.success("Payment successful! Redirecting to your course...");
     if (state && state.type === "course") {
       try {
         await purchaseCourse(state.course.id);
-
+        toast.success("Course purchased successfully!");
         navigate(`/learning/course/${state.course.id}`, { replace: true });
         return;
       } catch (error) {
         console.error("Failed to purchase course:", error);
-
+        toast.error("Failed to purchase course. Please try again.");
         navigate("/learning", { replace: true });
         return;
       }

@@ -9,6 +9,7 @@ import type { AppDispatch, RootState } from "../../store/store";
 import { fetchCourses } from "../../store/slice/coursesSlice";
 import FilterBar from "../../components/FilterBar";
 import bannerBg from "../../assets/bannerBg.webp";
+import { toast } from "react-toastify";
 
 const Courses = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -74,7 +75,12 @@ const Courses = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">Error loading courses: {error}</p>
-          <Button onClick={() => dispatch(fetchCourses(filters))}>
+          <Button
+            onClick={() => {
+              dispatch(fetchCourses(filters));
+              toast.info("Retrying to load courses...");
+            }}
+          >
             Try Again
           </Button>
         </div>
@@ -105,10 +111,22 @@ const Courses = () => {
           canShowMore || canShowLess ? (
             <div className="flex justify-center gap-3">
               {canShowLess && (
-                <Button onClick={() => setVisibleCount(8)}>Show less</Button>
+                <Button
+                  onClick={() => {
+                    setVisibleCount(8);
+                    toast.info("Showing fewer courses");
+                  }}
+                >
+                  Show less
+                </Button>
               )}
               {canShowMore && (
-                <Button onClick={() => setVisibleCount((c) => c + 8)}>
+                <Button
+                  onClick={() => {
+                    setVisibleCount((c) => c + 8);
+                    toast.info("Showing more courses");
+                  }}
+                >
                   Show more
                 </Button>
               )}

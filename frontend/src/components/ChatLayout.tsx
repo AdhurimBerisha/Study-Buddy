@@ -16,6 +16,7 @@ import { groupAPI } from "../services/api";
 import Badge from "./Badge";
 import { useUnreadCount } from "../hooks/useUnreadCount";
 import { requestNotificationPermission } from "../utils/notifications";
+import { toast } from "react-toastify";
 
 interface ApiMessage {
   id: string;
@@ -48,18 +49,12 @@ const ChatLayout = () => {
   );
   const [newMessage, setNewMessage] = useState("");
 
-  // Update browser tab title with unread count - temporarily disabled
-  // useUnreadCount();
-
   useEffect(() => {
     dispatch(fetchMyGroups());
 
     if (token) {
       socketService.connect(token);
     }
-
-    // Request notification permission - temporarily disabled
-    // requestNotificationPermission();
   }, [dispatch, token]);
 
   useEffect(() => {
@@ -102,6 +97,7 @@ const ChatLayout = () => {
         dispatch(loadMessages({ groupId, messages }));
       } catch (error) {
         console.error("Error fetching messages:", error);
+        toast.error("Failed to load messages. Please try again.");
       }
     },
     [currentUser, dispatch]
@@ -172,10 +168,8 @@ const ChatLayout = () => {
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedGroup) return;
 
-    // Send message via socket
     socketService.sendMessage(selectedGroup.id, newMessage.trim());
 
-    // Also dispatch to Redux store immediately for better UX
     dispatch(
       sendMessage({
         groupId: selectedGroup.id,
@@ -184,6 +178,7 @@ const ChatLayout = () => {
       })
     );
 
+    toast.success("Message sent successfully!");
     setNewMessage("");
   };
 
@@ -287,8 +282,8 @@ const ChatLayout = () => {
                   }
 
                   dispatch(selectGroup(group.id));
-
                   socketService.joinGroup(group.id);
+                  toast.success(`Joined group: ${group.name}`);
                 }}
               >
                 <div className="flex items-center justify-between">
