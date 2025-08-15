@@ -109,8 +109,8 @@ const CourseReader = () => {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-16 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">Loading course...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400 mx-auto mb-4"></div>
+        <p className="text-gray-600 dark:text-gray-400">Loading course...</p>
       </div>
     );
   }
@@ -118,7 +118,7 @@ const CourseReader = () => {
   if (error) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-16 text-center">
-        <p className="text-red-600 mb-4">Error: {error}</p>
+        <p className="text-red-600 dark:text-red-400 mb-4">Error: {error}</p>
         <Button onClick={() => loadCourseWithLessons(courseId!)}>Retry</Button>
       </div>
     );
@@ -127,7 +127,9 @@ const CourseReader = () => {
   if (!courseId || !currentCourse) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-16 text-center">
-        <p className="text-gray-600 mb-4">Course not found.</p>
+        <p className="text-gray-600 dark:text-gray-400 mb-4">
+          Course not found.
+        </p>
         <Button onClick={navigateToMyLearning}>Back to My Learning</Button>
       </div>
     );
@@ -142,9 +144,11 @@ const CourseReader = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <aside className="lg:col-span-1 bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+      <aside className="lg:col-span-1 bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Curriculum</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Curriculum
+          </h2>
           <Button
             variant="outline"
             size="sm"
@@ -157,7 +161,7 @@ const CourseReader = () => {
         </div>
 
         {!isEnrolled && (
-          <div className="mb-3 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3">
+          <div className="mb-3 text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-md p-3">
             <FaLock className="inline mr-1" />
             You need to enroll in this course to access the lessons.
           </div>
@@ -174,18 +178,18 @@ const CourseReader = () => {
                 key={lesson.id}
                 className={`px-4 py-3 rounded-lg border cursor-pointer transition-all duration-200 flex items-center justify-between ${
                   isActive
-                    ? "bg-blue-50 border-blue-200 shadow-sm"
+                    ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700 shadow-sm"
                     : isCompleted
-                    ? "bg-green-50 border-green-200 shadow-sm"
-                    : "bg-gray-50 border-gray-200 hover:bg-gray-100 hover:shadow-sm"
+                    ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700 shadow-sm"
+                    : "bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 hover:shadow-sm"
                 }`}
                 onClick={() => handleLessonSelect(lesson.id)}
               >
                 <div className="flex items-center space-x-3 flex-1 min-w-0">
                   {isCompleted && (
-                    <FaCheckCircle className="text-green-600 text-sm flex-shrink-0" />
+                    <FaCheckCircle className="text-green-600 dark:text-green-400 text-sm flex-shrink-0" />
                   )}
-                  <span className="text-sm font-medium truncate">
+                  <span className="text-sm font-medium truncate text-gray-900 dark:text-gray-100">
                     {lesson.title}
                   </span>
                 </div>
@@ -232,15 +236,17 @@ const CourseReader = () => {
         )}
       </aside>
 
-      <main className="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+      <main className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold">{currentCourse.title}</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            {currentCourse.title}
+          </h1>
           {isEnrolled ? (
-            <span className="text-sm text-green-700 bg-green-100 px-3 py-1 rounded-full">
+            <span className="text-sm text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/20 px-3 py-1 rounded-full">
               Enrolled
             </span>
           ) : (
-            <span className="text-sm text-gray-700 bg-gray-100 px-3 py-1 rounded-full">
+            <span className="text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
               Not Enrolled
             </span>
           )}
@@ -249,23 +255,23 @@ const CourseReader = () => {
         {isEnrolled && (
           <div className="mb-6">
             {isCompleted ? (
-              <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
-                <div className="flex items-center text-green-700 mb-2">
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-xl p-4 mb-4">
+                <div className="flex items-center text-green-700 dark:text-green-400 mb-2">
                   <FaTrophy className="mr-2" />
                   <span className="font-semibold">Congratulations!</span>
                 </div>
-                <p className="text-green-600 text-sm">
+                <p className="text-green-600 dark:text-green-400 text-sm">
                   You have successfully completed this course. All lessons are
                   done!
                 </p>
               </div>
             ) : (
               <>
-                <div className="flex items-center justify-between mb-1 text-sm text-gray-600">
+                <div className="flex items-center justify-between mb-1 text-sm text-gray-600 dark:text-gray-400">
                   <span>Progress</span>
                   <span>{completionPercentage}%</span>
                 </div>
-                <div className="h-2 bg-gray-200 rounded-full">
+                <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
                   <div
                     className="h-2 rounded-full bg-blue-500 transition-all duration-300"
                     style={{ width: `${completionPercentage}%` }}
@@ -279,7 +285,7 @@ const CourseReader = () => {
         {selectedLesson ? (
           <>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-semibold text-gray-900">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                 {selectedLesson.title}
               </h3>
               <div className="flex gap-2">
@@ -313,12 +319,12 @@ const CourseReader = () => {
             </div>
 
             <div className="prose max-w-none">
-              <p className="text-gray-700 leading-relaxed mb-6">
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
                 {selectedLesson.content}
               </p>
 
               {selectedLesson.duration && (
-                <div className="text-sm text-gray-500 mb-4">
+                <div className="text-sm text-gray-500 dark:text-gray-400 mb-4">
                   <FaPlay className="inline mr-2" />
                   Duration: {selectedLesson.duration} minutes
                 </div>
@@ -326,7 +332,9 @@ const CourseReader = () => {
 
               {selectedLesson.resources && (
                 <div className="mt-6">
-                  <h4 className="text-gray-800 font-medium mb-3">Resources</h4>
+                  <h4 className="text-gray-800 dark:text-gray-200 font-medium mb-3">
+                    Resources
+                  </h4>
                   <div className="space-y-2">
                     {JSON.parse(selectedLesson.resources).map(
                       (
@@ -336,7 +344,7 @@ const CourseReader = () => {
                         <a
                           key={index}
                           href={resource.url}
-                          className="block text-blue-600 hover:text-blue-800 hover:underline p-2 rounded border border-gray-200 hover:border-blue-300 transition-colors"
+                          className="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline p-2 rounded border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500 transition-colors"
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -350,8 +358,8 @@ const CourseReader = () => {
             </div>
           </>
         ) : (
-          <div className="text-center py-12 text-gray-500">
-            <FaBookOpen className="text-4xl mx-auto mb-4 text-gray-300" />
+          <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+            <FaBookOpen className="text-4xl mx-auto mb-4 text-gray-300 dark:text-gray-500" />
             <p>Select a lesson from the curriculum to get started</p>
           </div>
         )}

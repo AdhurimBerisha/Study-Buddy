@@ -63,23 +63,23 @@ const Modal = ({
     >
       <div
         ref={modalRef}
-        className={`bg-white rounded-xl shadow-lg ${sizes[size]} w-full max-h-[90vh] overflow-hidden relative border border-gray-200`}
+        className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg ${sizes[size]} w-full max-h-[90vh] overflow-hidden relative border border-gray-200 dark:border-gray-700`}
         role="document"
       >
         {(title || closeOnOverlayClick) && (
-          <div className="bg-gray-50 border-b border-gray-200">
+          <div className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
             <div className="flex items-center justify-between p-4 sm:p-6">
               {title && (
                 <h2
                   id="modal-title"
-                  className="text-lg sm:text-xl font-bold text-gray-900 pr-8"
+                  className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 pr-8"
                 >
                   {title}
                 </h2>
               )}
               {closeOnOverlayClick && (
                 <button
-                  className="absolute top-4 right-4 sm:top-6 sm:right-6 group text-gray-400 hover:text-gray-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-full p-2 hover:bg-gray-100 hover:scale-110"
+                  className="absolute top-4 right-4 sm:top-6 sm:right-6 group text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 rounded-full p-2 hover:bg-gray-100 dark:hover:bg-gray-600 hover:scale-110"
                   onClick={onClose}
                 >
                   <svg
@@ -101,7 +101,7 @@ const Modal = ({
           </div>
         )}
 
-        <div className="p-4 sm:p-6 bg-white">
+        <div className="p-4 sm:p-6 bg-white dark:bg-gray-800">
           <div className="relative">{children}</div>
         </div>
       </div>

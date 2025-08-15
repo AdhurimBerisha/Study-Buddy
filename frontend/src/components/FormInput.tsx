@@ -46,7 +46,7 @@ const FormInput = ({
 
   return (
     <div className={`flex flex-col w-full space-y-2 ${className}`}>
-      <label className="font-semibold text-sm sm:text-base text-gray-700">
+      <label className="font-semibold text-sm sm:text-base text-gray-700 dark:text-gray-300">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div className="relative">
@@ -66,15 +66,16 @@ const FormInput = ({
             w-full border rounded-lg transition-all duration-200
             ${sizes[size]}
             ${icon ? paddingWithIcon[size] : ""}
+            text-gray-900 dark:text-gray-100
             ${
               error
-                ? "border-red-500 focus:border-red-500 focus:ring-red-200 bg-red-50"
-                : "border-gray-300 focus:border-blue-500 focus:ring-blue-200 bg-white"
+                ? "border-red-500 focus:border-red-500 focus:ring-red-200 bg-red-50 dark:bg-red-900/20"
+                : "border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 bg-white dark:bg-gray-800"
             }
             focus:ring-2 focus:outline-none
-            hover:border-gray-400
-            disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50
-            placeholder-gray-400
+            hover:border-gray-400 dark:hover:border-gray-500
+            disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50
+            placeholder-gray-400 dark:placeholder-gray-500
           `}
         />
       </div>

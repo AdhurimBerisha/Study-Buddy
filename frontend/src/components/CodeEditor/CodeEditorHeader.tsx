@@ -64,7 +64,7 @@ const CodeEditorHeader = ({
               onClick={() => onTemplateChange(temp)}
               className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
                 selectedTemplate === temp
-                  ? "bg-white text-blue-700 shadow-md"
+                  ? "bg-white dark:bg-gray-200 text-blue-700 dark:text-blue-800 shadow-md"
                   : "text-blue-100 hover:bg-blue-500/20"
               }`}
             >

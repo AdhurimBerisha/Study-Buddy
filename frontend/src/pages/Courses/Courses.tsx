@@ -64,7 +64,9 @@ const Courses = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full border-blue-500 border-t-transparent"></div>
-          <p className="mt-4 text-gray-600">Loading courses...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">
+            Loading courses...
+          </p>
         </div>
       </div>
     );
@@ -74,7 +76,9 @@ const Courses = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 mb-4">Error loading courses: {error}</p>
+          <p className="text-red-600 dark:text-red-400 mb-4">
+            Error loading courses: {error}
+          </p>
           <Button
             onClick={() => {
               dispatch(fetchCourses(filters));

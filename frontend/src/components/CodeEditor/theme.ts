@@ -29,3 +29,39 @@ export const customTheme = {
     lineHeight: "1.5",
   },
 };
+
+export const darkTheme = {
+  colors: {
+    surface1: "#0f172a",
+    surface2: "#1e293b",
+    surface3: "#334155",
+    clickable: "#94a3b8",
+    base: "#f1f5f9",
+    disabled: "#64748b",
+    hover: "#cbd5e1",
+    accent: "#3b82f6",
+    error: "#ef4444",
+    errorSurface: "#450a0a",
+    warning: "#f59e0b",
+    warningSurface: "#451a03",
+    success: "#10b981",
+    successSurface: "#064e3b",
+  },
+  syntax: {
+    plain: "#f1f5f9",
+    comment: "#94a3b8",
+    keyword: "#3b82f6",
+    definition: "#a855f7",
+    punctuation: "#94a3b8",
+    property: "#10b981",
+    tag: "#ef4444",
+    static: "#f97316",
+    string: "#10b981",
+  },
+  font: {
+    body: "Inter, ui-sans-serif, system-ui, sans-serif",
+    mono: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
+    size: "14px",
+    lineHeight: "1.5",
+  },
+};

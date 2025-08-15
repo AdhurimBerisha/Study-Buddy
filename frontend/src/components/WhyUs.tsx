@@ -12,10 +12,10 @@ const WhyUs = () => {
             <h2 className="text-lg sm:text-xl font-light text-blue-600">
               Why Choose Us?
             </h2>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 leading-tight">
               Learn programming online anywhere, anytime!
             </h1>
-            <p className="text-gray-600 text-sm sm:text-base lg:text-lg leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base lg:text-lg leading-relaxed">
               Experience the future of learning with our comprehensive online
               platform designed to help you master programming skills at your
               own pace.
@@ -24,10 +24,10 @@ const WhyUs = () => {
 
           <div className="space-y-6 sm:space-y-8">
             <div className="space-y-3">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
                 Customized learning
               </h3>
-              <p className="flex items-start gap-3 text-gray-600 text-sm sm:text-base leading-relaxed">
+              <p className="flex items-start gap-3 text-gray-600 dark:text-gray-400 text-sm sm:text-base leading-relaxed">
                 <FaArrowRight className="mt-1 text-blue-600 text-lg sm:text-xl flex-shrink-0" />
                 <span>
                   Personalized learning paths tailored to your skill level and
@@ -37,10 +37,10 @@ const WhyUs = () => {
             </div>
 
             <div className="space-y-3">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
                 Get expert help when you need it
               </h3>
-              <p className="flex items-start gap-3 text-gray-600 text-sm sm:text-base leading-relaxed">
+              <p className="flex items-start gap-3 text-gray-600 dark:text-gray-400 text-sm sm:text-base leading-relaxed">
                 <FaArrowRight className="mt-1 text-blue-600 text-lg sm:text-xl flex-shrink-0" />
                 <span>
                   Access to qualified tutors 24/7, ready to help you overcome
@@ -50,10 +50,10 @@ const WhyUs = () => {
             </div>
 
             <div className="space-y-3">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
                 Learn anytime, Practice anywhere
               </h3>
-              <p className="flex items-start gap-3 text-gray-600 text-sm sm:text-base leading-relaxed">
+              <p className="flex items-start gap-3 text-gray-600 dark:text-gray-400 text-sm sm:text-base leading-relaxed">
                 <FaArrowRight className="mt-1 text-blue-600 text-lg sm:text-xl flex-shrink-0" />
                 <span>
                   Flexible scheduling and mobile-friendly platform that fits
@@ -69,11 +69,11 @@ const WhyUs = () => {
             <h2 className="text-lg sm:text-xl font-light text-blue-600">
               About Us
             </h2>
-            <blockquote className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 leading-tight">
+            <blockquote className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 dark:text-gray-100 leading-tight">
               "Our skilled tutors guide you every step of the way to help you
               reach your goals"
             </blockquote>
-            <p className="text-gray-600 text-sm sm:text-base lg:text-lg leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base lg:text-lg leading-relaxed">
               Join thousands of successful learners who have transformed their
               careers with our expert-led programming courses and personalized
               mentoring.

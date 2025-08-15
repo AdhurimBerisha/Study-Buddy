@@ -46,27 +46,27 @@ const FilterBar = ({
 
   return (
     <div className={`max-w-7xl mx-auto px-6 relative z-20 ${containerClasses}`}>
-      <div className="bg-white/90 backdrop-blur border border-gray-200 rounded-2xl shadow-sm p-4 sm:p-6">
+      <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm p-4 sm:p-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Search
             </label>
             <input
               value={query}
               onChange={(e) => onQueryChange(e.target.value)}
               placeholder={searchPlaceholder}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Category
             </label>
             <select
               value={category ?? ""}
               onChange={(e) => onCategoryChange(e.target.value || null)}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             >
               <option value="">All</option>
               {categories.map((c) => (
@@ -77,7 +77,7 @@ const FilterBar = ({
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {sortLabel}
             </label>
             <select
@@ -85,7 +85,7 @@ const FilterBar = ({
               onChange={(e) =>
                 onSortChange((e.target.value as "asc" | "desc" | "") || null)
               }
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             >
               <option value="">None</option>
               <option value="asc">{ascLabel}</option>
