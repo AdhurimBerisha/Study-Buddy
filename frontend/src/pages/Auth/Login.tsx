@@ -58,7 +58,7 @@ const Login = () => {
             onChange={handleChange}
             required
             placeholder="Enter your email"
-            className="border border-gray-300 rounded-lg px-4 py-3 w-full focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
+            className="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
           />
         </div>
 
@@ -73,7 +73,7 @@ const Login = () => {
             onChange={handleChange}
             required
             placeholder="Enter your password"
-            className="border border-gray-300 rounded-lg px-4 py-3 w-full focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
+            className="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
           />
         </div>
 
