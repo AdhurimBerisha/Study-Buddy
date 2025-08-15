@@ -5,6 +5,7 @@ import type { AppDispatch, RootState } from "../../store/store";
 import { login, clearError } from "../../store/slice/authSlice";
 import AuthLayout from "./AuthLayout";
 import Button from "../../components/Button";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -30,9 +31,10 @@ const Login = () => {
 
     try {
       await dispatch(login(formData)).unwrap();
+      toast.success("Login successful! Welcome back!");
       navigate("/");
-    } catch (error) {
-      // Error is handled by the slice
+    } catch {
+      toast.error("Login failed. Please check your credentials.");
     }
   };
 

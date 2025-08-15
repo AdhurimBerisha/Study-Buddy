@@ -9,6 +9,7 @@ import {
   clearError,
   refreshGroupData,
 } from "../../store/slice/groupsSlice";
+import { toast } from "react-toastify";
 
 import Hero from "../../components/Hero";
 import Button from "../../components/Button";
@@ -48,10 +49,11 @@ const MyGroups = () => {
   const handleLeaveGroup = async (id: string) => {
     try {
       await dispatch(leaveGroup(id)).unwrap();
-
+      toast.info("Successfully left the group.");
       dispatch(refreshGroupData(id));
     } catch (error) {
       console.error("Failed to leave group:", error);
+      toast.error("Failed to leave group. Please try again.");
     }
   };
 
@@ -62,8 +64,10 @@ const MyGroups = () => {
       );
       if (!confirmed) return;
       await dispatch(deleteGroup(id)).unwrap();
+      toast.info("Group deleted successfully.");
     } catch (error) {
       console.error("Failed to delete group:", error);
+      toast.error("Failed to delete group. Please try again.");
     }
   };
 

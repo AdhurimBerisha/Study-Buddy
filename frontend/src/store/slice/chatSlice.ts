@@ -38,16 +38,14 @@ const chatSlice = createSlice({
   initialState,
   reducers: {
     selectGroup: (state, action: PayloadAction<string>) => {
-      // Only reset unread count if we're switching to a different group
       if (state.selectedGroupId !== action.payload) {
-        // Mark previous group as read
         if (
           state.selectedGroupId &&
           state.unreadCountsByGroupId[state.selectedGroupId]
         ) {
           state.unreadCountsByGroupId[state.selectedGroupId] = 0;
         }
-        // Mark new group as read
+
         if (state.unreadCountsByGroupId[action.payload]) {
           state.unreadCountsByGroupId[action.payload] = 0;
         }
@@ -68,7 +66,6 @@ const chatSlice = createSlice({
         return;
       }
 
-      // Add message to local state immediately for better UX
       state.messagesByGroupId[groupId].push({
         id: messageId,
         sender,
@@ -104,8 +101,6 @@ const chatSlice = createSlice({
         }),
       });
 
-      // Increment unread count for messages from other users
-      // This ensures badges show up for new messages even when group is selected
       if (sender !== "You") {
         const currentCount = state.unreadCountsByGroupId[groupId] || 0;
         const newCount = currentCount + 1;

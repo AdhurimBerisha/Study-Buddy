@@ -3,6 +3,7 @@ import { store } from "../store/store";
 import { receiveMessage } from "../store/slice/chatSlice";
 import { refreshGroupData } from "../store/slice/groupsSlice";
 import { showNewMessageNotification } from "../utils/notifications";
+import { toast } from "react-toastify";
 
 export interface SocketMessage {
   id: string;
@@ -71,6 +72,7 @@ class SocketService {
       if (!isCurrentUser) {
         const senderName = `${message.sender.firstName} ${message.sender.lastName}`;
         showNewMessageNotification(senderName, message.content);
+        toast.info(`New message from ${senderName}: ${message.content}`);
       }
 
       store.dispatch(
@@ -87,10 +89,24 @@ class SocketService {
 
     this.socket.on("member_joined", (event: GroupEvent) => {
       store.dispatch(refreshGroupData(event.groupId));
+
+      const currentUser = store.getState().auth.user;
+      if (currentUser && event.data.user.id !== currentUser.id) {
+        toast.info(
+          `${event.data.user.firstName} ${event.data.user.lastName} joined the group`
+        );
+      }
     });
 
     this.socket.on("member_left", (event: GroupEvent) => {
       store.dispatch(refreshGroupData(event.groupId));
+
+      const currentUser = store.getState().auth.user;
+      if (currentUser && event.data.user.id !== currentUser.id) {
+        toast.info(
+          `${event.data.user.firstName} ${event.data.user.lastName} left the group`
+        );
+      }
     });
   }
 
@@ -104,10 +120,12 @@ class SocketService {
 
     this.socket.on("disconnect", () => {
       this.isConnected = false;
+      toast.warning("Disconnected from chat server");
     });
 
     this.socket.on("connect_error", (error) => {
       this.isConnected = false;
+      toast.error("Failed to connect to chat server");
 
       if (this.reconnectAttempts < this.maxReconnectAttempts) {
         this.reconnectAttempts++;

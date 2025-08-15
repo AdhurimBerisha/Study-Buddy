@@ -5,6 +5,7 @@ import type { AppDispatch, RootState } from "../../store/store";
 import { register, clearError } from "../../store/slice/authSlice";
 import AuthLayout from "./AuthLayout";
 import Button from "../../components/Button";
+import { toast } from "react-toastify";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -33,6 +34,7 @@ const Register = () => {
     dispatch(clearError());
 
     if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match!");
       return;
     }
 
@@ -46,9 +48,10 @@ const Register = () => {
           phone: formData.phone || undefined,
         })
       ).unwrap();
+      toast.success("Account created successfully! Please sign in.");
       navigate("/login");
-    } catch (error) {
-      // Error is handled by the slice
+    } catch {
+      toast.error("Registration failed. Please try again.");
     }
   };
 

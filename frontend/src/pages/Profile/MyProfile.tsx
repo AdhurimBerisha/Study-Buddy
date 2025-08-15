@@ -18,6 +18,7 @@ import {
   updateProfile,
   clearError,
 } from "../../store/slice/authSlice";
+import { toast } from "react-toastify";
 
 interface ProfileFormData {
   firstName: string;
@@ -75,11 +76,13 @@ const MyProfile = () => {
 
     if (file.size > 5 * 1024 * 1024) {
       setAvatarError("File size must be less than 5MB");
+      toast.error("File size must be less than 5MB");
       return;
     }
 
     if (!file.type.startsWith("image/")) {
       setAvatarError("Please select an image file");
+      toast.error("Please select an image file");
       return;
     }
 
@@ -101,11 +104,12 @@ const MyProfile = () => {
           avatarFile: selectedAvatarFile || undefined,
         })
       ).unwrap();
+      toast.success("Profile updated successfully!");
       setIsEditing(false);
       setSelectedAvatarFile(null);
       dispatch(clearError());
     } catch (error) {
-      // Error is handled by the slice
+      toast.error("Failed to update profile. Please try again.");
     }
   };
 
@@ -137,7 +141,14 @@ const MyProfile = () => {
           <p className="text-gray-600 mb-4">
             {error || "Failed to load profile"}
           </p>
-          <Button onClick={() => dispatch(fetchProfile())}>Try Again</Button>
+          <Button
+            onClick={() => {
+              dispatch(fetchProfile());
+              toast.info("Retrying to load profile...");
+            }}
+          >
+            Try Again
+          </Button>
         </div>
       </div>
     );

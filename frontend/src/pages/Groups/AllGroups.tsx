@@ -11,6 +11,7 @@ import {
   clearError,
 } from "../../store/slice/groupsSlice";
 import socketService from "../../services/socket";
+import { toast } from "react-toastify";
 
 import Hero from "../../components/Hero";
 import Button from "../../components/Button";
@@ -79,7 +80,7 @@ const AllGroups = () => {
 
   const handleCreateGroup = async () => {
     if (!isAuthenticated) {
-      alert("Please log in to create a group.");
+      toast.error("Please log in to create a group.");
       return;
     }
 
@@ -91,7 +92,7 @@ const AllGroups = () => {
       );
 
     if (missingFields.length > 0) {
-      alert(`Please fill in: ${missingFields.join(", ")}`);
+      toast.error(`Please fill in: ${missingFields.join(", ")}`);
       return;
     }
 
@@ -105,6 +106,7 @@ const AllGroups = () => {
 
     try {
       await dispatch(createGroup(groupData)).unwrap();
+      toast.success("Group created successfully!");
       dispatch(fetchAllGroups());
       setGroupName("");
       setCategory("");
@@ -114,42 +116,45 @@ const AllGroups = () => {
       setIsModalOpen(false);
     } catch (error) {
       console.error("Failed to create group:", error);
+      toast.error("Failed to create group. Please try again.");
     }
   };
 
   const handleJoinGroup = async (id: string) => {
     if (!isAuthenticated) {
-      alert("Please log in to join a group.");
+      toast.error("Please log in to join a group.");
       return;
     }
     try {
       await dispatch(joinGroup(id)).unwrap();
-
+      toast.success("Successfully joined the group!");
       socketService.joinGroup(id);
       dispatch(refreshGroupData(id));
     } catch (error) {
       console.error("Failed to join group:", error);
+      toast.error("Failed to join group. Please try again.");
     }
   };
 
   const handleLeaveGroup = async (id: string) => {
     if (!isAuthenticated) {
-      alert("Please log in to leave a group.");
+      toast.error("Please log in to leave a group.");
       return;
     }
     try {
       await dispatch(leaveGroup(id)).unwrap();
-
+      toast.info("Successfully left the group.");
       socketService.leaveGroup(id);
       dispatch(refreshGroupData(id));
     } catch (error) {
       console.error("Failed to leave group:", error);
+      toast.error("Failed to leave group. Please try again.");
     }
   };
 
   const handleCreateGroupClick = () => {
     if (!isAuthenticated) {
-      alert("Please log in to create a new group.");
+      toast.error("Please log in to create a new group.");
       return;
     }
     setIsModalOpen(true);

@@ -26,6 +26,8 @@ import MyLearning from "./pages/Learning/MyLearning";
 import CourseReader from "./pages/Learning/CourseReader";
 import CodeEditorDemo from "./pages/CodeEditorDemo/CodeEditorDemo";
 import { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   const location = useLocation();
@@ -100,6 +102,18 @@ const App = () => {
       </Routes>
       {showChatLayout && <ChatLayout />}
       <Footer />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 };

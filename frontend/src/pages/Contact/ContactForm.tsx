@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import Button from "../../components/Button";
 import emailjs from "@emailjs/browser";
+import { toast } from "react-toastify";
 
 interface ContactFormData {
   firstName: string;
@@ -34,10 +35,10 @@ const ContactForm = () => {
       );
 
       reset();
-      alert("Message sent successfully!");
+      toast.success("Message sent successfully! We'll get back to you soon.");
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("Failed to send message. Please try again.");
+      toast.error("Failed to send message. Please try again.");
     }
   };
 

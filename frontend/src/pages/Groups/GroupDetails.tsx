@@ -11,6 +11,7 @@ import {
   refreshGroupData,
   clearCurrentGroup,
 } from "../../store/slice/groupsSlice";
+import { toast } from "react-toastify";
 
 import Button from "../../components/Button";
 import {
@@ -73,10 +74,11 @@ const GroupDetails = () => {
     if (!id) return;
     try {
       await dispatch(joinGroup(id)).unwrap();
-
+      toast.info("Successfully joined the group.");
       dispatch(refreshGroupData(id));
     } catch (error) {
       console.error("Failed to join group:", error);
+      toast.error("Failed to join group. Please try again.");
     }
   };
 
@@ -84,10 +86,11 @@ const GroupDetails = () => {
     if (!id) return;
     try {
       await dispatch(leaveGroup(id)).unwrap();
-
+      toast.info("Successfully left the group.");
       navigate("/groups");
     } catch (error) {
       console.error("Failed to leave group:", error);
+      toast.error("Failed to leave group. Please try again.");
     }
   };
 
@@ -96,9 +99,11 @@ const GroupDetails = () => {
     if (window.confirm("Are you sure you want to delete this group?")) {
       try {
         await dispatch(deleteGroup(id)).unwrap();
+        toast.info("Group deleted successfully.");
         navigate("/groups");
       } catch (error) {
         console.error("Failed to delete group:", error);
+        toast.error("Failed to delete group. Please try again.");
       }
     }
   };
@@ -107,7 +112,9 @@ const GroupDetails = () => {
     if (!id) return;
 
     if (!editData.name || !editData.category || !editData.level) {
-      alert("Please fill in all required fields (Name, Category, and Level)");
+      toast.error(
+        "Please fill in all required fields (Name, Category, and Level)"
+      );
       return;
     }
 
@@ -123,11 +130,12 @@ const GroupDetails = () => {
       };
 
       await dispatch(updateGroup({ id, data: updateData })).unwrap();
+      toast.info("Group updated successfully.");
       setIsEditing(false);
       dispatch(fetchGroup(id));
     } catch (error) {
       console.error("Failed to update group:", error);
-      alert("Failed to update group. Please try again.");
+      toast.error("Failed to update group. Please try again.");
     }
   };
 
