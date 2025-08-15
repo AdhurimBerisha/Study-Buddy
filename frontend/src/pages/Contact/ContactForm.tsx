@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import Button from "../../components/Button";
+import emailjs from "@emailjs/browser";
 
 interface ContactFormData {
   firstName: string;
@@ -18,7 +19,19 @@ const ContactForm = () => {
 
   const onSubmit = async (data: ContactFormData) => {
     try {
-      console.log("Form submitted:", data);
+      const templateParams = {
+        from_name: `${data.firstName} ${data.lastName}`,
+        from_email: data.email,
+        message: data.message,
+        to_name: "StudyBuddy Team",
+      };
+
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
 
       reset();
       alert("Message sent successfully!");
