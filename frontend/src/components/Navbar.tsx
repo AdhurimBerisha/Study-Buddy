@@ -4,6 +4,9 @@ import { FaBars, FaTimes, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import Logo from "../assets/Logo.svg";
 import { FaUserCircle } from "react-icons/fa";
 import { useAuth } from "../hooks/useAuth";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store/store";
+import Badge from "./Badge";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,6 +18,14 @@ const Navbar = () => {
   const isGroupsActive = location.pathname.startsWith("/groups");
 
   const { user, isAuthenticated, logout } = useAuth();
+  const { unreadCountsByGroupId } = useSelector(
+    (state: RootState) => state.chat
+  );
+
+  const totalUnreadCount = Object.values(unreadCountsByGroupId).reduce(
+    (sum, count) => sum + count,
+    0
+  );
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -121,6 +132,14 @@ const Navbar = () => {
                   }`}
                 >
                   Groups
+                  {totalUnreadCount > 0 && (
+                    <Badge
+                      count={totalUnreadCount}
+                      variant="danger"
+                      size="xs"
+                      className="ml-2"
+                    />
+                  )}
                   <svg
                     className="ml-1 h-4 w-4 transition-transform duration-200 group-hover:rotate-180"
                     fill="none"
@@ -154,7 +173,16 @@ const Navbar = () => {
                       to="/groups/chat"
                       className="block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 transition-colors duration-200"
                     >
-                      Chat
+                      <div className="flex items-center justify-between">
+                        <span>Chat</span>
+                        {totalUnreadCount > 0 && (
+                          <Badge
+                            count={totalUnreadCount}
+                            variant="danger"
+                            size="xs"
+                          />
+                        )}
+                      </div>
                     </NavLink>
                   </div>
                 </div>
@@ -381,7 +409,17 @@ const Navbar = () => {
                     : "text-white hover:text-blue-300"
                 }`}
               >
-                <span>Groups</span>
+                <div className="flex items-center">
+                  <span>Groups</span>
+                  {totalUnreadCount > 0 && (
+                    <Badge
+                      count={totalUnreadCount}
+                      variant="danger"
+                      size="xs"
+                      className="ml-2"
+                    />
+                  )}
+                </div>
                 {isMobileGroupsDropdownOpen ? (
                   <FaChevronUp className="h-4 w-4" />
                 ) : (
@@ -436,7 +474,16 @@ const Navbar = () => {
                       }`
                     }
                   >
-                    Chat
+                    <div className="flex items-center justify-between">
+                      <span>Chat</span>
+                      {totalUnreadCount > 0 && (
+                        <Badge
+                          count={totalUnreadCount}
+                          variant="danger"
+                          size="xs"
+                        />
+                      )}
+                    </div>
                   </NavLink>
                 </div>
               )}

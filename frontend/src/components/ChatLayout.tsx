@@ -6,10 +6,16 @@ import {
   toggleChatWidget,
   setChatWidgetOpen,
   loadMessages,
+  markGroupAsRead,
+  receiveMessage,
+  sendMessage,
 } from "../store/slice/chatSlice";
 import { fetchMyGroups } from "../store/slice/groupsSlice";
 import socketService from "../services/socket";
 import { groupAPI } from "../services/api";
+import Badge from "./Badge";
+import { useUnreadCount } from "../hooks/useUnreadCount";
+import { requestNotificationPermission } from "../utils/notifications";
 
 interface ApiMessage {
   id: string;
@@ -30,14 +36,20 @@ import {
 
 const ChatLayout = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { selectedGroupId, messagesByGroupId, isChatWidgetOpen } = useSelector(
-    (state: RootState) => state.chat
-  );
+  const {
+    selectedGroupId,
+    messagesByGroupId,
+    isChatWidgetOpen,
+    unreadCountsByGroupId,
+  } = useSelector((state: RootState) => state.chat);
   const { myGroups, loading } = useSelector((state: RootState) => state.groups);
   const { token, user: currentUser } = useSelector(
     (state: RootState) => state.auth
   );
   const [newMessage, setNewMessage] = useState("");
+
+  // Update browser tab title with unread count - temporarily disabled
+  // useUnreadCount();
 
   useEffect(() => {
     dispatch(fetchMyGroups());
@@ -45,6 +57,9 @@ const ChatLayout = () => {
     if (token) {
       socketService.connect(token);
     }
+
+    // Request notification permission - temporarily disabled
+    // requestNotificationPermission();
   }, [dispatch, token]);
 
   useEffect(() => {
@@ -95,9 +110,7 @@ const ChatLayout = () => {
   useEffect(() => {
     if (selectedGroupId && socketService.isSocketConnected()) {
       socketService.leaveGroup(selectedGroupId);
-
       socketService.joinGroup(selectedGroupId);
-
       fetchGroupMessages(selectedGroupId);
     }
   }, [selectedGroupId, fetchGroupMessages]);
@@ -122,6 +135,14 @@ const ChatLayout = () => {
     return selectedGroup ? messagesByGroupId[selectedGroup.id] || [] : [];
   }, [selectedGroup, messagesByGroupId]);
 
+  const totalUnreadCount = useMemo(() => {
+    const total = Object.values(unreadCountsByGroupId).reduce(
+      (sum, count) => sum + count,
+      0
+    );
+    return total;
+  }, [unreadCountsByGroupId]);
+
   useEffect(() => {
     if (messages.length > 0) {
       const chatContainer = document.querySelector(".overflow-y-auto");
@@ -131,10 +152,37 @@ const ChatLayout = () => {
     }
   }, [messages]);
 
+  const handleScroll = useCallback(
+    (e: React.UIEvent<HTMLDivElement>) => {
+      const target = e.target as HTMLDivElement;
+      const isAtBottom =
+        target.scrollHeight - target.scrollTop <= target.clientHeight + 100;
+
+      if (
+        isAtBottom &&
+        selectedGroup &&
+        unreadCountsByGroupId[selectedGroup.id] > 0
+      ) {
+        dispatch(markGroupAsRead(selectedGroup.id));
+      }
+    },
+    [selectedGroup, unreadCountsByGroupId, dispatch]
+  );
+
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedGroup) return;
 
+    // Send message via socket
     socketService.sendMessage(selectedGroup.id, newMessage.trim());
+
+    // Also dispatch to Redux store immediately for better UX
+    dispatch(
+      sendMessage({
+        groupId: selectedGroup.id,
+        content: newMessage.trim(),
+        sender: "You",
+      })
+    );
 
     setNewMessage("");
   };
@@ -168,6 +216,24 @@ const ChatLayout = () => {
           <span className="font-semibold truncate">
             {selectedGroup ? selectedGroup.name : "No groups"}
           </span>
+          {!isChatWidgetOpen && totalUnreadCount > 0 && (
+            <Badge
+              count={totalUnreadCount}
+              variant="danger"
+              size="xs"
+              className="ml-2"
+            />
+          )}
+          {isChatWidgetOpen &&
+            selectedGroup &&
+            unreadCountsByGroupId[selectedGroup.id] > 0 && (
+              <Badge
+                count={unreadCountsByGroupId[selectedGroup.id]}
+                variant="warning"
+                size="xs"
+                className="ml-2"
+              />
+            )}
         </div>
         <div className="flex items-center space-x-2">
           {isChatWidgetOpen ? (
@@ -227,6 +293,14 @@ const ChatLayout = () => {
               >
                 <div className="flex items-center justify-between">
                   <span className="truncate">{group.name}</span>
+                  {unreadCountsByGroupId[group.id] > 0 && (
+                    <Badge
+                      count={unreadCountsByGroupId[group.id]}
+                      variant="primary"
+                      size="xs"
+                      className="ml-2 flex-shrink-0"
+                    />
+                  )}
                 </div>
                 <div className="text-xs text-gray-400 mt-1 truncate">
                   {group.category}
@@ -236,7 +310,10 @@ const ChatLayout = () => {
           </div>
 
           <div className="flex flex-col flex-1">
-            <div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 space-y-3 sm:space-y-4 bg-white">
+            <div
+              className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 space-y-3 sm:space-y-4 bg-white"
+              onScroll={handleScroll}
+            >
               {messages.length === 0 && (
                 <div className="flex items-center justify-center h-full">
                   <p className="text-gray-400 text-center text-sm sm:text-base">

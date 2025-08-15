@@ -2,6 +2,7 @@ import { io, Socket } from "socket.io-client";
 import { store } from "../store/store";
 import { receiveMessage } from "../store/slice/chatSlice";
 import { refreshGroupData } from "../store/slice/groupsSlice";
+import { showNewMessageNotification } from "../utils/notifications";
 
 export interface SocketMessage {
   id: string;
@@ -66,6 +67,12 @@ class SocketService {
           `${message.sender.firstName} ${message.sender.lastName}` ===
             `${currentUser.firstName} ${currentUser.lastName}`);
 
+      // Show notification for messages not from current user
+      if (!isCurrentUser) {
+        const senderName = `${message.sender.firstName} ${message.sender.lastName}`;
+        showNewMessageNotification(senderName, message.content);
+      }
+
       store.dispatch(
         receiveMessage({
           groupId: message.groupId,
@@ -99,7 +106,7 @@ class SocketService {
       this.isConnected = false;
     });
 
-    this.socket.on("connect_error", () => {
+    this.socket.on("connect_error", (error) => {
       this.isConnected = false;
 
       if (this.reconnectAttempts < this.maxReconnectAttempts) {

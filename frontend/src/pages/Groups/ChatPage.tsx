@@ -9,15 +9,19 @@ import {
   FaLock,
 } from "react-icons/fa";
 import Button from "../../components/Button";
+import Badge from "../../components/Badge";
 import {
   selectGroup as selectGroupAction,
   toggleSidebar,
   setSidebarOpen,
   loadMessages,
+  markGroupAsRead,
 } from "../../store/slice/chatSlice";
 import { fetchMyGroups } from "../../store/slice/groupsSlice";
 import socketService from "../../services/socket";
 import { groupAPI } from "../../services/api";
+import { useUnreadCount } from "../../hooks/useUnreadCount";
+import { requestNotificationPermission } from "../../utils/notifications";
 
 interface ApiMessage {
   id: string;
@@ -34,11 +38,17 @@ const ChatPage = () => {
     (state: RootState) => state.auth
   );
   const isAuthenticated = !!token;
-  const { selectedGroupId, messagesByGroupId, isSidebarOpen } = useSelector(
-    (state: RootState) => state.chat
-  );
+  const {
+    selectedGroupId,
+    messagesByGroupId,
+    isSidebarOpen,
+    unreadCountsByGroupId,
+  } = useSelector((state: RootState) => state.chat);
   const { myGroups, loading } = useSelector((state: RootState) => state.groups);
   const [newMessage, setNewMessage] = useState("");
+
+  // Update browser tab title with unread count - temporarily disabled
+  // useUnreadCount();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -46,6 +56,9 @@ const ChatPage = () => {
 
       socketService.connect(token);
     }
+
+    // Request notification permission - temporarily disabled
+    // requestNotificationPermission();
   }, [dispatch, isAuthenticated, token]);
 
   useEffect(() => {
@@ -122,6 +135,13 @@ const ChatPage = () => {
     return selectedGroup ? messagesByGroupId[selectedGroup.id] || [] : [];
   }, [selectedGroup, messagesByGroupId]);
 
+  const totalUnreadCount = useMemo(() => {
+    return Object.values(unreadCountsByGroupId).reduce(
+      (sum, count) => sum + count,
+      0
+    );
+  }, [unreadCountsByGroupId]);
+
   useEffect(() => {
     if (messages.length > 0) {
       const chatContainer = document.querySelector(".overflow-y-auto");
@@ -130,6 +150,23 @@ const ChatPage = () => {
       }
     }
   }, [messages]);
+
+  const handleScroll = useCallback(
+    (e: React.UIEvent<HTMLDivElement>) => {
+      const target = e.target as HTMLDivElement;
+      const isAtBottom =
+        target.scrollHeight - target.scrollTop <= target.clientHeight + 100;
+
+      if (
+        isAtBottom &&
+        selectedGroup &&
+        unreadCountsByGroupId[selectedGroup.id] > 0
+      ) {
+        dispatch(markGroupAsRead(selectedGroup.id));
+      }
+    },
+    [selectedGroup, unreadCountsByGroupId, dispatch]
+  );
 
   if (!isAuthenticated) {
     return (
@@ -263,6 +300,12 @@ const ChatPage = () => {
                             <span>{group.level}</span>
                           </div>
                         </div>
+                        <Badge
+                          count={unreadCountsByGroupId[group.id] || 0}
+                          variant="primary"
+                          size="xs"
+                          className="ml-2 flex-shrink-0"
+                        />
                       </div>
                     </div>
                   );
@@ -291,11 +334,20 @@ const ChatPage = () => {
               </span>
             )}
           </div>
+          {totalUnreadCount > 0 && (
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-600">Unread:</span>
+              <Badge count={totalUnreadCount} variant="primary" size="sm" />
+            </div>
+          )}
         </header>
 
         {selectedGroup ? (
           <>
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+            <div
+              className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4"
+              onScroll={handleScroll}
+            >
               {messages.length === 0 ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
