@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { SandpackProvider, SandpackLayout } from "@codesandbox/sandpack-react";
 import CodeEditorHeader from "./CodeEditorHeader";
 import CodeEditorSidebar from "./CodeEditorSidebar";
@@ -33,11 +33,6 @@ const CodeEditor = ({
   };
 
   const currentTheme = theme === "dark" ? darkTheme : customTheme;
-
-  useEffect(() => {
-    console.log("Current theme:", theme);
-    console.log("Applied theme:", currentTheme);
-  }, [theme, currentTheme]);
 
   return (
     <div className={`w-full ${className}`}>
