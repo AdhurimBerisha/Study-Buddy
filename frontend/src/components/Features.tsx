@@ -25,12 +25,7 @@ const features = [
     description:
       "Practice coding in real-time with our built-in editor supporting multiple languages and live preview functionality.",
   },
-  {
-    icon: <FaUserCheck />,
-    title: "Pay Per Lesson",
-    description:
-      "Flexible payment options - pay only for the lessons you take with no long-term commitments or hidden fees.",
-  },
+
   {
     icon: <FaDollarSign />,
     title: "Affordable Prices",
