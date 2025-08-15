@@ -3,6 +3,8 @@ import CodeEditor from "../../components/CodeEditor/CodeEditor";
 import { getFilesForTemplate } from "../../components/CodeEditor/constants";
 import type { TemplateType } from "../../components/CodeEditor/types";
 import { FaCode, FaPlay } from "react-icons/fa";
+import bannerBg from "../../assets/bannerBg.webp";
+import Banner from "../../components/Banner";
 
 const CodeEditorDemo = () => {
   const [showFileExplorer, setShowFileExplorer] = useState(true);
@@ -59,6 +61,11 @@ const CodeEditorDemo = () => {
           className="max-w-7xl mx-auto"
         />
       </div>
+      <Banner
+        imageSrc={bannerBg}
+        title="Start learning a new language today!"
+        buttonText="Sign Up"
+      />
     </div>
   );
 };
