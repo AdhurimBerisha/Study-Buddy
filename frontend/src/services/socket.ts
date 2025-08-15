@@ -119,12 +119,10 @@ class SocketService {
 
     this.socket.on("disconnect", () => {
       this.isConnected = false;
-      toast.warning("Disconnected from chat server");
     });
 
     this.socket.on("connect_error", () => {
       this.isConnected = false;
-      toast.error("Failed to connect to chat server");
 
       if (this.reconnectAttempts < this.maxReconnectAttempts) {
         this.reconnectAttempts++;
