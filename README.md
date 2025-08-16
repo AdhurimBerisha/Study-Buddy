@@ -64,12 +64,15 @@ This project requires a few environment variables to run properly.
 - `MYSQL_PASSWORD` — your_mysql_password
 - `MYSQL_DB` — your_mysql_database
 
+- `GOOGLE_CLIENT_ID` — your_google_client_id_here  
+
 ### frontend `.env` variables include:
 - `VITE_API_URL` — http://localhost:8080/api
 - `VITE_SOCKET_URL` — http://localhost:8080
 - `VITE_EMAILJS_SERVICE_ID` — your_service_id_here
 - `VITE_EMAILJS_TEMPLATE_ID` — your_template_id_here
 - `VITE_EMAILJS_PUBLIC_KEY` — your_public_key_here
+- `VITE_GOOGLE_CLIENT_ID` — your_google_client_id_here 
 
 4. Run the development servers
 
