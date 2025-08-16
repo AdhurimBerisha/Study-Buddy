@@ -34,6 +34,20 @@ const login = createAsyncThunk(
   }
 );
 
+const googleLogin = createAsyncThunk(
+  "auth/googleLogin",
+  async (googleToken: string) => {
+    try {
+      const response = await api.post("/auth/google", { token: googleToken });
+      const { token, user } = response.data;
+      localStorage.setItem("token", token);
+      return { token, user };
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
 const register = createAsyncThunk(
   "auth/register",
   async ({
@@ -134,6 +148,21 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Login failed";
+      })
+
+      .addCase(googleLogin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(googleLogin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.error = null;
+      })
+      .addCase(googleLogin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Google login failed";
       });
 
     builder
@@ -188,4 +217,4 @@ export default authSlice.reducer;
 export const { logout, clearError, setLoading, setError, setUser, setToken } =
   authSlice.actions;
 
-export { login, register, fetchProfile, updateProfile };
+export { login, googleLogin, register, fetchProfile, updateProfile };

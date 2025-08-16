@@ -1,4 +1,3 @@
-import React from "react";
 import { FaSun, FaMoon } from "react-icons/fa";
 import { useTheme } from "../hooks/useTheme";
 
@@ -7,10 +6,10 @@ interface DarkModeToggleProps {
   size?: "sm" | "md" | "lg";
 }
 
-const DarkModeToggle: React.FC<DarkModeToggleProps> = ({
+const DarkModeToggle = ({
   className = "",
   size = "md",
-}) => {
+}: DarkModeToggleProps) => {
   const { theme, toggleTheme } = useTheme();
 
   const sizeClasses = {

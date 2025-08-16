@@ -1,4 +1,4 @@
-export const showNewMessageNotification = (sender: string, content: string) => {
+const showNewMessageNotification = (sender: string, content: string) => {
   if (!("Notification" in window)) {
     return;
   }
@@ -22,8 +22,10 @@ export const showNewMessageNotification = (sender: string, content: string) => {
   }
 };
 
-export const requestNotificationPermission = () => {
+const requestNotificationPermission = () => {
   if ("Notification" in window && Notification.permission === "default") {
     Notification.requestPermission();
   }
 };
+
+export { showNewMessageNotification, requestNotificationPermission };

@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
 import Badge from "./Badge";
 import ThemeToggle from "./ThemeToggle";
+import { getDisplayName } from "../utils/nameUtils";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -246,7 +247,7 @@ const Navbar = () => {
                       <FaUserCircle className="w-8 h-8 text-gray-600 dark:text-gray-400" />
                     )}
                     <span className="hidden sm:block">
-                      {user?.firstName} {user?.lastName}
+                      {getDisplayName(user?.firstName || "", user?.lastName)}
                     </span>
                     <svg
                       className="h-4 w-4 transition-transform duration-200 group-hover:rotate-180"
@@ -552,7 +553,10 @@ const Navbar = () => {
                       )}
                       <div className="text-sm">
                         <p className="font-medium">
-                          {user?.firstName} {user?.lastName}
+                          {getDisplayName(
+                            user?.firstName || "",
+                            user?.lastName
+                          )}
                         </p>
                       </div>
                     </div>

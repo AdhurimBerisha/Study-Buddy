@@ -1,5 +1,3 @@
-import React from "react";
-
 interface BadgeProps {
   count: number;
   variant?: "primary" | "secondary" | "danger" | "warning";
@@ -7,12 +5,12 @@ interface BadgeProps {
   className?: string;
 }
 
-const Badge: React.FC<BadgeProps> = ({
+const Badge = ({
   count,
   variant = "primary",
   size = "md",
   className = "",
-}) => {
+}: BadgeProps) => {
   if (count === 0) {
     return null;
   }
