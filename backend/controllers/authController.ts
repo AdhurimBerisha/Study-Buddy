@@ -86,8 +86,6 @@ const googleAuth = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid Google token" });
     }
 
-    console.log("Google OAuth payload:", JSON.stringify(payload, null, 2));
-
     const {
       email,
       given_name,
@@ -130,14 +128,6 @@ const googleAuth = async (req: Request, res: Response) => {
         lastName = "";
       }
     }
-
-    console.log("Extracted user data:", {
-      email,
-      firstName,
-      lastName,
-      googleId,
-      picture: picture ? "Has picture" : "No picture",
-    });
 
     let user = await User.findOne({ where: { email } });
 

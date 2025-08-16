@@ -7,6 +7,7 @@ import AuthLayout from "./AuthLayout";
 import Button from "../../components/Button";
 import GoogleSignInButton from "../../components/GoogleSignInButton";
 import { toast } from "react-toastify";
+import ErrorBoundary from "../../components/ErrorBoundary";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -102,7 +103,9 @@ const Login = () => {
         </div>
 
         <div className="mt-6">
-          <GoogleSignInButton />
+          <ErrorBoundary>
+            <GoogleSignInButton />
+          </ErrorBoundary>
         </div>
       </div>
     </AuthLayout>
