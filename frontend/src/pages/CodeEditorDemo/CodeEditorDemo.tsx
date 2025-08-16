@@ -17,15 +17,15 @@ const CodeEditorDemo = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-center justify-between h-auto sm:h-16 py-3 sm:py-0 gap-3 sm:gap-0">
+            <div className="flex items-center gap-3 order-2 sm:order-1 sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2">
               <FaCode className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-              <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+              <h1 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
                 Interactive Code Editor
               </h1>
             </div>
 
-            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 order-1 sm:order-2">
               <div className="w-2 h-2 bg-green-400 rounded-full"></div>
               <span>Ready</span>
             </div>
@@ -35,9 +35,9 @@ const CodeEditorDemo = () => {
 
       <div className="bg-blue-50 dark:bg-blue-900/20 border-b border-blue-200 dark:border-blue-800 mb-5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex items-center gap-3 text-sm text-blue-800 dark:text-blue-200">
-            <FaPlay className="w-4 h-4" />
-            <span>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 text-sm text-blue-800 dark:text-blue-200">
+            <FaPlay className="w-4 h-4 mt-0.5 sm:mt-0 flex-shrink-0" />
+            <span className="text-center sm:text-left">
               <strong>Tip:</strong> Start coding! The editor supports live
               preview, file management, and console output. Try changing the
               code to see real-time updates.
@@ -58,7 +58,7 @@ const CodeEditorDemo = () => {
           onTogglePreview={setShowPreview}
           height="calc(100vh - 200px)"
           consoleHeight="200px"
-          className="max-w-7xl mx-auto"
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
         />
       </div>
       <Banner

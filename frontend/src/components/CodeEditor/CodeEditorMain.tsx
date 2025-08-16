@@ -88,15 +88,19 @@ const CodeEditorMain = ({ showPreview }: CodeEditorMainProps) => {
   return (
     <div
       ref={editorRef}
-      className="flex-1 relative"
-      style={{ width: showPreview ? "45%" : "calc(100% - 200px)" }}
+      className={`flex-1 relative overflow-auto min-h-[300px] ${
+        showPreview ? "w-full lg:w-[45%]" : "w-full lg:w-[calc(100%-200px)]"
+      }`}
     >
-      <SandpackCodeEditor
-        className="font-mono border-none w-full h-full"
-        style={{
-          overflow: "hidden",
-        }}
-      />
+      <div className="w-full h-full overflow-auto min-h-[300px]">
+        <SandpackCodeEditor
+          className="font-mono border-none w-full h-full"
+          style={{
+            overflow: "visible",
+            minHeight: "300px",
+          }}
+        />
+      </div>
 
       {showHorizontalScrollbar && (
         <div className="absolute bottom-6 left-0 right-0 h-3 bg-gray-100 dark:bg-gray-700">
