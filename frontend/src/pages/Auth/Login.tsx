@@ -49,7 +49,7 @@ const Login = () => {
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="flex flex-col w-full">
-          <label className="font-semibold text-sm mb-2 text-gray-700">
+          <label className="font-semibold text-sm mb-2 text-gray-700 dark:text-gray-300">
             Email <span className="text-red-500">*</span>
           </label>
           <input
@@ -64,7 +64,7 @@ const Login = () => {
         </div>
 
         <div className="flex flex-col w-full">
-          <label className="font-semibold text-sm mb-2 text-gray-700">
+          <label className="font-semibold text-sm mb-2 text-gray-700 dark:text-gray-300">
             Password <span className="text-red-500">*</span>
           </label>
           <input
@@ -79,7 +79,7 @@ const Login = () => {
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded-md">
             {error}
           </div>
         )}

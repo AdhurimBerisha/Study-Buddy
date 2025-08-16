@@ -67,7 +67,7 @@ const Register = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col w-full">
-            <label className="font-semibold text-sm mb-2 text-gray-700">
+            <label className="font-semibold text-sm mb-2 text-gray-700 dark:text-gray-300">
               First Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -82,7 +82,7 @@ const Register = () => {
           </div>
 
           <div className="flex flex-col w-full">
-            <label className="font-semibold text-sm mb-2 text-gray-700">
+            <label className="font-semibold text-sm mb-2 text-gray-700 dark:text-gray-300">
               Last Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -98,7 +98,7 @@ const Register = () => {
         </div>
 
         <div className="flex flex-col w-full">
-          <label className="font-semibold text-sm mb-2 text-gray-700">
+          <label className="font-semibold text-sm mb-2 text-gray-700 dark:text-gray-300">
             Email <span className="text-red-500">*</span>
           </label>
           <input
@@ -113,7 +113,7 @@ const Register = () => {
         </div>
 
         <div className="flex flex-col w-full">
-          <label className="font-semibold text-sm mb-2 text-gray-700">
+          <label className="font-semibold text-sm mb-2 text-gray-700 dark:text-gray-300">
             Phone Number
           </label>
           <input
@@ -127,7 +127,7 @@ const Register = () => {
         </div>
 
         <div className="flex flex-col w-full">
-          <label className="font-semibold text-sm mb-2 text-gray-700">
+          <label className="font-semibold text-sm mb-2 text-gray-700 dark:text-gray-300">
             Password <span className="text-red-500">*</span>
           </label>
           <input
@@ -142,7 +142,7 @@ const Register = () => {
         </div>
 
         <div className="flex flex-col w-full">
-          <label className="font-semibold text-sm mb-2 text-gray-700">
+          <label className="font-semibold text-sm mb-2 text-gray-700 dark:text-gray-300">
             Confirm Password <span className="text-red-500">*</span>
           </label>
           <input
@@ -152,12 +152,12 @@ const Register = () => {
             onChange={handleChange}
             required
             placeholder="Confirm your password"
-            className="border border-gray-500 dark:border-gray-600 rounded-lg px-4 py-3 w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
+            className="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
           />
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded-md">
             {error}
           </div>
         )}
