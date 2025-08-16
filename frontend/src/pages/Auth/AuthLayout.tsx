@@ -49,7 +49,7 @@ const AuthLayout = ({
         <div className="text-center mt-6">
           <Link
             to="/"
-            className="text-white hover:text-blue-200 text-sm transition-colors duration-200"
+            className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 text-sm transition-colors duration-200"
           >
             ← Back to Home
           </Link>
