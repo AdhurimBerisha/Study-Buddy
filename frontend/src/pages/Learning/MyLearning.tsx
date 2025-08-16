@@ -4,6 +4,7 @@ import Button from "../../components/Button";
 import { FaBookOpen, FaArrowRight, FaClock } from "react-icons/fa";
 import { useLearning } from "../../hooks/useLearning";
 import { useAuth } from "../../hooks/useAuth";
+import { useCustomPageTitle } from "../../hooks/usePageTitle";
 
 interface PurchasedCourse {
   id: string;
@@ -25,6 +26,8 @@ const MyLearning = () => {
   );
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState<string | null>(null);
+
+  useCustomPageTitle("My Learning");
 
   useEffect(() => {
     const fetchPurchasedCourses = async () => {

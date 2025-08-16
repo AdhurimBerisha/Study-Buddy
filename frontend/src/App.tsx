@@ -29,6 +29,7 @@ import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useTheme } from "./hooks/useTheme";
+import { usePageTitle } from "./hooks/usePageTitle";
 
 const App = () => {
   const location = useLocation();
@@ -36,6 +37,8 @@ const App = () => {
   const { token, user } = useSelector((state: RootState) => state.auth);
   const { theme } = useTheme();
   const isAuthenticated = !!token;
+
+  usePageTitle();
 
   const showChatLayout =
     location.pathname !== "/groups/chat" && isAuthenticated;

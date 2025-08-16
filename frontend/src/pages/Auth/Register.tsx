@@ -7,8 +7,11 @@ import AuthLayout from "./AuthLayout";
 import Button from "../../components/Button";
 import GoogleSignInButton from "../../components/GoogleSignInButton";
 import { toast } from "react-toastify";
+import { useCustomPageTitle } from "../../hooks/usePageTitle";
 
 const Register = () => {
+  useCustomPageTitle("Sign Up");
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",

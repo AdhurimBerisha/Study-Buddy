@@ -8,8 +8,11 @@ import Button from "../../components/Button";
 import GoogleSignInButton from "../../components/GoogleSignInButton";
 import { toast } from "react-toastify";
 import ErrorBoundary from "../../components/ErrorBoundary";
+import { useCustomPageTitle } from "../../hooks/usePageTitle";
 
 const Login = () => {
+  useCustomPageTitle("Sign In");
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",

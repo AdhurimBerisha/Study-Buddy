@@ -30,6 +30,7 @@ import Features from "../../components/Features";
 import Banner from "../../components/Banner";
 import bannerBg from "../../assets/bannerBg.webp";
 import GroupCard from "./GroupCard";
+import { useCustomPageTitle } from "../../hooks/usePageTitle";
 
 const AllGroups = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -46,6 +47,8 @@ const AllGroups = () => {
   const [level, setLevel] = useState("");
   const [description, setDescription] = useState("");
   const [maxMembers, setMaxMembers] = useState("");
+
+  useCustomPageTitle("Study Groups");
 
   useEffect(() => {
     if (token) {

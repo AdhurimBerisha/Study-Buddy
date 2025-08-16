@@ -19,6 +19,7 @@ import {
   clearError,
 } from "../../store/slice/authSlice";
 import { toast } from "react-toastify";
+import { useCustomPageTitle } from "../../hooks/usePageTitle";
 
 interface ProfileFormData {
   firstName: string;
@@ -32,6 +33,8 @@ const MyProfile = () => {
   const { user, loading, error } = useSelector(
     (state: RootState) => state.auth
   );
+
+  useCustomPageTitle("My Profile");
 
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(

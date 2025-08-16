@@ -19,6 +19,7 @@ import {
   clearCurrentCourse,
 } from "../../store/slice/coursesSlice";
 import { purchaseAPI } from "../../services/api";
+import { useCustomPageTitle } from "../../hooks/usePageTitle";
 
 const CourseDetails = () => {
   const { slug: courseId } = useParams<{ slug: string }>();
@@ -32,6 +33,8 @@ const CourseDetails = () => {
   const isAuthenticated = !!token;
   const [isPurchased, setIsPurchased] = useState(false);
   const [checkingPurchase, setCheckingPurchase] = useState(false);
+
+  useCustomPageTitle(course?.title || undefined);
 
   useEffect(() => {
     if (courseId) {

@@ -10,6 +10,7 @@ import { fetchCourses } from "../../store/slice/coursesSlice";
 import FilterBar from "../../components/FilterBar";
 import bannerBg from "../../assets/bannerBg.webp";
 import { toast } from "react-toastify";
+import { useCustomPageTitle } from "../../hooks/usePageTitle";
 
 const Courses = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,6 +22,8 @@ const Courses = () => {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string | null>(null);
   const [priceSort, setPriceSort] = useState<"asc" | "desc" | null>(null);
+
+  useCustomPageTitle("All Courses");
 
   useEffect(() => {
     dispatch(fetchCourses(filters));

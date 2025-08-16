@@ -7,6 +7,7 @@ import { tutorAPI } from "../../services/api";
 import { type Tutor } from "../../types/tutor";
 import FilterBar from "../../components/FilterBar";
 import Button from "../../components/Button";
+import { useCustomPageTitle } from "../../hooks/usePageTitle";
 
 const Tutors = () => {
   const [visibleCount, setVisibleCount] = useState(4);
@@ -17,11 +18,13 @@ const Tutors = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  useCustomPageTitle("Find Tutors");
+
   useEffect(() => {
     const fetchTutors = async () => {
       try {
         setLoading(true);
-        const params: any = {};
+        const params: Record<string, string> = {};
         if (category) params.category = category;
 
         const response = await tutorAPI.getAllTutors(params);
