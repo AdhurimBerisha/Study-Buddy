@@ -108,7 +108,7 @@ const MyProfile = () => {
       setIsEditing(false);
       setSelectedAvatarFile(null);
       dispatch(clearError());
-    } catch (error) {
+    } catch {
       toast.error("Failed to update profile. Please try again.");
     }
   };
@@ -176,7 +176,7 @@ const MyProfile = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-8 sm:py-12 lg:py-16">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-12">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-900 dark:from-gray-100 dark:via-blue-300 dark:to-indigo-300 bg-clip-text text-transparent mb-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
             Profile Settings
           </h1>
           <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-md mx-auto">
