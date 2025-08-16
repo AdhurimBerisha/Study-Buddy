@@ -4,11 +4,12 @@ import sequelize from "../config/db";
 export interface UserAttributes {
   id: string;
   email: string;
-  password: string;
+  password: string | null;
   firstName: string;
   lastName: string;
   phone?: string | null;
   avatar?: string | null;
+  googleId?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -16,7 +17,7 @@ export interface UserAttributes {
 export interface UserCreationAttributes
   extends Optional<
     UserAttributes,
-    "id" | "phone" | "avatar" | "createdAt" | "updatedAt"
+    "id" | "phone" | "avatar" | "googleId" | "createdAt" | "updatedAt"
   > {}
 
 export class User extends Model<UserAttributes, UserCreationAttributes> {}
@@ -36,7 +37,7 @@ User.init(
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       validate: { len: [6, 255] },
     },
     firstName: {
@@ -47,9 +48,9 @@ User.init(
     },
     lastName: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       field: "last_name",
-      validate: { len: [1, 50] },
+      validate: { len: [0, 50] },
     },
     phone: {
       type: DataTypes.STRING,
@@ -59,6 +60,11 @@ User.init(
     avatar: {
       type: DataTypes.TEXT,
       allowNull: true,
+    },
+    googleId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: "google_id",
     },
   },
   {

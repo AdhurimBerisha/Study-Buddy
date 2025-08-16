@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import User from "../models/User";
 import { generateToken } from "../utils/jwt";
+import { OAuth2Client } from "google-auth-library";
 
 const userSignup = async (req: Request, res: Response) => {
   try {
@@ -40,6 +41,14 @@ const userLogin = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Invalid email or password" });
 
     const userPlain = user.get({ plain: true });
+
+    if (!userPlain.password) {
+      return res.status(401).json({
+        message:
+          "This account uses Google sign-in. Please use Google to sign in.",
+      });
+    }
+
     const isValid = await bcrypt.compare(password, userPlain.password);
 
     if (!isValid)
@@ -57,4 +66,114 @@ const userLogin = async (req: Request, res: Response) => {
   }
 };
 
-export { userSignup, userLogin };
+const googleAuth = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.body as { token: string };
+
+    if (!token) {
+      return res.status(400).json({ message: "Google token is required" });
+    }
+
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload) {
+      return res.status(400).json({ message: "Invalid Google token" });
+    }
+
+    console.log("Google OAuth payload:", JSON.stringify(payload, null, 2));
+
+    const {
+      email,
+      given_name,
+      family_name,
+      sub: googleId,
+      picture,
+      name,
+    } = payload;
+
+    if (!email) {
+      return res
+        .status(400)
+        .json({ message: "Email not found in Google token" });
+    }
+
+    let firstName = "Google";
+    let lastName = "User";
+
+    if (given_name && family_name) {
+      firstName = given_name.trim().replace(/\s+/g, " ");
+      lastName = family_name.trim().replace(/\s+/g, " ");
+    } else if (given_name && !family_name) {
+      firstName = given_name.trim().replace(/\s+/g, " ");
+      lastName = "";
+    } else if (name) {
+      const nameParts = name.trim().split(/\s+/);
+      if (nameParts.length >= 2) {
+        firstName = nameParts[0];
+        lastName = nameParts.slice(1).join(" ");
+      } else if (nameParts.length === 1) {
+        firstName = nameParts[0];
+        lastName = "";
+      }
+    }
+
+    if (firstName === "Google" && email.includes("@gmail.com")) {
+      const emailPrefix = email.split("@")[0];
+      if (emailPrefix && emailPrefix !== "anbupsycho") {
+        firstName = emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1);
+        lastName = "";
+      }
+    }
+
+    console.log("Extracted user data:", {
+      email,
+      firstName,
+      lastName,
+      googleId,
+      picture: picture ? "Has picture" : "No picture",
+    });
+
+    let user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      user = await User.create({
+        email,
+        firstName,
+        lastName,
+        password: null,
+        googleId,
+        avatar: picture || null,
+      });
+    } else if (!(user as any).googleId) {
+      await user.update({
+        googleId,
+        avatar: picture || (user as any).avatar,
+      });
+    } else if (picture && !(user as any).avatar) {
+      await user.update({ avatar: picture });
+    }
+
+    const userPlain = user.get({ plain: true });
+    delete (userPlain as any).password;
+
+    const jwtToken = generateToken({
+      userId: userPlain.id,
+      email: userPlain.email,
+    });
+
+    return res.json({ token: jwtToken, user: userPlain });
+  } catch (e) {
+    console.error("Google auth error:", e);
+    const message =
+      e instanceof Error ? e.message : "Google authentication failed";
+    return res.status(400).json({ message });
+  }
+};
+
+export { userSignup, userLogin, googleAuth };
