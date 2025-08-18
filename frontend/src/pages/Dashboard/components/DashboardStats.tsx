@@ -4,8 +4,10 @@ interface DashboardStatsProps {
       total: number;
       regular: number;
       admin: number;
-      tutor: number;
       recent: number;
+    };
+    tutors: {
+      total: number;
     };
     courses: {
       total: number;
@@ -127,10 +129,10 @@ const DashboardStats = ({ stats }: DashboardStatsProps) => {
               </div>
             </div>
             <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-              {stats.users.tutor}
+              {stats.tutors.total}
             </div>
             <div className="text-sm text-purple-600 dark:text-purple-400">
-              Expert instructors
+              Expert Tutors
             </div>
           </div>
         </div>

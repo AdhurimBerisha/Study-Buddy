@@ -919,7 +919,8 @@ const getDashboardStats = async (req: AuthenticatedRequest, res: Response) => {
       where: { role: "user" },
     });
     const adminUsers = await User.count({ where: { role: "admin" } });
-    const tutorUsers = await User.count({ where: { role: "tutor" } });
+
+    const totalTutors = await Tutor.count();
 
     const totalCourses = await Course.count();
 
@@ -945,8 +946,10 @@ const getDashboardStats = async (req: AuthenticatedRequest, res: Response) => {
           total: totalUsers,
           regular: regularUsers,
           admin: adminUsers,
-          tutor: tutorUsers,
           recent: recentUsers,
+        },
+        tutors: {
+          total: totalTutors,
         },
         courses: {
           total: totalCourses,
