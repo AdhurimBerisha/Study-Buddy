@@ -18,7 +18,6 @@ const EditTutorForm = ({ tutorId }: EditTutorFormProps) => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    phone: "",
     avatar: "",
     bio: "",
     expertise: [] as string[],
@@ -36,13 +35,11 @@ const EditTutorForm = ({ tutorId }: EditTutorFormProps) => {
         const tutor = response.data.data;
 
         setFormData({
-          firstName: tutor.user.firstName || "",
-          lastName: tutor.user.lastName || "",
-          phone: tutor.user.phone || "",
-          avatar: tutor.user.avatar || "",
+          firstName: tutor.first_name || "",
+          lastName: tutor.last_name || "",
+          avatar: tutor.avatar || "",
           bio: tutor.bio || "",
           expertise: tutor.expertise || [],
-
           isVerified: tutor.isVerified || false,
         });
       } catch (error) {
@@ -89,7 +86,19 @@ const EditTutorForm = ({ tutorId }: EditTutorFormProps) => {
     }
 
     try {
-      await dispatch(updateTutor({ tutorId, tutorData: formData })).unwrap();
+      // Transform the data to match backend expectations
+      const transformedData = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        avatar: formData.avatar,
+        bio: formData.bio,
+        expertise: formData.expertise,
+        isVerified: formData.isVerified,
+      };
+
+      await dispatch(
+        updateTutor({ tutorId, tutorData: transformedData })
+      ).unwrap();
     } catch (error) {
       console.error("Failed to update tutor:", error);
     }
@@ -140,22 +149,6 @@ const EditTutorForm = ({ tutorId }: EditTutorFormProps) => {
                 setFormData({
                   ...formData,
                   lastName: e.target.value,
-                })
-              }
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Phone
-            </label>
-            <input
-              type="tel"
-              value={formData.phone}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  phone: e.target.value,
                 })
               }
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"

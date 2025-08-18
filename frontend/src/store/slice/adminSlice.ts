@@ -387,9 +387,8 @@ export const updateTutor = createAsyncThunk(
     }: {
       tutorId: string;
       tutorData: {
-        firstName?: string;
-        lastName?: string;
-        phone?: string;
+        first_name?: string;
+        last_name?: string;
         avatar?: string;
         bio?: string;
         expertise?: string[];
