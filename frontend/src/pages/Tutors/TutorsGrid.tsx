@@ -23,17 +23,7 @@ const TutorsGrid = ({ items, footer }: Props) => {
       {items.map((tutor, index) => (
         <TutorCard
           key={index}
-          avatar={
-            tutor.avatar ? (
-              <img
-                src={tutor.avatar}
-                alt={`${tutor.first_name} ${tutor.last_name}`}
-                className="w-24 h-24 rounded-full object-cover"
-              />
-            ) : (
-              <FaUserCircle />
-            )
-          }
+          avatar={tutor.avatar}
           {...tutor}
         />
       ))}

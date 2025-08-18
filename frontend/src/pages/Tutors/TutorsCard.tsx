@@ -2,9 +2,10 @@ import type { ReactNode } from "react";
 import Button from "../../components/Button";
 import { Link } from "react-router-dom";
 import type { Tutor } from "../../types/tutor";
+import { FaUserCircle } from "react-icons/fa";
 
 type TutorCardProps = Tutor & {
-  avatar: ReactNode;
+  avatar?: string;
 };
 
 const TutorCard = ({
@@ -21,8 +22,16 @@ const TutorCard = ({
     <div className="grid grid-cols-1 md:grid-cols-12 gap-8 py-8 border-b border-gray-200 dark:border-gray-700 w-full max-w-4xl">
       <div className="md:col-span-4 flex justify-center md:justify-start">
         <div className="w-72 bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col items-center text-center">
-          <div className="w-24 h-24 rounded-full mb-4 flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-5xl">
-            {avatar}
+          <div className="w-24 h-24 rounded-full mb-4 flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-5xl overflow-hidden">
+            {avatar ? (
+              <img
+                src={avatar}
+                alt={`${first_name} ${last_name}`}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <FaUserCircle className="w-full h-full text-gray-400 dark:text-gray-500" />
+            )}
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
             {expertise.join(", ")}
