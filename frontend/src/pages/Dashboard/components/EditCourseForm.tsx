@@ -1,26 +1,33 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store/store";
-import { updateCourse, setShowEditCourseForm } from "../../../store/slice/adminSlice";
+import {
+  updateCourse,
+  setShowEditCourseForm,
+} from "../../../store/slice/adminSlice";
 import api from "../../../services/api";
 
 interface Tutor {
   id: string;
-  user: {
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
+  first_name: string;
+  last_name: string;
+  email: string;
 }
 
 interface EditCourseFormProps {
   courseId: string;
+  loadingTutors: boolean;
+  tutors: Tutor[];
 }
 
-const EditCourseForm: React.FC<EditCourseFormProps> = ({ courseId, loadingTutors, tutors }) => {
+const EditCourseForm = ({
+  courseId,
+  loadingTutors,
+  tutors,
+}: EditCourseFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { updatingCourse } = useSelector((state: RootState) => state.admin);
-  
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -35,14 +42,13 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({ courseId, loadingTutors
 
   const [loading, setLoading] = useState(true);
 
-  // Fetch course data when component mounts
   useEffect(() => {
     const fetchCourse = async () => {
       try {
         setLoading(true);
         const response = await api.get(`/admin/courses/${courseId}`);
         const course = response.data.data;
-        
+
         setFormData({
           title: course.title || "",
           description: course.description || "",
@@ -68,17 +74,21 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({ courseId, loadingTutors
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Client-side validation
-    if (!formData.title || !formData.description || !formData.category || !formData.language || !formData.level || !formData.tutorId) {
+
+    if (
+      !formData.title ||
+      !formData.description ||
+      !formData.category ||
+      !formData.language ||
+      !formData.level ||
+      !formData.tutorId
+    ) {
       return;
     }
 
     try {
       await dispatch(updateCourse({ courseId, courseData: formData })).unwrap();
-      // Form will be hidden by Redux actions
     } catch (error) {
-      // Error handling is done in Redux
       console.error("Failed to update course:", error);
     }
   };
@@ -268,7 +278,7 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({ courseId, loadingTutors
               ) : tutors && tutors.length > 0 ? (
                 tutors.map((tutor) => (
                   <option key={tutor.id} value={tutor.id}>
-                    {tutor.user.firstName} {tutor.user.lastName} ({tutor.user.email})
+                    {tutor.first_name} {tutor.last_name} ({tutor.email})
                   </option>
                 ))
               ) : (

@@ -13,9 +13,9 @@ const TutorCard = ({
   expertise,
   rating,
   totalLessons,
-  user,
+  first_name,
+  last_name,
   bio,
-  hourlyRate,
 }: TutorCardProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-8 py-8 border-b border-gray-200 dark:border-gray-700 w-full max-w-4xl">
@@ -46,16 +46,9 @@ const TutorCard = ({
 
       <div className="md:col-span-8">
         <h3 className="text-2xl font-medium mb-2 text-gray-900 dark:text-gray-100">
-          {user.firstName} {user.lastName}
+          {first_name} {last_name}
         </h3>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{bio}</p>
-
-        <div className="text-sm text-gray-500 dark:text-gray-400 uppercase mb-1">
-          Hourly Rate:
-        </div>
-        <p className="mb-6 text-gray-600 dark:text-gray-400">
-          ${hourlyRate}/hour
-        </p>
 
         <div className="flex flex-col gap-4 text-sm" />
       </div>

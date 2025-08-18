@@ -1,4 +1,3 @@
-import React from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import AdminDashboard from "./AdminDashboard";
@@ -6,7 +5,7 @@ import TutorDashboard from "./TutorDashboard.tsx";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import { useNavigate } from "react-router-dom";
 
-const Dashboard: React.FC = () => {
+const Dashboard = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
 

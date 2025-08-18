@@ -23,7 +23,6 @@ interface User {
     id: string;
     bio: string;
     expertise: string[];
-    hourlyRate: number;
     isVerified: boolean;
   } | null;
 }
@@ -40,11 +39,9 @@ interface Course {
   tutorId?: string;
   createdAt: string;
   tutor?: {
-    user: {
-      firstName: string;
-      lastName: string;
-      email: string;
-    };
+    first_name: string;
+    last_name: string;
+    email: string;
   };
 }
 
@@ -70,18 +67,16 @@ interface DashboardStats {
 
 interface Tutor {
   id: string;
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone?: string | null;
-    avatar?: string | null;
-  };
+  first_name: string;
+  last_name: string;
+  email: string;
   bio: string;
   expertise: string[];
-  hourlyRate: number;
+  rating: number;
+  totalStudents: number;
+  totalLessons: number;
   isVerified: boolean;
+  avatar?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -363,7 +358,6 @@ export const createTutor = createAsyncThunk(
       avatar?: string;
       bio?: string;
       expertise: string[];
-      hourlyRate: number;
     },
     { rejectWithValue }
   ) => {
@@ -399,7 +393,6 @@ export const updateTutor = createAsyncThunk(
         avatar?: string;
         bio?: string;
         expertise?: string[];
-        hourlyRate?: number;
         isVerified?: boolean;
       };
     },

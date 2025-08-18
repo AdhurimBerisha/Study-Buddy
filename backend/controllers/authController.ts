@@ -6,14 +6,13 @@ import { OAuth2Client } from "google-auth-library";
 import { AuthenticatedRequest } from "../middlewares/requireAuth";
 import { handleError } from "../helpers/errorHelper";
 
-// Helper function to determine redirect path
 const getRedirectPath = (role: string) => {
   if (role === "admin") {
     return "/dashboard";
   } else if (role === "tutor") {
     return "/dashboard";
   } else {
-    return "/"; // Regular users go to main website
+    return "/";
   }
 };
 
@@ -21,23 +20,19 @@ const userSignup = async (req: Request, res: Response) => {
   try {
     const { email, password, firstName, lastName, phone } = req.body;
 
-    // Validate required fields
     if (!email || !password || !firstName || !lastName) {
       return res.status(400).json({
         message: "Email, password, firstName, and lastName are required",
       });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(409).json({ message: "User already exists" });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create user with default role
     const user = await User.create({
       email,
       password: hashedPassword,
@@ -49,7 +44,6 @@ const userSignup = async (req: Request, res: Response) => {
 
     const userPlain = user.get({ plain: true }) as any;
 
-    // Generate token with role
     const token = generateToken({
       userId: userPlain.id,
       email: userPlain.email,
@@ -79,7 +73,6 @@ const userLogin = async (req: Request, res: Response) => {
 
     const userPlain = user.get({ plain: true }) as any;
 
-    // Check if this is a Google-only account
     if (!userPlain.password) {
       return res.status(401).json({
         message:
@@ -87,7 +80,6 @@ const userLogin = async (req: Request, res: Response) => {
       });
     }
 
-    // Verify password
     const isValid = await bcrypt.compare(password, userPlain.password);
     if (!isValid) {
       return res.status(401).json({ message: "Invalid email or password" });
@@ -95,7 +87,6 @@ const userLogin = async (req: Request, res: Response) => {
 
     delete userPlain.password;
 
-    // Generate token with role only
     const token = generateToken({
       userId: userPlain.id,
       email: userPlain.email,
@@ -178,7 +169,6 @@ const googleAuth = async (req: Request, res: Response) => {
     let user = await User.findOne({ where: { email } });
 
     if (!user) {
-      // Create new regular user account
       user = await User.create({
         email,
         firstName,
@@ -189,14 +179,12 @@ const googleAuth = async (req: Request, res: Response) => {
         role: "user",
       });
     } else {
-      // Check if this is an admin/tutor account
       if ((user as any).role !== "user") {
         return res.status(403).json({
           message: "Admin and tutor accounts cannot use Google sign-in",
         });
       }
 
-      // Update existing user
       if (!(user as any).googleId) {
         await user.update({
           googleId,
@@ -233,18 +221,15 @@ const createAdminAccount = async (req: Request, res: Response) => {
   try {
     const { email, password, firstName, lastName } = req.body;
 
-    // Validate required fields
     if (!email || !password || !firstName || !lastName) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(409).json({ message: "User already exists" });
     }
 
-    // Hash password and create admin
     const hashed = await bcrypt.hash(password, 12);
     const admin = await User.create({
       email,
@@ -272,18 +257,15 @@ const createTutorAccount = async (req: Request, res: Response) => {
   try {
     const { email, password, firstName, lastName, phone } = req.body;
 
-    // Validate required fields
     if (!email || !password || !firstName || !lastName) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(409).json({ message: "User already exists" });
     }
 
-    // Hash password and create tutor
     const hashed = await bcrypt.hash(password, 12);
     const tutor = await User.create({
       email,
@@ -312,7 +294,6 @@ const promoteToAdmin = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { userId } = req.body;
 
-    // Only existing admins can promote users to admin
     if (!req.user || req.user.role !== "admin") {
       return res.status(403).json({ message: "Only admins can promote users" });
     }

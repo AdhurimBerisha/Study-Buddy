@@ -1,22 +1,17 @@
 export interface Tutor {
   id: string;
-  userId: string;
+  first_name: string;
+  last_name: string;
+  email: string;
   bio: string;
   expertise: string[];
-  hourlyRate: number;
   rating: number;
   totalStudents: number;
   totalLessons: number;
   isVerified: boolean;
+  avatar?: string;
   createdAt: string;
   updatedAt: string;
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    avatar?: string;
-  };
   courses?: Array<{
     id: string;
     title: string;

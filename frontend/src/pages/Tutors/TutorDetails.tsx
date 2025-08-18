@@ -70,15 +70,23 @@ const TutorDetails = () => {
       <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
         <div className="p-8 sm:p-10 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-b border-gray-100 dark:border-gray-700 flex items-start justify-between gap-6 flex-col sm:flex-row">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-4xl">
-              <FaUserCircle />
+            <div className="w-16 h-16 rounded-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-4xl overflow-hidden">
+              {tutor.avatar ? (
+                <img
+                  src={tutor.avatar}
+                  alt={`${tutor.first_name} ${tutor.last_name}`}
+                  className="w-16 h-16 object-cover"
+                />
+              ) : (
+                <FaUserCircle />
+              )}
             </div>
             <div>
               <div className="text-xs uppercase tracking-wider text-blue-700 dark:text-blue-300 font-bold bg-blue-100 dark:bg-blue-900/20 inline-block px-3 py-1 rounded-full mb-2">
                 {tutor.expertise.join(", ")}
               </div>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-gray-100">
-                {tutor.user.firstName} {tutor.user.lastName}
+                {tutor.first_name} {tutor.last_name}
               </h1>
               <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 mt-1">
                 <span className="flex items-center gap-1">
@@ -156,16 +164,10 @@ const TutorDetails = () => {
             </h3>
             <div className="space-y-4 text-sm">
               <p className="text-gray-700 dark:text-gray-300 mb-2">
-                Start your career from learning with {tutor.user.firstName}{" "}
-                {tutor.user.lastName}
+                Start your career from learning with {tutor.first_name}{" "}
+                {tutor.last_name}
               </p>
               <div className="space-y-2">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  <strong>Hourly Rate:</strong>{" "}
-                  <span className="text-gray-700 dark:text-gray-300">
-                    ${Number(tutor.hourlyRate).toFixed(2)}/hour
-                  </span>
-                </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   <strong>Total Students:</strong>{" "}
                   <span className="text-gray-700 dark:text-gray-300">

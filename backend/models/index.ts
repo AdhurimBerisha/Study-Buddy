@@ -8,27 +8,6 @@ import LessonProgress from "./LessonProgress";
 import Purchase from "./Purchase";
 import Tutor from "./Tutor";
 
-Course.belongsTo(User, {
-  foreignKey: "createdBy",
-  as: "instructor",
-});
-
-User.hasMany(Course, {
-  foreignKey: "createdBy",
-  as: "createdCourses",
-});
-
-// Tutor relationships
-User.hasOne(Tutor, {
-  foreignKey: "userId",
-  as: "tutorProfile",
-});
-
-Tutor.belongsTo(User, {
-  foreignKey: "userId",
-  as: "user",
-});
-
 Tutor.hasMany(Course, {
   foreignKey: "tutorId",
   as: "courses",
@@ -113,7 +92,6 @@ User.belongsToMany(Group, {
   as: "groups",
 });
 
-// Add direct associations for GroupMember
 GroupMember.belongsTo(Group, {
   foreignKey: "groupId",
   as: "group",

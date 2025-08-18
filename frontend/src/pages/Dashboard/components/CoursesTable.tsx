@@ -1,4 +1,3 @@
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store/store";
 import {
@@ -18,15 +17,13 @@ interface Course {
   tutorId?: string;
   createdAt: string;
   tutor?: {
-    user: {
-      firstName: string;
-      lastName: string;
-      email: string;
-    };
+    first_name: string;
+    last_name: string;
+    email: string;
   };
 }
 
-const CoursesTable: React.FC = () => {
+const CoursesTable = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { courses, updatingCourse, deletingCourseId } = useSelector(
     (state: RootState) => state.admin
@@ -199,17 +196,16 @@ const CoursesTable: React.FC = () => {
                     <div className="flex items-center">
                       <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center mr-3">
                         <span className="text-xs font-semibold text-white">
-                          {course.tutor.user.firstName.charAt(0)}
-                          {course.tutor.user.lastName.charAt(0)}
+                          {course.tutor.first_name.charAt(0)}
+                          {course.tutor.last_name.charAt(0)}
                         </span>
                       </div>
                       <div>
                         <div className="text-sm font-medium text-gray-900 dark:text-white">
-                          {course.tutor.user.firstName}{" "}
-                          {course.tutor.user.lastName}
+                          {course.tutor.first_name} {course.tutor.last_name}
                         </div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">
-                          {course.tutor.user.email}
+                          {course.tutor.email}
                         </div>
                       </div>
                     </div>
@@ -271,7 +267,6 @@ const CoursesTable: React.FC = () => {
                           d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                         />
                       </svg>
-                      {/* Tooltip */}
                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
                         Edit Course
                         <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
@@ -323,7 +318,6 @@ const CoursesTable: React.FC = () => {
                           />
                         </svg>
                       )}
-                      {/* Tooltip */}
                       {deletingCourseId !== course.id && (
                         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
                           Delete Course

@@ -46,7 +46,7 @@ const Tutors = () => {
       const q = query.toLowerCase();
       list = list.filter(
         (t) =>
-          `${t.user.firstName} ${t.user.lastName}`.toLowerCase().includes(q) ||
+          `${t.first_name} ${t.last_name}`.toLowerCase().includes(q) ||
           t.expertise.some((exp) => exp.toLowerCase().includes(q))
       );
     }

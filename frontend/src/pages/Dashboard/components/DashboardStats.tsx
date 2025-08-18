@@ -1,5 +1,3 @@
-import React from "react";
-
 interface DashboardStatsProps {
   stats: {
     users: {
@@ -22,7 +20,7 @@ interface DashboardStatsProps {
   };
 }
 
-const DashboardStats: React.FC<DashboardStatsProps> = ({ stats }) => {
+const DashboardStats = ({ stats }: DashboardStatsProps) => {
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
@@ -35,7 +33,6 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({ stats }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Total Users Card */}
         <div className="group relative bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-blue-200/50 dark:border-blue-700/50 hover:scale-105">
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-blue-600/20 rounded-full blur-3xl group-hover:blur-2xl transition-all duration-300"></div>
           <div className="relative">
@@ -70,7 +67,6 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({ stats }) => {
           </div>
         </div>
 
-        {/* Total Courses Card */}
         <div className="group relative bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-800/30 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-green-200/50 dark:border-green-700/50 hover:scale-105">
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-400/20 to-emerald-600/20 rounded-full blur-3xl group-hover:blur-2xl transition-all duration-300"></div>
           <div className="relative">
@@ -105,7 +101,6 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({ stats }) => {
           </div>
         </div>
 
-        {/* Total Tutors Card */}
         <div className="group relative bg-gradient-to-br from-purple-50 to-violet-100 dark:from-purple-900/30 dark:to-violet-800/30 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-purple-200/50 dark:border-purple-700/50 hover:scale-105">
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-violet-600/20 rounded-full blur-3xl group-hover:blur-2xl transition-all duration-300"></div>
           <div className="relative">
@@ -140,7 +135,6 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({ stats }) => {
           </div>
         </div>
 
-        {/* Total Lessons Card */}
         <div className="group relative bg-gradient-to-br from-amber-50 to-orange-100 dark:from-amber-900/30 dark:to-orange-800/30 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-amber-200/50 dark:border-amber-700/50 hover:scale-105">
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-400/20 to-orange-600/20 rounded-full blur-3xl group-hover:blur-2xl transition-all duration-300"></div>
           <div className="relative">

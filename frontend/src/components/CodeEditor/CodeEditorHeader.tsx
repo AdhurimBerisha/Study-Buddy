@@ -46,7 +46,6 @@ const CodeEditorHeader = ({
         <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-400 rounded-full translate-y-12 -translate-x-12 opacity-30"></div>
       </div>
 
-      {/* Mobile Layout */}
       <div className="lg:hidden flex flex-col gap-4 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -65,7 +64,6 @@ const CodeEditorHeader = ({
           </div>
         </div>
 
-        {/* Mobile Controls */}
         <div className="flex flex-wrap items-center gap-3 justify-center">
           <div className="flex gap-1 overflow-x-auto">
             {templates.map((temp) => (
@@ -115,7 +113,6 @@ const CodeEditorHeader = ({
         </div>
       </div>
 
-      {/* Desktop Layout */}
       <div className="hidden lg:flex items-center justify-between relative z-10">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-red-400 rounded-full shadow-inner"></div>

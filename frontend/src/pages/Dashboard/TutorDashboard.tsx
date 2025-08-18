@@ -1,7 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../store/store";
-import api from "../../services/api";
+import { useState, useEffect } from "react";
 
 interface Course {
   id: string;
@@ -22,8 +19,7 @@ interface Student {
   lastActive: string;
 }
 
-const TutorDashboard: React.FC = () => {
-  const { user } = useSelector((state: RootState) => state.auth);
+const TutorDashboard = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
   const [stats, setStats] = useState({
@@ -122,7 +118,6 @@ const TutorDashboard: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
           <div className="flex items-center">
@@ -237,7 +232,6 @@ const TutorDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Course Management */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
@@ -327,7 +321,6 @@ const TutorDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Student Management */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
           <h3 className="text-lg font-medium text-gray-900 dark:text-white">

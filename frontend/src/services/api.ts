@@ -115,7 +115,9 @@ export const tutorAPI = {
   createTutor: (data: {
     bio: string;
     expertise: string[];
-    hourlyRate: number;
+    first_name: string;
+    last_name: string;
+    email: string;
   }) => api.post("/tutors", data),
 
   updateTutor: (
@@ -123,7 +125,9 @@ export const tutorAPI = {
     data: {
       bio?: string;
       expertise?: string[];
-      hourlyRate?: number;
+      first_name?: string;
+      last_name?: string;
+      email?: string;
     }
   ) => api.put(`/tutors/${id}`, data),
 

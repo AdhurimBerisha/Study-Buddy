@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "../../store/store";
 import {
@@ -8,9 +8,7 @@ import {
   fetchTutors,
   setShowCreateUserForm,
   setShowCreateCourseForm,
-  setShowEditCourseForm,
   setShowCreateTutorForm,
-  setShowEditTutorForm,
   clearMessage,
 } from "../../store/slice/adminSlice";
 import DashboardStats from "./components/DashboardStats";
@@ -24,7 +22,7 @@ import CoursesTable from "./components/CoursesTable";
 import TutorsTable from "./components/TutorsTable";
 import MessageDisplay from "./components/MessageDisplay";
 
-const AdminDashboard: React.FC = () => {
+const AdminDashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
   const {
     stats,
@@ -35,6 +33,8 @@ const AdminDashboard: React.FC = () => {
     showCreateTutorForm,
     showEditTutorForm,
     message,
+    loadingTutors,
+    tutors,
   } = useSelector((state: RootState) => state.admin);
 
   useEffect(() => {
@@ -70,7 +70,6 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header Section */}
         <div className="mb-12 text-center">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mb-6 shadow-lg">
             <svg
@@ -99,7 +98,6 @@ const AdminDashboard: React.FC = () => {
         <MessageDisplay />
 
         <div className="space-y-12">
-          {/* Dashboard Stats */}
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 rounded-3xl blur-3xl"></div>
             <div className="relative bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20 dark:border-gray-700/30">
@@ -107,7 +105,6 @@ const AdminDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Regular Users Section */}
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-blue-800/5 rounded-3xl blur-2xl"></div>
             <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20 dark:border-gray-700/30">
@@ -167,7 +164,6 @@ const AdminDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Course Management Section */}
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-green-600/5 to-emerald-800/5 rounded-3xl blur-2xl"></div>
             <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20 dark:border-gray-700/30">
@@ -224,13 +220,16 @@ const AdminDashboard: React.FC = () => {
 
               {showCreateCourseForm && <CreateCourseForm />}
               {showEditCourseForm && (
-                <EditCourseForm courseId={showEditCourseForm} />
+                <EditCourseForm
+                  courseId={showEditCourseForm}
+                  loadingTutors={loadingTutors}
+                  tutors={tutors}
+                />
               )}
               <CoursesTable />
             </div>
           </div>
 
-          {/* Tutor Management Section */}
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-purple-600/5 to-violet-800/5 rounded-3xl blur-2xl"></div>
             <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20 dark:border-gray-700/30">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store/store";
 import {
@@ -6,7 +6,7 @@ import {
   setShowCreateTutorForm,
 } from "../../../store/slice/adminSlice";
 
-const CreateTutorForm: React.FC = () => {
+const CreateTutorForm = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { creatingTutor } = useSelector((state: RootState) => state.admin);
 
@@ -19,7 +19,6 @@ const CreateTutorForm: React.FC = () => {
     avatar: "",
     bio: "",
     expertise: [] as string[],
-    hourlyRate: 0,
   });
 
   const [expertiseInput, setExpertiseInput] = useState("");
@@ -47,7 +46,6 @@ const CreateTutorForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Client-side validation
     if (
       !formData.email ||
       !formData.password ||
@@ -60,9 +58,7 @@ const CreateTutorForm: React.FC = () => {
 
     try {
       await dispatch(createTutor(formData)).unwrap();
-      // Form will be reset and hidden by Redux actions
     } catch (error) {
-      // Error handling is done in Redux
       console.error("Failed to create tutor:", error);
     }
   };
@@ -173,25 +169,6 @@ const CreateTutorForm: React.FC = () => {
                 })
               }
               placeholder="https://example.com/avatar.jpg"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Hourly Rate *
-            </label>
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              required
-              value={formData.hourlyRate}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  hourlyRate: parseFloat(e.target.value) || 0,
-                })
-              }
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
             />
           </div>

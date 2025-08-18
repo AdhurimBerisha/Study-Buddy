@@ -5,7 +5,6 @@ import { handleError } from "../helpers/errorHelper";
 import bcrypt from "bcryptjs";
 import { Op } from "sequelize";
 
-// Helper function to check if user is admin
 const checkAdminAuth = (req: AuthenticatedRequest, res: Response) => {
   if (!req.user?.id) {
     res.status(401).json({ message: "User not authenticated" });
@@ -20,9 +19,6 @@ const checkAdminAuth = (req: AuthenticatedRequest, res: Response) => {
   return req.user.id;
 };
 
-// ==================== USER MANAGEMENT ====================
-
-// Get all users with pagination and filtering
 const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -41,27 +37,15 @@ const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
       ];
     }
 
-    // Always filter to only show regular users (role: "user")
     whereClause.role = "user";
 
-    // Get total count of regular users only
     const totalUsersCount = await User.count({ where: { role: "user" } });
 
-    // Get filtered count (for pagination)
     const filteredCount = await User.count({ where: whereClause });
 
-    // Get paginated users
     const { rows: users } = await User.findAndCountAll({
       where: whereClause,
       attributes: { exclude: ["password"] },
-      include: [
-        {
-          model: Tutor,
-          as: "tutorProfile",
-          attributes: ["id", "bio", "expertise", "hourlyRate", "isVerified"],
-          required: false,
-        },
-      ],
       order: [["createdAt", "DESC"]],
       limit: Number(limit),
       offset,
@@ -73,8 +57,8 @@ const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
       pagination: {
         currentPage: Number(page),
         totalPages: Math.ceil(filteredCount / Number(limit)),
-        totalUsers: totalUsersCount, // Total users in database
-        filteredUsers: filteredCount, // Users matching current filters
+        totalUsers: totalUsersCount,
+        filteredUsers: filteredCount,
         usersPerPage: Number(limit),
       },
     });
@@ -83,7 +67,6 @@ const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Get single user by ID
 const getUserById = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -92,13 +75,6 @@ const getUserById = async (req: AuthenticatedRequest, res: Response) => {
     const { id } = req.params;
     const user = await User.findByPk(id, {
       attributes: { exclude: ["password"] },
-      include: [
-        {
-          model: Tutor,
-          as: "tutorProfile",
-          attributes: ["id", "bio", "expertise", "hourlyRate", "isVerified"],
-        },
-      ],
     });
 
     if (!user) {
@@ -111,7 +87,6 @@ const getUserById = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Create new user (admin can create any type of user)
 const createUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -127,23 +102,19 @@ const createUser = async (req: AuthenticatedRequest, res: Response) => {
       role = "user",
     } = req.body;
 
-    // Validate required fields
     if (!email || !password || !firstName || !lastName) {
       return res.status(400).json({
         message: "Email, password, firstName, and lastName are required",
       });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(409).json({ message: "User already exists" });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create user
     const user = await User.create({
       email,
       password: hashedPassword,
@@ -153,17 +124,6 @@ const createUser = async (req: AuthenticatedRequest, res: Response) => {
       avatar: avatar || null,
       role,
     });
-
-    // If creating a tutor, also create tutor profile
-    if (role === "tutor") {
-      await Tutor.create({
-        userId: (user as any).id,
-        bio: "",
-        expertise: [],
-        hourlyRate: 0,
-        isVerified: false,
-      });
-    }
 
     const userPlain = user.get({ plain: true }) as any;
     delete userPlain.password;
@@ -178,7 +138,6 @@ const createUser = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Update user
 const updateUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -192,58 +151,18 @@ const updateUser = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Prevent admin from changing their own role
     if (id === adminId) {
       delete updateData.role;
     }
 
-    // Hash password if provided
     if (updateData.password) {
       updateData.password = await bcrypt.hash(updateData.password, 12);
     }
 
-    // Update user
     await user.update(updateData);
-
-    // Handle tutor profile creation/deletion based on role changes
-    if (updateData.role) {
-      const existingTutor = await Tutor.findOne({ where: { userId: id } });
-
-      if (updateData.role === "tutor" && !existingTutor) {
-        // Create tutor profile
-        await Tutor.create({
-          userId: id,
-          bio: "",
-          expertise: [],
-          hourlyRate: 0,
-          isVerified: false,
-        });
-      } else if (updateData.role !== "tutor" && existingTutor) {
-        // Check if tutor has associated courses before deleting
-        const courseCount = await Course.count({
-          where: { tutorId: existingTutor.id },
-        });
-
-        if (courseCount > 0) {
-          return res.status(400).json({
-            message: `Cannot change role from tutor to ${updateData.role}. This tutor has ${courseCount} associated course(s). Please delete the courses first or deactivate the tutor instead.`,
-          });
-        }
-
-        // Delete tutor profile only if no courses exist
-        await existingTutor.destroy();
-      }
-    }
 
     const updatedUser = await User.findByPk(id, {
       attributes: { exclude: ["password"] },
-      include: [
-        {
-          model: Tutor,
-          as: "tutorProfile",
-          attributes: ["id", "bio", "expertise", "hourlyRate", "isVerified"],
-        },
-      ],
     });
 
     res.json({
@@ -256,7 +175,6 @@ const updateUser = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Delete user
 const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -264,7 +182,6 @@ const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
 
     const { id } = req.params;
 
-    // Prevent admin from deleting themselves
     if (id === adminId) {
       return res.status(400).json({
         message: "You cannot delete your own account",
@@ -276,14 +193,12 @@ const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Check if user has associated data
-    const courseCount = await Course.count({ where: { createdBy: id } });
     const purchaseCount = await Purchase.count({ where: { userId: id } });
 
-    if (courseCount > 0 || purchaseCount > 0) {
+    if (purchaseCount > 0) {
       return res.status(400).json({
         message:
-          "Cannot delete user with associated courses or purchases. Consider deactivating instead.",
+          "Cannot delete user with associated purchases. Consider deactivating instead.",
       });
     }
 
@@ -298,7 +213,6 @@ const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Change user role
 const changeUserRole = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -313,7 +227,6 @@ const changeUserRole = async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
-    // Prevent admin from changing their own role
     if (id === adminId) {
       return res.status(400).json({
         message: "You cannot change your own role",
@@ -325,46 +238,10 @@ const changeUserRole = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Update user role
     await user.update({ role });
-
-    // Handle tutor profile
-    const existingTutor = await Tutor.findOne({ where: { userId: id } });
-
-    if (role === "tutor" && !existingTutor) {
-      // Create tutor profile
-      await Tutor.create({
-        userId: id,
-        bio: "",
-        expertise: [],
-        hourlyRate: 0,
-        isVerified: false,
-      });
-    } else if (role !== "tutor" && existingTutor) {
-      // Check if tutor has associated courses before deleting
-      const courseCount = await Course.count({
-        where: { tutorId: existingTutor.id },
-      });
-
-      if (courseCount > 0) {
-        return res.status(400).json({
-          message: `Cannot change role from tutor to ${role}. This tutor has ${courseCount} associated course(s). Please delete the courses first or deactivate the tutor instead.`,
-        });
-      }
-
-      // Delete tutor profile only if no courses exist
-      await existingTutor.destroy();
-    }
 
     const updatedUser = await User.findByPk(id, {
       attributes: { exclude: ["password"] },
-      include: [
-        {
-          model: Tutor,
-          as: "tutorProfile",
-          attributes: ["id", "bio", "expertise", "hourlyRate", "isVerified"],
-        },
-      ],
     });
 
     res.json({
@@ -377,9 +254,6 @@ const changeUserRole = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// ==================== COURSE MANAGEMENT ====================
-
-// Get all courses with pagination and filtering
 const getAllCourses = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -404,19 +278,15 @@ const getAllCourses = async (req: AuthenticatedRequest, res: Response) => {
       where: whereClause,
       include: [
         {
-          model: User,
-          as: "instructor",
-          attributes: ["id", "firstName", "lastName", "email"],
-        },
-        {
           model: Tutor,
           as: "tutor",
-          include: [
-            {
-              model: User,
-              as: "user",
-              attributes: ["id", "firstName", "lastName", "email"],
-            },
+          attributes: [
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "bio",
+            "expertise",
           ],
         },
       ],
@@ -440,7 +310,6 @@ const getAllCourses = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Get single course by ID
 const getCourseById = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -450,19 +319,15 @@ const getCourseById = async (req: AuthenticatedRequest, res: Response) => {
     const course = await Course.findByPk(id, {
       include: [
         {
-          model: User,
-          as: "instructor",
-          attributes: ["id", "firstName", "lastName", "email"],
-        },
-        {
           model: Tutor,
           as: "tutor",
-          include: [
-            {
-              model: User,
-              as: "user",
-              attributes: ["id", "firstName", "lastName", "email"],
-            },
+          attributes: [
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "bio",
+            "expertise",
           ],
         },
         {
@@ -484,7 +349,6 @@ const getCourseById = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Create course (admin can create courses for any tutor)
 const createCourse = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -500,7 +364,6 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
       thumbnail,
       totalLessons,
       tutorId,
-      createdBy,
     } = req.body;
 
     if (
@@ -517,7 +380,6 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
-    // Verify tutor exists
     const tutor = await Tutor.findByPk(tutorId);
     if (!tutor) {
       return res.status(404).json({ message: "Tutor not found" });
@@ -532,26 +394,21 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
       price: price || 0,
       thumbnail,
       totalLessons,
-      createdBy: createdBy || (tutor as any).userId, // Use provided createdBy or tutor's userId
       tutorId,
     });
 
     const createdCourse = await Course.findByPk(course.get("id") as string, {
       include: [
         {
-          model: User,
-          as: "instructor",
-          attributes: ["id", "firstName", "lastName", "email"],
-        },
-        {
           model: Tutor,
           as: "tutor",
-          include: [
-            {
-              model: User,
-              as: "user",
-              attributes: ["id", "firstName", "lastName", "email"],
-            },
+          attributes: [
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "bio",
+            "expertise",
           ],
         },
       ],
@@ -567,7 +424,6 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Update course
 const updateCourse = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -581,7 +437,6 @@ const updateCourse = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(404).json({ message: "Course not found" });
     }
 
-    // If changing tutorId, verify new tutor exists
     if (updateData.tutorId) {
       const tutor = await Tutor.findByPk(updateData.tutorId);
       if (!tutor) {
@@ -594,19 +449,15 @@ const updateCourse = async (req: AuthenticatedRequest, res: Response) => {
     const updatedCourse = await Course.findByPk(id, {
       include: [
         {
-          model: User,
-          as: "instructor",
-          attributes: ["id", "firstName", "lastName", "email"],
-        },
-        {
           model: Tutor,
           as: "tutor",
-          include: [
-            {
-              model: User,
-              as: "user",
-              attributes: ["id", "firstName", "lastName", "email"],
-            },
+          attributes: [
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "bio",
+            "expertise",
           ],
         },
       ],
@@ -622,7 +473,6 @@ const updateCourse = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Delete course
 const deleteCourse = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -635,7 +485,6 @@ const deleteCourse = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(404).json({ message: "Course not found" });
     }
 
-    // Check if course has purchases
     const purchaseCount = await Purchase.count({ where: { courseId: id } });
     if (purchaseCount > 0) {
       return res.status(400).json({
@@ -655,9 +504,6 @@ const deleteCourse = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// ==================== LESSON MANAGEMENT ====================
-
-// Get all lessons for a course
 const getCourseLessons = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -667,7 +513,6 @@ const getCourseLessons = async (req: AuthenticatedRequest, res: Response) => {
     const { page = 1, limit = 10 } = req.query;
     const offset = (Number(page) - 1) * Number(limit);
 
-    // Verify course exists
     const course = await Course.findByPk(courseId);
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
@@ -695,7 +540,6 @@ const getCourseLessons = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Get single lesson by ID
 const getLessonById = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -722,7 +566,6 @@ const getLessonById = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Create lesson
 const createLesson = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -737,13 +580,11 @@ const createLesson = async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
-    // Verify course exists
     const course = await Course.findByPk(courseId);
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
 
-    // Check if lesson order already exists
     const existingLesson = await Lesson.findOne({
       where: { courseId, order },
     });
@@ -773,7 +614,6 @@ const createLesson = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Update lesson
 const updateLesson = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -796,7 +636,6 @@ const updateLesson = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(404).json({ message: "Lesson not found" });
     }
 
-    // Handle resources JSON serialization
     if (updateData.resources) {
       updateData.resources = JSON.stringify(updateData.resources);
     }
@@ -813,7 +652,6 @@ const updateLesson = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Delete lesson
 const deleteLesson = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -837,9 +675,6 @@ const deleteLesson = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// ==================== TUTOR MANAGEMENT ====================
-
-// Get all tutors with pagination and filtering
 const getAllTutors = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -852,9 +687,9 @@ const getAllTutors = async (req: AuthenticatedRequest, res: Response) => {
 
     if (search) {
       whereClause[Op.or] = [
-        { "$user.firstName$": { [Op.iLike]: `%${search}%` } },
-        { "$user.lastName$": { [Op.iLike]: `%${search}%` } },
-        { "$user.email$": { [Op.iLike]: `%${search}%` } },
+        { first_name: { [Op.iLike]: `%${search}%` } },
+        { last_name: { [Op.iLike]: `%${search}%` } },
+        { email: { [Op.iLike]: `%${search}%` } },
       ];
     }
 
@@ -864,20 +699,20 @@ const getAllTutors = async (req: AuthenticatedRequest, res: Response) => {
 
     const { count, rows: tutors } = await Tutor.findAndCountAll({
       where: whereClause,
-      include: [
-        {
-          model: User,
-          as: "user",
-          attributes: [
-            "id",
-            "firstName",
-            "lastName",
-            "email",
-            "phone",
-            "avatar",
-          ],
-          where: { role: "tutor" }, // Ensure only users with tutor role
-        },
+      attributes: [
+        "id",
+        "first_name",
+        "last_name",
+        "email",
+        "bio",
+        "expertise",
+        "rating",
+        "totalStudents",
+        "totalLessons",
+        "isVerified",
+        "avatar",
+        "createdAt",
+        "updatedAt",
       ],
       order: [["createdAt", "DESC"]],
       limit: Number(limit),
@@ -899,7 +734,6 @@ const getAllTutors = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Get single tutor by ID
 const getTutorById = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -907,19 +741,20 @@ const getTutorById = async (req: AuthenticatedRequest, res: Response) => {
 
     const { id } = req.params;
     const tutor = await Tutor.findByPk(id, {
-      include: [
-        {
-          model: User,
-          as: "user",
-          attributes: [
-            "id",
-            "firstName",
-            "lastName",
-            "email",
-            "phone",
-            "avatar",
-          ],
-        },
+      attributes: [
+        "id",
+        "first_name",
+        "last_name",
+        "email",
+        "bio",
+        "expertise",
+        "rating",
+        "totalStudents",
+        "totalLessons",
+        "isVerified",
+        "avatar",
+        "createdAt",
+        "updatedAt",
       ],
     });
 
@@ -933,7 +768,6 @@ const getTutorById = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Create new tutor (admin can create tutor accounts)
 const createTutor = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -948,81 +782,40 @@ const createTutor = async (req: AuthenticatedRequest, res: Response) => {
       avatar,
       bio,
       expertise,
-      hourlyRate,
     } = req.body;
 
-    // Validate required fields
-    if (
-      !email ||
-      !password ||
-      !firstName ||
-      !lastName ||
-      !expertise ||
-      !hourlyRate
-    ) {
+    if (!email || !password || !firstName || !lastName || !expertise) {
       return res.status(400).json({
         message:
-          "Email, password, firstName, lastName, expertise, and hourlyRate are required",
+          "Email, password, firstName, lastName, and expertise are required",
       });
     }
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) {
-      return res.status(409).json({ message: "User already exists" });
+    const existingTutor = await Tutor.findOne({ where: { email } });
+    if (existingTutor) {
+      return res.status(409).json({ message: "Tutor already exists" });
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    // Create user with tutor role
-    const user = await User.create({
-      email,
-      password: hashedPassword,
-      firstName,
-      lastName,
-      phone: phone || null,
-      avatar: avatar || null,
-      role: "tutor",
-    });
-
-    // Create tutor profile
     const tutor = await Tutor.create({
-      userId: (user as any).id,
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
       bio: bio || "",
       expertise: Array.isArray(expertise) ? expertise : [expertise],
-      hourlyRate: Number(hourlyRate),
       isVerified: false,
-    });
-
-    const createdTutor = await Tutor.findByPk(tutor.get("id") as string, {
-      include: [
-        {
-          model: User,
-          as: "user",
-          attributes: [
-            "id",
-            "firstName",
-            "lastName",
-            "email",
-            "phone",
-            "avatar",
-          ],
-        },
-      ],
+      avatar: avatar || null,
     });
 
     res.status(201).json({
       success: true,
       message: "Tutor created successfully",
-      data: createdTutor,
+      data: tutor,
     });
   } catch (error) {
     handleError(res, error, "Error creating tutor");
   }
 };
 
-// Update tutor
 const updateTutor = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -1031,62 +824,46 @@ const updateTutor = async (req: AuthenticatedRequest, res: Response) => {
     const { id } = req.params;
     const updateData = req.body;
 
-    const tutor = await Tutor.findByPk(id, {
-      include: [
-        {
-          model: User,
-          as: "user",
-        },
-      ],
-    });
+    const tutor = await Tutor.findByPk(id);
 
     if (!tutor) {
       return res.status(404).json({ message: "Tutor not found" });
     }
 
-    // Update user data if provided
-    if (
-      updateData.firstName ||
-      updateData.lastName ||
-      updateData.phone ||
-      updateData.avatar
-    ) {
-      await (tutor as any).user.update({
-        firstName: updateData.firstName,
-        lastName: updateData.lastName,
-        phone: updateData.phone,
-        avatar: updateData.avatar,
-      });
-    }
-
-    // Update tutor profile data
     const tutorUpdateData: any = {};
+    if (updateData.first_name !== undefined)
+      tutorUpdateData.first_name = updateData.first_name;
+    if (updateData.last_name !== undefined)
+      tutorUpdateData.last_name = updateData.last_name;
+    if (updateData.email !== undefined)
+      tutorUpdateData.email = updateData.email;
     if (updateData.bio !== undefined) tutorUpdateData.bio = updateData.bio;
     if (updateData.expertise !== undefined)
       tutorUpdateData.expertise = updateData.expertise;
-    if (updateData.hourlyRate !== undefined)
-      tutorUpdateData.hourlyRate = updateData.hourlyRate;
     if (updateData.isVerified !== undefined)
       tutorUpdateData.isVerified = updateData.isVerified;
+    if (updateData.avatar !== undefined)
+      tutorUpdateData.avatar = updateData.avatar;
 
     if (Object.keys(tutorUpdateData).length > 0) {
       await tutor.update(tutorUpdateData);
     }
 
     const updatedTutor = await Tutor.findByPk(id, {
-      include: [
-        {
-          model: User,
-          as: "user",
-          attributes: [
-            "id",
-            "firstName",
-            "lastName",
-            "email",
-            "phone",
-            "avatar",
-          ],
-        },
+      attributes: [
+        "id",
+        "first_name",
+        "last_name",
+        "email",
+        "bio",
+        "expertise",
+        "rating",
+        "totalStudents",
+        "totalLessons",
+        "isVerified",
+        "avatar",
+        "createdAt",
+        "updatedAt",
       ],
     });
 
@@ -1100,7 +877,6 @@ const updateTutor = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Delete tutor
 const deleteTutor = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -1108,20 +884,12 @@ const deleteTutor = async (req: AuthenticatedRequest, res: Response) => {
 
     const { id } = req.params;
 
-    const tutor = await Tutor.findByPk(id, {
-      include: [
-        {
-          model: User,
-          as: "user",
-        },
-      ],
-    });
+    const tutor = await Tutor.findByPk(id);
 
     if (!tutor) {
       return res.status(404).json({ message: "Tutor not found" });
     }
 
-    // Check if tutor has associated courses
     const courseCount = await Course.count({ where: { tutorId: id } });
     if (courseCount > 0) {
       return res.status(400).json({
@@ -1130,11 +898,7 @@ const deleteTutor = async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
-    // Delete tutor profile first
     await tutor.destroy();
-
-    // Delete associated user account
-    await (tutor as any).user.destroy();
 
     res.json({
       success: true,
@@ -1145,15 +909,11 @@ const deleteTutor = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// ==================== DASHBOARD STATISTICS ====================
-
-// Get admin dashboard statistics
 const getDashboardStats = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
     if (!adminId) return;
 
-    // Count users by role
     const totalUsers = await User.count();
     const regularUsers = await User.count({
       where: { role: "user" },
@@ -1161,16 +921,12 @@ const getDashboardStats = async (req: AuthenticatedRequest, res: Response) => {
     const adminUsers = await User.count({ where: { role: "admin" } });
     const tutorUsers = await User.count({ where: { role: "tutor" } });
 
-    // Count courses
     const totalCourses = await Course.count();
 
-    // Count lessons
     const totalLessons = await Lesson.count();
 
-    // Count purchases
     const totalPurchases = await Purchase.count();
 
-    // Recent activity (last 7 days)
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -1210,35 +966,26 @@ const getDashboardStats = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 export {
-  // User Management
   getAllUsers,
   getUserById,
   createUser,
   updateUser,
   deleteUser,
   changeUserRole,
-
-  // Course Management
   getAllCourses,
   getCourseById,
   createCourse,
   updateCourse,
   deleteCourse,
-
-  // Lesson Management
   getCourseLessons,
   getLessonById,
   createLesson,
   updateLesson,
   deleteLesson,
-
-  // Tutor Management
   getAllTutors,
   getTutorById,
   createTutor,
   updateTutor,
   deleteTutor,
-
-  // Dashboard
   getDashboardStats,
 };

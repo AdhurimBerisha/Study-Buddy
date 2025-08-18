@@ -142,9 +142,7 @@ class SocketManager {
             };
 
             this.io!.to(`group_${data.groupId}`).emit("new_message", message);
-          } catch (error) {
-            // Error handling
-          }
+          } catch (error) {}
         }
       );
 

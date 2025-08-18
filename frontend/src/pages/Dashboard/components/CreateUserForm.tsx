@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store/store";
 import {
@@ -6,7 +6,7 @@ import {
   setShowCreateUserForm,
 } from "../../../store/slice/adminSlice";
 
-const CreateUserForm: React.FC = () => {
+const CreateUserForm = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { creatingUser } = useSelector((state: RootState) => state.admin);
 
@@ -23,7 +23,6 @@ const CreateUserForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Client-side validation
     if (
       !formData.email ||
       !formData.password ||
@@ -35,9 +34,7 @@ const CreateUserForm: React.FC = () => {
 
     try {
       await dispatch(createUser(formData)).unwrap();
-      // Form will be reset and hidden by Redux actions
     } catch (error) {
-      // Error handling is done in Redux
       console.error("Failed to create user:", error);
     }
   };

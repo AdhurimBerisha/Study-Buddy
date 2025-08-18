@@ -1,8 +1,7 @@
-import React from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
 
-const MessageDisplay: React.FC = () => {
+const MessageDisplay = () => {
   const { message } = useSelector((state: RootState) => state.admin);
 
   if (!message) return null;

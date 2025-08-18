@@ -7,7 +7,7 @@
     "dev": "tsx watch server.ts",
     "start": "tsx server.ts",
     "sync-db": "tsx syncDb.js",
-    "seed": "tsx seeders/seed.ts"
+    "seed": "tsx seed.ts"
   },
   "author": "",
   "license": "ISC",

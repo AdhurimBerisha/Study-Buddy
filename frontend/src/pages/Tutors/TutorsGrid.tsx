@@ -21,7 +21,21 @@ const TutorsGrid = ({ items, footer }: Props) => {
   return (
     <section className="max-w-7xl mx-auto px-6 border-b border-gray-300 dark:border-gray-600 pb-8 mb-8 mt-0 pt-0 relative z-10 flex flex-col items-center">
       {items.map((tutor, index) => (
-        <TutorCard key={index} avatar={<FaUserCircle />} {...tutor} />
+        <TutorCard
+          key={index}
+          avatar={
+            tutor.avatar ? (
+              <img
+                src={tutor.avatar}
+                alt={`${tutor.first_name} ${tutor.last_name}`}
+                className="w-24 h-24 rounded-full object-cover"
+              />
+            ) : (
+              <FaUserCircle />
+            )
+          }
+          {...tutor}
+        />
       ))}
       {footer && <div className="mt-6">{footer}</div>}
     </section>

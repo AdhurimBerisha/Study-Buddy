@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store/store";
 import {
@@ -11,7 +11,7 @@ interface EditTutorFormProps {
   tutorId: string;
 }
 
-const EditTutorForm: React.FC<EditTutorFormProps> = ({ tutorId }) => {
+const EditTutorForm = ({ tutorId }: EditTutorFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { updatingTutor } = useSelector((state: RootState) => state.admin);
 
@@ -22,14 +22,12 @@ const EditTutorForm: React.FC<EditTutorFormProps> = ({ tutorId }) => {
     avatar: "",
     bio: "",
     expertise: [] as string[],
-    hourlyRate: 0,
     isVerified: false,
   });
 
   const [expertiseInput, setExpertiseInput] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Fetch tutor data when component mounts
   useEffect(() => {
     const fetchTutor = async () => {
       try {
@@ -44,7 +42,7 @@ const EditTutorForm: React.FC<EditTutorFormProps> = ({ tutorId }) => {
           avatar: tutor.user.avatar || "",
           bio: tutor.bio || "",
           expertise: tutor.expertise || [],
-          hourlyRate: tutor.hourlyRate || 0,
+
           isVerified: tutor.isVerified || false,
         });
       } catch (error) {
@@ -82,7 +80,6 @@ const EditTutorForm: React.FC<EditTutorFormProps> = ({ tutorId }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Client-side validation
     if (
       !formData.firstName ||
       !formData.lastName ||
@@ -93,9 +90,7 @@ const EditTutorForm: React.FC<EditTutorFormProps> = ({ tutorId }) => {
 
     try {
       await dispatch(updateTutor({ tutorId, tutorData: formData })).unwrap();
-      // Form will be hidden by Redux actions
     } catch (error) {
-      // Error handling is done in Redux
       console.error("Failed to update tutor:", error);
     }
   };
@@ -183,25 +178,7 @@ const EditTutorForm: React.FC<EditTutorFormProps> = ({ tutorId }) => {
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Hourly Rate *
-            </label>
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              required
-              value={formData.hourlyRate}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  hourlyRate: parseFloat(e.target.value) || 0,
-                })
-              }
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
-            />
-          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Verification Status

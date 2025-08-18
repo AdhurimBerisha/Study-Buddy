@@ -38,7 +38,7 @@ User.init(
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: true, // Can be null for Google users
+      allowNull: true,
     },
     firstName: {
       type: DataTypes.STRING,

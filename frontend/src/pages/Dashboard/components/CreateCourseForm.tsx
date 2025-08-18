@@ -1,21 +1,17 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store/store";
-import { createCourse, setShowCreateCourseForm } from "../../../store/slice/adminSlice";
+import {
+  createCourse,
+  setShowCreateCourseForm,
+} from "../../../store/slice/adminSlice";
 
-interface Tutor {
-  id: string;
-  user: {
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
-}
-
-const CreateCourseForm: React.FC = () => {
+const CreateCourseForm = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { creatingCourse, loadingTutors, tutors } = useSelector((state: RootState) => state.admin);
-  
+  const { creatingCourse, loadingTutors, tutors } = useSelector(
+    (state: RootState) => state.admin
+  );
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -30,17 +26,21 @@ const CreateCourseForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Client-side validation
-    if (!formData.title || !formData.description || !formData.category || !formData.language || !formData.level || !formData.tutorId) {
+
+    if (
+      !formData.title ||
+      !formData.description ||
+      !formData.category ||
+      !formData.language ||
+      !formData.level ||
+      !formData.tutorId
+    ) {
       return;
     }
 
     try {
       await dispatch(createCourse(formData)).unwrap();
-      // Form will be reset and hidden by Redux actions
     } catch (error) {
-      // Error handling is done in Redux
       console.error("Failed to create course:", error);
     }
   };
@@ -222,7 +222,7 @@ const CreateCourseForm: React.FC = () => {
               ) : tutors && tutors.length > 0 ? (
                 tutors.map((tutor) => (
                   <option key={tutor.id} value={tutor.id}>
-                    {tutor.user.firstName} {tutor.user.lastName} ({tutor.user.email})
+                    {tutor.first_name} {tutor.last_name} ({tutor.email})
                   </option>
                 ))
               ) : (

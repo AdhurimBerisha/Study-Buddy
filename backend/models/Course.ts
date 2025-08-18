@@ -11,7 +11,6 @@ export interface CourseAttributes {
   price: number;
   thumbnail?: string | null;
   totalLessons?: number | null;
-  createdBy: string;
   tutorId: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -72,15 +71,6 @@ Course.init(
       validate: { min: 0 },
       field: "total_lessons",
     },
-    createdBy: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      field: "created_by",
-      references: {
-        model: "users",
-        key: "id",
-      },
-    },
     tutorId: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -111,9 +101,6 @@ Course.init(
       },
       {
         fields: ["level"],
-      },
-      {
-        fields: ["created_by"],
       },
       {
         fields: ["tutor_id"],

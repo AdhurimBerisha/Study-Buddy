@@ -5,22 +5,18 @@ import { handleError } from "../helpers/errorHelper";
 import sequelize from "../config/db";
 import { Op } from "sequelize";
 
-const instructorInclude = {
-  model: User,
-  as: "instructor",
-  attributes: ["id", "firstName", "lastName", "avatar"],
-  required: false,
-};
-
 const tutorInclude = {
   model: Tutor,
   as: "tutor",
-  include: [
-    {
-      model: User,
-      as: "user",
-      attributes: ["id", "firstName", "lastName", "avatar"],
-    },
+  attributes: [
+    "id",
+    "first_name",
+    "last_name",
+    "email",
+    "bio",
+    "expertise",
+    "rating",
+    "avatar",
   ],
   required: false,
 };
@@ -33,13 +29,15 @@ const checkAuth = (req: AuthenticatedRequest, res: Response) => {
   return req.user.id;
 };
 
-const checkCourseOwnership = async (courseId: string, userId: string) => {
+const checkCourseOwnership = async (courseId: string, tutorId: string) => {
   const course = await Course.findByPk(courseId);
   if (!course) throw new Error("Course not found");
 
   const courseData = course.toJSON();
-  if (courseData.createdBy !== userId) {
-    throw new Error("Only the instructor can perform this action");
+  if (courseData.tutorId !== tutorId) {
+    throw new Error(
+      "Only the tutor who created this course can perform this action"
+    );
   }
   return course;
 };
@@ -63,7 +61,7 @@ const listCourses = async (req: AuthenticatedRequest, res: Response) => {
 
     const courses = await Course.findAll({
       where: whereClause,
-      include: [instructorInclude, tutorInclude],
+      include: [tutorInclude],
       order: [["createdAt", "DESC"]],
     });
 
@@ -79,7 +77,7 @@ const getCourse = async (req: AuthenticatedRequest, res: Response) => {
     const userId = req.user?.id;
 
     const course = await Course.findByPk(id, {
-      include: [instructorInclude, tutorInclude],
+      include: [tutorInclude],
     });
     if (!course) return res.status(404).json({ message: "Course not found" });
 
@@ -120,16 +118,10 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
-    const tutor = await Tutor.findOne({ where: { userId } });
+    const tutor = await Tutor.findByPk(tutorId);
     if (!tutor) {
-      return res.status(403).json({
-        message: "Only tutors can create courses",
-      });
-    }
-
-    if ((tutor as any).id !== tutorId) {
-      return res.status(403).json({
-        message: "You can only create courses for your own tutor profile",
+      return res.status(404).json({
+        message: "Tutor not found",
       });
     }
 
@@ -142,12 +134,11 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
       price: price || 0,
       thumbnail,
       totalLessons,
-      createdBy: userId,
       tutorId,
     });
 
     const createdCourse = await Course.findByPk(course.get("id") as string, {
-      include: [instructorInclude, tutorInclude],
+      include: [tutorInclude],
     });
 
     res.status(201).json(createdCourse);
@@ -162,11 +153,17 @@ const updateCourse = async (req: AuthenticatedRequest, res: Response) => {
     if (!userId) return;
 
     const { id } = req.params;
-    const course = await checkCourseOwnership(id, userId);
+    const { tutorId } = req.body;
+
+    if (!tutorId) {
+      return res.status(400).json({ message: "tutorId is required" });
+    }
+
+    const course = await checkCourseOwnership(id, tutorId);
 
     await course.update(req.body);
     const updatedCourse = await Course.findByPk(id, {
-      include: [instructorInclude, tutorInclude],
+      include: [tutorInclude],
     });
 
     res.json(updatedCourse);
@@ -181,7 +178,13 @@ const deleteCourse = async (req: AuthenticatedRequest, res: Response) => {
     if (!userId) return;
 
     const { id } = req.params;
-    const course = await checkCourseOwnership(id, userId);
+    const { tutorId } = req.body;
+
+    if (!tutorId) {
+      return res.status(400).json({ message: "tutorId is required" });
+    }
+
+    const course = await checkCourseOwnership(id, tutorId);
 
     await course.destroy();
     res.json({ message: "Course deleted successfully" });

@@ -49,8 +49,8 @@ const connectDatabase = async () => {
     await sequelize.authenticate();
     console.log("✅ Database connected successfully");
 
-    await sequelize.sync({ force: false, alter: true });
-    console.log("✅ Database tables created successfully");
+    await sequelize.sync({ force: false, alter: false });
+    console.log("✅ Database tables synchronized successfully");
   } catch (err: any) {
     console.error("❌ Database connection failed:", err.message);
   }
@@ -58,7 +58,6 @@ const connectDatabase = async () => {
 
 connectDatabase();
 
-// Initialize Socket.io
 socketManager.initialize(server);
 
 server.listen(PORT, () => {

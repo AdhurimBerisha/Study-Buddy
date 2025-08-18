@@ -1,20 +1,8 @@
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store/store";
 import { changeUserRole, deleteUser } from "../../../store/slice/adminSlice";
 
-interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string | null;
-  avatar?: string | null;
-  role: string;
-  createdAt: string;
-}
-
-const UsersTable: React.FC = () => {
+const UsersTable = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { users, deletingUserId } = useSelector(
     (state: RootState) => state.admin
@@ -147,7 +135,6 @@ const UsersTable: React.FC = () => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex items-center space-x-3">
-                    {/* Role Change Buttons */}
                     {user.role !== "admin" && (
                       <button
                         onClick={() => handleChangeRole(user.id, "admin")}
@@ -167,7 +154,6 @@ const UsersTable: React.FC = () => {
                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                           />
                         </svg>
-                        {/* Tooltip */}
                         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
                           Make Admin
                           <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
@@ -199,7 +185,6 @@ const UsersTable: React.FC = () => {
                             d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
                           />
                         </svg>
-                        {/* Tooltip */}
                         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
                           Make Tutor
                           <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
@@ -225,7 +210,6 @@ const UsersTable: React.FC = () => {
                             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                           />
                         </svg>
-                        {/* Tooltip */}
                         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
                           Make User
                           <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
@@ -233,7 +217,6 @@ const UsersTable: React.FC = () => {
                       </button>
                     )}
 
-                    {/* Delete Button */}
                     {user.id !== currentUser?.id && (
                       <button
                         onClick={() => handleDeleteUser(user.id)}

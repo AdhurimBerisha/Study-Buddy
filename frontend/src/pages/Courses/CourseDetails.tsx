@@ -302,7 +302,7 @@ const CourseDetails = () => {
                   </div>
                   <div className="mt-3 text-sm text-gray-600 dark:text-gray-400">
                     <span className="mr-3">{tutor.lessons} lessons</span>
-                    <span className="mr-3">Hourly: {tutor.hourlyRate}</span>
+
                     <span>Trial: {tutor.trialRate}</span>
                   </div>
                   <div className="mt-4 flex gap-3">
@@ -317,9 +317,6 @@ const CourseDetails = () => {
                           name: tutor.name,
                           trialRate: parseFloat(
                             tutor.trialRate.replace(/[^0-9.]/g, "")
-                          ),
-                          hourlyRate: parseFloat(
-                            tutor.hourlyRate.replace(/[^0-9.]/g, "")
                           ),
                         },
                         booking: { isTrial: true },

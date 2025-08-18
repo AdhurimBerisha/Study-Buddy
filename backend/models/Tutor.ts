@@ -3,14 +3,16 @@ import sequelize from "../config/db";
 
 export interface TutorAttributes {
   id: string;
-  userId: string;
+  first_name: string;
+  last_name: string;
+  email: string;
   bio: string;
   expertise: string[];
-  hourlyRate: number;
   rating: number;
   totalStudents: number;
   totalLessons: number;
   isVerified: boolean;
+  avatar?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -23,6 +25,7 @@ export interface TutorCreationAttributes
     | "totalStudents"
     | "totalLessons"
     | "isVerified"
+    | "avatar"
     | "createdAt"
     | "updatedAt"
   > {}
@@ -36,14 +39,20 @@ Tutor.init(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    userId: {
-      type: DataTypes.UUID,
+    first_name: {
+      type: DataTypes.STRING,
       allowNull: false,
-      field: "user_id",
-      references: {
-        model: "users",
-        key: "id",
-      },
+      field: "first_name",
+    },
+    last_name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: "last_name",
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: { isEmail: true },
     },
     bio: {
       type: DataTypes.TEXT,
@@ -54,12 +63,6 @@ Tutor.init(
       type: DataTypes.JSON,
       allowNull: false,
       defaultValue: [],
-    },
-    hourlyRate: {
-      type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
-      validate: { min: 0 },
-      field: "hourly_rate",
     },
     rating: {
       type: DataTypes.DECIMAL(3, 2),
@@ -87,6 +90,10 @@ Tutor.init(
       defaultValue: false,
       field: "is_verified",
     },
+    avatar: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -102,18 +109,6 @@ Tutor.init(
     sequelize,
     tableName: "tutors",
     timestamps: true,
-    indexes: [
-      {
-        unique: true,
-        fields: ["user_id"],
-      },
-      {
-        fields: ["rating"],
-      },
-      {
-        fields: ["is_verified"],
-      },
-    ],
   }
 );
 
