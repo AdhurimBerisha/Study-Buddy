@@ -4,6 +4,7 @@ import chatReducer from "./slice/chatSlice";
 import groupsReducer from "./slice/groupsSlice";
 import learningReducer from "./slice/learningSlice";
 import coursesReducer from "./slice/coursesSlice";
+import adminReducer from "./slice/adminSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     groups: groupsReducer,
     learning: learningReducer,
     courses: coursesReducer,
+    admin: adminReducer,
   },
 });
 

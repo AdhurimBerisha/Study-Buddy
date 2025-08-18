@@ -10,6 +10,7 @@ export interface AuthenticatedRequest extends Request {
     lastName: string;
     phone?: string | null;
     avatar?: string | null;
+    role: string;
   };
 }
 

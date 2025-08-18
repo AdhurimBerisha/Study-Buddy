@@ -13,6 +13,7 @@ import groupRoutes from "./routes/group";
 import tutorRoutes from "./routes/tutor";
 import lessonRoutes from "./routes/lesson";
 import purchaseRoutes from "./routes/purchase";
+import adminRoutes from "./routes/admin";
 import socketManager from "./config/socket";
 
 const app = express();
@@ -30,6 +31,7 @@ app.use("/api/groups", groupRoutes);
 app.use("/api/tutors", tutorRoutes);
 app.use("/api/lessons", lessonRoutes);
 app.use("/api/purchases", purchaseRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.get("/", (_req, res) => {
   res.send("Server is running! REST API at /api");
@@ -47,7 +49,7 @@ const connectDatabase = async () => {
     await sequelize.authenticate();
     console.log("✅ Database connected successfully");
 
-    await sequelize.sync({ force: false });
+    await sequelize.sync({ force: false, alter: true });
     console.log("✅ Database tables created successfully");
   } catch (err: any) {
     console.error("❌ Database connection failed:", err.message);

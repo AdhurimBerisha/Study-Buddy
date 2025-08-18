@@ -48,7 +48,7 @@ const GoogleSignInButton = () => {
         (googleButton as HTMLElement).click();
       } else {
         console.warn("Google button not found, falling back to direct click");
-        // Fallback: try to find any clickable element
+
         const fallbackButton = googleButtonRef.current?.querySelector(
           'button, [role="button"]'
         );

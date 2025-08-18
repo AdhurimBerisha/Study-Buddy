@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import type { RootState } from "../store";
 import api from "../../services/api";
 
 export interface User {
@@ -8,6 +9,7 @@ export interface User {
   lastName: string;
   phone?: string;
   avatar?: string;
+  role: "user" | "tutor" | "admin";
 }
 
 export interface AuthState {
@@ -15,6 +17,7 @@ export interface AuthState {
   token: string | null;
   loading: boolean;
   error: string | null;
+  redirectTo?: string;
 }
 
 const initialState: AuthState = {
@@ -22,29 +25,26 @@ const initialState: AuthState = {
   token: localStorage.getItem("token"),
   loading: false,
   error: null,
+  redirectTo: undefined,
 };
 
 const login = createAsyncThunk(
   "auth/login",
   async ({ email, password }: { email: string; password: string }) => {
     const response = await api.post("/auth/login", { email, password });
-    const { token, user } = response.data;
+    const { token, user, redirectTo } = response.data;
     localStorage.setItem("token", token);
-    return { token, user };
+    return { token, user, redirectTo };
   }
 );
 
 const googleLogin = createAsyncThunk(
   "auth/googleLogin",
   async (googleToken: string) => {
-    try {
-      const response = await api.post("/auth/google", { token: googleToken });
-      const { token, user } = response.data;
-      localStorage.setItem("token", token);
-      return { token, user };
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.post("/auth/google", { token: googleToken });
+    const { token, user, redirectTo } = response.data;
+    localStorage.setItem("token", token);
+    return { token, user, redirectTo };
   }
 );
 
@@ -115,6 +115,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
+      state.redirectTo = undefined;
       localStorage.removeItem("token");
     },
     clearError: (state) => {
@@ -132,6 +133,9 @@ const authSlice = createSlice({
     setToken: (state, action) => {
       state.token = action.payload;
     },
+    clearRedirect: (state) => {
+      state.redirectTo = undefined;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -143,6 +147,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.redirectTo = action.payload.redirectTo;
         state.error = null;
       })
       .addCase(login.rejected, (state, action) => {
@@ -158,6 +163,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.redirectTo = action.payload.redirectTo;
         state.error = null;
       })
       .addCase(googleLogin.rejected, (state, action) => {
@@ -214,7 +220,14 @@ const authSlice = createSlice({
 
 export default authSlice.reducer;
 
-export const { logout, clearError, setLoading, setError, setUser, setToken } =
-  authSlice.actions;
+export const {
+  logout,
+  clearError,
+  setLoading,
+  setError,
+  setUser,
+  setToken,
+  clearRedirect,
+} = authSlice.actions;
 
 export { login, googleLogin, register, fetchProfile, updateProfile };

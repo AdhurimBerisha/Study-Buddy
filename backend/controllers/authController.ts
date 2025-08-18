@@ -3,33 +3,68 @@ import bcrypt from "bcryptjs";
 import User from "../models/User";
 import { generateToken } from "../utils/jwt";
 import { OAuth2Client } from "google-auth-library";
+import { AuthenticatedRequest } from "../middlewares/requireAuth";
+import { handleError } from "../helpers/errorHelper";
+
+// Helper function to determine redirect path
+const getRedirectPath = (role: string) => {
+  if (role === "admin") {
+    return "/dashboard";
+  } else if (role === "tutor") {
+    return "/dashboard";
+  } else {
+    return "/"; // Regular users go to main website
+  }
+};
 
 const userSignup = async (req: Request, res: Response) => {
   try {
-    const { email, password, firstName, lastName, phone } = req.body as {
-      email: string;
-      password: string;
-      firstName: string;
-      lastName: string;
-      phone?: string;
-    };
-    const existing = await User.findOne({ where: { email } });
-    if (existing)
-      return res.status(409).json({ message: "Email already in use" });
-    const hashed = await bcrypt.hash(password, 12);
+    const { email, password, firstName, lastName, phone } = req.body;
+
+    // Validate required fields
+    if (!email || !password || !firstName || !lastName) {
+      return res.status(400).json({
+        message: "Email, password, firstName, and lastName are required",
+      });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(409).json({ message: "User already exists" });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    // Create user with default role
     const user = await User.create({
       email,
-      password: hashed,
+      password: hashedPassword,
       firstName,
       lastName,
-      phone: phone ?? null,
+      phone: phone || null,
+      role: "user",
     });
-    const plain = user.get({ plain: true });
-    delete (plain as any).password;
-    return res.status(201).json(plain);
+
+    const userPlain = user.get({ plain: true }) as any;
+
+    // Generate token with role
+    const token = generateToken({
+      userId: userPlain.id,
+      email: userPlain.email,
+      role: userPlain.role,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "User created successfully",
+      token,
+      user: userPlain,
+      redirectTo: getRedirectPath(userPlain.role),
+    });
   } catch (e) {
-    const message = e instanceof Error ? e.message : "Registration failed";
-    return res.status(400).json({ message });
+    handleError(res, e, "Error creating user");
   }
 };
 
@@ -37,11 +72,14 @@ const userLogin = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body as { email: string; password: string };
     const user = await User.findOne({ where: { email } });
-    if (!user)
+
+    if (!user) {
       return res.status(401).json({ message: "Invalid email or password" });
+    }
 
-    const userPlain = user.get({ plain: true });
+    const userPlain = user.get({ plain: true }) as any;
 
+    // Check if this is a Google-only account
     if (!userPlain.password) {
       return res.status(401).json({
         message:
@@ -49,17 +87,26 @@ const userLogin = async (req: Request, res: Response) => {
       });
     }
 
+    // Verify password
     const isValid = await bcrypt.compare(password, userPlain.password);
-
-    if (!isValid)
+    if (!isValid) {
       return res.status(401).json({ message: "Invalid email or password" });
+    }
 
-    delete (userPlain as any).password;
+    delete userPlain.password;
+
+    // Generate token with role only
     const token = generateToken({
       userId: userPlain.id,
       email: userPlain.email,
+      role: userPlain.role,
     });
-    return res.json({ token, user: userPlain });
+
+    return res.json({
+      token,
+      user: userPlain,
+      redirectTo: getRedirectPath(userPlain.role),
+    });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Login failed";
     return res.status(400).json({ message });
@@ -75,7 +122,6 @@ const googleAuth = async (req: Request, res: Response) => {
     }
 
     const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
     const ticket = await client.verifyIdToken({
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -132,6 +178,7 @@ const googleAuth = async (req: Request, res: Response) => {
     let user = await User.findOne({ where: { email } });
 
     if (!user) {
+      // Create new regular user account
       user = await User.create({
         email,
         firstName,
@@ -139,25 +186,41 @@ const googleAuth = async (req: Request, res: Response) => {
         password: null,
         googleId,
         avatar: picture || null,
+        role: "user",
       });
-    } else if (!(user as any).googleId) {
-      await user.update({
-        googleId,
-        avatar: picture || (user as any).avatar,
-      });
-    } else if (picture && !(user as any).avatar) {
-      await user.update({ avatar: picture });
+    } else {
+      // Check if this is an admin/tutor account
+      if ((user as any).role !== "user") {
+        return res.status(403).json({
+          message: "Admin and tutor accounts cannot use Google sign-in",
+        });
+      }
+
+      // Update existing user
+      if (!(user as any).googleId) {
+        await user.update({
+          googleId,
+          avatar: picture || (user as any).avatar,
+        });
+      } else if (picture && !(user as any).avatar) {
+        await user.update({ avatar: picture });
+      }
     }
 
-    const userPlain = user.get({ plain: true });
-    delete (userPlain as any).password;
+    const userPlain = user.get({ plain: true }) as any;
+    delete userPlain.password;
 
     const jwtToken = generateToken({
       userId: userPlain.id,
       email: userPlain.email,
+      role: userPlain.role,
     });
 
-    return res.json({ token: jwtToken, user: userPlain });
+    return res.json({
+      token: jwtToken,
+      user: userPlain,
+      redirectTo: getRedirectPath(userPlain.role),
+    });
   } catch (e) {
     console.error("Google auth error:", e);
     const message =
@@ -166,4 +229,121 @@ const googleAuth = async (req: Request, res: Response) => {
   }
 };
 
-export { userSignup, userLogin, googleAuth };
+const createAdminAccount = async (req: Request, res: Response) => {
+  try {
+    const { email, password, firstName, lastName } = req.body;
+
+    // Validate required fields
+    if (!email || !password || !firstName || !lastName) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(409).json({ message: "User already exists" });
+    }
+
+    // Hash password and create admin
+    const hashed = await bcrypt.hash(password, 12);
+    const admin = await User.create({
+      email,
+      password: hashed,
+      firstName,
+      lastName,
+      role: "admin",
+    });
+
+    const adminPlain = admin.get({ plain: true }) as any;
+    delete adminPlain.password;
+
+    return res.status(201).json({
+      message: "Admin account created successfully",
+      admin: adminPlain,
+    });
+  } catch (e) {
+    const message =
+      e instanceof Error ? e.message : "Failed to create admin account";
+    return res.status(400).json({ message });
+  }
+};
+
+const createTutorAccount = async (req: Request, res: Response) => {
+  try {
+    const { email, password, firstName, lastName, phone } = req.body;
+
+    // Validate required fields
+    if (!email || !password || !firstName || !lastName) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(409).json({ message: "User already exists" });
+    }
+
+    // Hash password and create tutor
+    const hashed = await bcrypt.hash(password, 12);
+    const tutor = await User.create({
+      email,
+      password: hashed,
+      firstName,
+      lastName,
+      phone: phone || null,
+      role: "tutor",
+    });
+
+    const tutorPlain = tutor.get({ plain: true }) as any;
+    delete tutorPlain.password;
+
+    return res.status(201).json({
+      message: "Tutor account created successfully",
+      tutor: tutorPlain,
+    });
+  } catch (e) {
+    const message =
+      e instanceof Error ? e.message : "Failed to create tutor account";
+    return res.status(400).json({ message });
+  }
+};
+
+const promoteToAdmin = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { userId } = req.body;
+
+    // Only existing admins can promote users to admin
+    if (!req.user || req.user.role !== "admin") {
+      return res.status(403).json({ message: "Only admins can promote users" });
+    }
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await user.update({
+      role: "admin",
+    });
+
+    const userPlain = user.get({ plain: true }) as any;
+    delete userPlain.password;
+
+    return res.json({
+      message: "User promoted to admin successfully",
+      user: userPlain,
+    });
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Failed to promote user";
+    return res.status(400).json({ message });
+  }
+};
+
+export {
+  userSignup,
+  userLogin,
+  googleAuth,
+  promoteToAdmin,
+  createAdminAccount,
+  createTutorAccount,
+};

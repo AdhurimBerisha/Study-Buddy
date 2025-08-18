@@ -10,6 +10,7 @@ export interface UserAttributes {
   phone?: string | null;
   avatar?: string | null;
   googleId?: string | null;
+  role: "user" | "tutor" | "admin";
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -37,46 +38,39 @@ User.init(
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: true,
-      validate: { len: [6, 255] },
+      allowNull: true, // Can be null for Google users
     },
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
-      field: "first_name",
-      validate: { len: [1, 50] },
     },
     lastName: {
       type: DataTypes.STRING,
-      allowNull: true,
-      field: "last_name",
-      validate: { len: [0, 50] },
+      allowNull: false,
     },
     phone: {
       type: DataTypes.STRING,
       allowNull: true,
-      validate: { is: /^[+]?[1-9][\d\s\-()]+$/ },
     },
     avatar: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING,
       allowNull: true,
     },
     googleId: {
       type: DataTypes.STRING,
       allowNull: true,
-      field: "google_id",
+      unique: true,
+    },
+    role: {
+      type: DataTypes.ENUM("user", "tutor", "admin"),
+      allowNull: false,
+      defaultValue: "user",
     },
   },
   {
     sequelize,
-    tableName: "users",
+    modelName: "User",
     timestamps: true,
-    indexes: [
-      {
-        unique: true,
-        fields: ["email"],
-      },
-    ],
   }
 );
 

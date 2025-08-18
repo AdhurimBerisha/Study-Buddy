@@ -25,6 +25,7 @@ import Checkout from "./pages/Payments/Checkout";
 import MyLearning from "./pages/Learning/MyLearning";
 import CourseReader from "./pages/Learning/CourseReader";
 import CodeEditorDemo from "./pages/CodeEditorDemo/CodeEditorDemo";
+import Dashboard from "./pages/Dashboard/Dashboard";
 import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -76,6 +77,14 @@ const App = () => {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/profile" element={<MyProfile />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/checkout"
           element={

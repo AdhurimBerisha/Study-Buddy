@@ -266,6 +266,14 @@ const Navbar = () => {
 
                   <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                     <div className="py-1">
+                      {(user?.role === "admin" || user?.role === "tutor") && (
+                        <NavLink
+                          to="/dashboard"
+                          className="block px-4 py-2 text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:text-blue-400 transition-colors duration-200"
+                        >
+                          Dashboard
+                        </NavLink>
+                      )}
                       <NavLink
                         to="/profile"
                         className="block px-4 py-2 text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
@@ -561,6 +569,15 @@ const Navbar = () => {
                       </div>
                     </div>
                     <div className="flex flex-col items-center space-y-2 w-full">
+                      {(user?.role === "admin" || user?.role === "tutor") && (
+                        <NavLink
+                          to="/dashboard"
+                          onClick={toggleMenu}
+                          className="w-full text-center px-3 py-2 text-sm font-medium text-white hover:text-blue-300 transition-colors duration-200"
+                        >
+                          Dashboard
+                        </NavLink>
+                      )}
                       <NavLink
                         to="/profile"
                         onClick={toggleMenu}

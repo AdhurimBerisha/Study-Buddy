@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store/store";
-import { login, clearError } from "../../store/slice/authSlice";
+import { login, clearError, clearRedirect } from "../../store/slice/authSlice";
 import AuthLayout from "./AuthLayout";
 import Button from "../../components/Button";
 import GoogleSignInButton from "../../components/GoogleSignInButton";
 import { toast } from "react-toastify";
-import ErrorBoundary from "../../components/ErrorBoundary";
 import { useCustomPageTitle } from "../../hooks/usePageTitle";
 
 const Login = () => {
@@ -20,7 +19,16 @@ const Login = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { loading, error } = useSelector((state: RootState) => state.auth);
+  const { loading, error, redirectTo } = useSelector(
+    (state: RootState) => state.auth
+  );
+
+  useEffect(() => {
+    if (redirectTo) {
+      navigate(redirectTo);
+      dispatch(clearRedirect());
+    }
+  }, [redirectTo, navigate, dispatch]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -37,7 +45,6 @@ const Login = () => {
     try {
       await dispatch(login(formData)).unwrap();
       toast.success("Login successful! Welcome back!");
-      navigate("/");
     } catch {
       toast.error("Login failed. Please check your credentials.");
     }
@@ -99,16 +106,14 @@ const Login = () => {
             <div className="w-full border-t border-gray-300 dark:border-gray-600" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400">
+            <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
               Or continue with
             </span>
           </div>
         </div>
 
         <div className="mt-6">
-          <ErrorBoundary>
-            <GoogleSignInButton />
-          </ErrorBoundary>
+          <GoogleSignInButton />
         </div>
       </div>
     </AuthLayout>
