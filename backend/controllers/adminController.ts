@@ -219,7 +219,18 @@ const updateUser = async (req: AuthenticatedRequest, res: Response) => {
           isVerified: false,
         });
       } else if (updateData.role !== "tutor" && existingTutor) {
-        // Delete tutor profile
+        // Check if tutor has associated courses before deleting
+        const courseCount = await Course.count({
+          where: { tutorId: existingTutor.id },
+        });
+
+        if (courseCount > 0) {
+          return res.status(400).json({
+            message: `Cannot change role from tutor to ${updateData.role}. This tutor has ${courseCount} associated course(s). Please delete the courses first or deactivate the tutor instead.`,
+          });
+        }
+
+        // Delete tutor profile only if no courses exist
         await existingTutor.destroy();
       }
     }
@@ -330,7 +341,18 @@ const changeUserRole = async (req: AuthenticatedRequest, res: Response) => {
         isVerified: false,
       });
     } else if (role !== "tutor" && existingTutor) {
-      // Delete tutor profile
+      // Check if tutor has associated courses before deleting
+      const courseCount = await Course.count({
+        where: { tutorId: existingTutor.id },
+      });
+
+      if (courseCount > 0) {
+        return res.status(400).json({
+          message: `Cannot change role from tutor to ${role}. This tutor has ${courseCount} associated course(s). Please delete the courses first or deactivate the tutor instead.`,
+        });
+      }
+
+      // Delete tutor profile only if no courses exist
       await existingTutor.destroy();
     }
 

@@ -48,7 +48,7 @@ router.get("/users/:id", getUserById);
 router.post("/users", createUser);
 router.put("/users/:id", updateUser);
 router.delete("/users/:id", deleteUser);
-router.patch("/users/:id/role", changeUserRole);
+router.put("/users/:id/role", changeUserRole);
 
 // ==================== COURSE MANAGEMENT ====================
 router.get("/courses", getAllCourses);

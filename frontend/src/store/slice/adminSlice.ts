@@ -248,7 +248,7 @@ export const changeUserRole = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      await api.patch(`/admin/users/${userId}/role`, { role });
+      await api.put(`/admin/users/${userId}/role`, { role });
       return { userId, role };
     } catch (error: unknown) {
       const apiError = error as ApiError;
