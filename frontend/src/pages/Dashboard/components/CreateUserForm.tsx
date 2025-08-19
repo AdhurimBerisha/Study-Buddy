@@ -17,7 +17,7 @@ const CreateUserForm = () => {
     lastName: "",
     phone: "",
     avatar: "",
-    role: "user" as "user" | "tutor" | "admin",
+    role: "user" as "user" | "admin",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -191,13 +191,12 @@ const CreateUserForm = () => {
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    role: e.target.value as "user" | "tutor" | "admin",
+                    role: e.target.value as "user" | "admin",
                   })
                 }
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white transition-all duration-200"
               >
                 <option value="user">User</option>
-                <option value="tutor">Tutor</option>
                 <option value="admin">Admin</option>
               </select>
             </div>
