@@ -138,7 +138,7 @@ const CoursesTable = () => {
                       ) : (
                         <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 flex items-center justify-center ring-2 ring-gray-200 dark:ring-gray-700 shadow-md">
                           <span className="text-lg font-bold text-white">
-                            {course.title.charAt(0).toUpperCase()}
+                            {(course.title?.charAt(0) || "?").toUpperCase()}
                           </span>
                         </div>
                       )}
@@ -196,8 +196,8 @@ const CoursesTable = () => {
                     <div className="flex items-center">
                       <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center mr-3">
                         <span className="text-xs font-semibold text-white">
-                          {course.tutor.first_name.charAt(0)}
-                          {course.tutor.last_name.charAt(0)}
+                          {course.tutor.first_name?.charAt(0) || "?"}
+                          {course.tutor.last_name?.charAt(0) || "?"}
                         </span>
                       </div>
                       <div>

@@ -11,8 +11,6 @@ const TutorsTable = () => {
     (state: RootState) => state.admin
   );
 
-  console.log("Tutors data:", tutors);
-
   const handleEdit = (tutorId: string) => {
     dispatch(setShowEditTutorForm(tutorId));
   };
