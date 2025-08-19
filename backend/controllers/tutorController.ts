@@ -1,12 +1,14 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/requireAuth";
-import { Tutor, Course } from "../models";
+import { Tutor, Course, User, Lesson } from "../models";
 import { handleError } from "../helpers/errorHelper";
 import { Op } from "sequelize";
+import sequelize from "../config/db";
 
 const createTutor = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { bio, expertise, first_name, last_name, email, avatar } = req.body;
+    const { bio, expertise, first_name, last_name, email, avatar, userId } =
+      req.body;
 
     const existingTutor = await Tutor.findOne({ where: { email } });
     if (existingTutor) {
@@ -22,6 +24,7 @@ const createTutor = async (req: AuthenticatedRequest, res: Response) => {
       bio,
       expertise,
       avatar,
+      userId,
     });
 
     res.status(201).json({
@@ -143,4 +146,118 @@ const deleteTutor = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export { createTutor, getTutor, getAllTutors, updateTutor, deleteTutor };
+const createCourse = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const tutor = await Tutor.findOne({ where: { userId } });
+    if (!tutor) {
+      return res
+        .status(403)
+        .json({ message: "Only tutors can create courses" });
+    }
+
+    const {
+      title,
+      description,
+      category,
+      language,
+      level,
+      price,
+      thumbnail,
+      totalLessons,
+      lessons,
+    } = req.body;
+
+    if (!title || !description || !category || !language || !level) {
+      return res.status(400).json({
+        message:
+          "Title, description, category, language, and level are required",
+      });
+    }
+
+    const result = await sequelize.transaction(async (t) => {
+      const course = await Course.create(
+        {
+          title,
+          description,
+          category,
+          language,
+          level,
+          price: price || 0,
+          thumbnail,
+          totalLessons,
+          tutorId: userId,
+        },
+        { transaction: t }
+      );
+
+      const courseId = course.get("id") as string;
+
+      if (lessons && Array.isArray(lessons) && lessons.length > 0) {
+        const lessonPromises = lessons.map((lesson: any) => {
+          const lessonData = {
+            courseId: courseId,
+            title: lesson.title,
+            content: lesson.content,
+            order: lesson.order,
+            duration: lesson.duration || null,
+            resources: lesson.resources || null,
+            isActive: true,
+          };
+          return Lesson.create(lessonData, { transaction: t });
+        });
+
+        await Promise.all(lessonPromises);
+      }
+
+      return course;
+    });
+
+    const courseId = result.get("id") as string;
+
+    const createdCourse = await Course.findByPk(courseId, {
+      include: [
+        {
+          model: User,
+          as: "tutor",
+          attributes: ["id", "firstName", "lastName", "email"],
+        },
+        {
+          model: Lesson,
+          as: "lessons",
+          attributes: [
+            "id",
+            "title",
+            "content",
+            "order",
+            "duration",
+            "resources",
+            "isActive",
+          ],
+          order: [["order", "ASC"]],
+        },
+      ],
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Course created successfully",
+      data: createdCourse,
+    });
+  } catch (error) {
+    handleError(res, error, "Error creating course");
+  }
+};
+
+export {
+  createTutor,
+  getTutor,
+  getAllTutors,
+  updateTutor,
+  deleteTutor,
+  createCourse,
+};

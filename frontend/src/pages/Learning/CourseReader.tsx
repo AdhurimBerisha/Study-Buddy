@@ -336,22 +336,37 @@ const CourseReader = () => {
                     Resources
                   </h4>
                   <div className="space-y-2">
-                    {JSON.parse(selectedLesson.resources).map(
-                      (
-                        resource: { label: string; url: string },
-                        index: number
-                      ) => (
-                        <a
-                          key={index}
-                          href={resource.url}
-                          className="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline p-2 rounded border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500 transition-colors"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {resource.label}
-                        </a>
-                      )
-                    )}
+                    {(() => {
+                      try {
+                        const parsedResources = JSON.parse(
+                          selectedLesson.resources
+                        );
+                        if (Array.isArray(parsedResources)) {
+                          return parsedResources.map(
+                            (
+                              resource: { label: string; url: string },
+                              index: number
+                            ) => (
+                              <a
+                                key={index}
+                                href={resource.url}
+                                className="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline p-2 rounded border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500 transition-colors"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {resource.label}
+                              </a>
+                            )
+                          );
+                        }
+                      } catch {
+                        return (
+                          <div className="text-gray-700 dark:text-gray-300 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                            {selectedLesson.resources}
+                          </div>
+                        );
+                      }
+                    })()}
                   </div>
                 </div>
               )}

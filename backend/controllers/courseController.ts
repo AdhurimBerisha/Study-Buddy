@@ -1,23 +1,14 @@
 import type { Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/requireAuth";
-import { Course, User, Purchase, Tutor } from "../models";
+import { Course, User, Purchase } from "../models";
 import { handleError } from "../helpers/errorHelper";
 import sequelize from "../config/db";
 import { Op } from "sequelize";
 
 const tutorInclude = {
-  model: Tutor,
+  model: User,
   as: "tutor",
-  attributes: [
-    "id",
-    "first_name",
-    "last_name",
-    "email",
-    "bio",
-    "expertise",
-    "rating",
-    "avatar",
-  ],
+  attributes: ["id", "firstName", "lastName", "email"],
   required: false,
 };
 
@@ -118,7 +109,7 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
-    const tutor = await Tutor.findByPk(tutorId);
+    const tutor = await User.findByPk(tutorId);
     if (!tutor) {
       return res.status(404).json({
         message: "Tutor not found",
