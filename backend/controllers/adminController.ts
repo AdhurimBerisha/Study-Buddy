@@ -31,9 +31,9 @@ const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
 
     if (search) {
       whereClause[Op.or] = [
-        { firstName: { [Op.iLike]: `%${search}%` } },
-        { lastName: { [Op.iLike]: `%${search}%` } },
-        { email: { [Op.iLike]: `%${search}%` } },
+        { firstName: { [Op.like]: `%${search}%` } },
+        { lastName: { [Op.like]: `%${search}%` } },
+        { email: { [Op.like]: `%${search}%` } },
       ];
     }
 
@@ -127,6 +127,30 @@ const createUser = async (req: AuthenticatedRequest, res: Response) => {
 
     const userPlain = user.get({ plain: true }) as any;
     delete userPlain.password;
+
+    if (role === "tutor") {
+      try {
+        const tutor = await Tutor.create({
+          userId: userPlain.id,
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+          bio: "",
+          expertise: [],
+          isVerified: false,
+          avatar: avatar || undefined,
+        });
+
+        userPlain.tutorProfile = {
+          id: tutor.get("id") as string,
+          bio: tutor.get("bio") as string,
+          expertise: tutor.get("expertise") as string[],
+          isVerified: tutor.get("isVerified") as boolean,
+        };
+      } catch (tutorError) {
+        console.error("Error creating tutor profile:", tutorError);
+      }
+    }
 
     res.status(201).json({
       success: true,
@@ -240,6 +264,26 @@ const changeUserRole = async (req: AuthenticatedRequest, res: Response) => {
 
     await user.update({ role });
 
+    if (role === "tutor") {
+      const existingTutor = await Tutor.findOne({ where: { userId: id } });
+      if (!existingTutor) {
+        try {
+          await Tutor.create({
+            userId: id,
+            first_name: user.get("firstName") as string,
+            last_name: user.get("lastName") as string,
+            email: user.get("email") as string,
+            bio: "",
+            expertise: [],
+            isVerified: false,
+            avatar: (user.get("avatar") as string) || undefined,
+          });
+        } catch (tutorError) {
+          console.error("Error creating tutor profile:", tutorError);
+        }
+      }
+    }
+
     const updatedUser = await User.findByPk(id, {
       attributes: { exclude: ["password"] },
     });
@@ -266,8 +310,8 @@ const getAllCourses = async (req: AuthenticatedRequest, res: Response) => {
 
     if (search) {
       whereClause[Op.or] = [
-        { title: { [Op.iLike]: `%${search}%` } },
-        { description: { [Op.iLike]: `%${search}%` } },
+        { title: { [Op.like]: `%${search}%` } },
+        { description: { [Op.like]: `%${search}%` } },
       ];
     }
 
@@ -278,16 +322,9 @@ const getAllCourses = async (req: AuthenticatedRequest, res: Response) => {
       where: whereClause,
       include: [
         {
-          model: Tutor,
+          model: User,
           as: "tutor",
-          attributes: [
-            "id",
-            "first_name",
-            "last_name",
-            "email",
-            "bio",
-            "expertise",
-          ],
+          attributes: ["id", "firstName", "lastName", "email"],
         },
       ],
       order: [["createdAt", "DESC"]],
@@ -319,16 +356,9 @@ const getCourseById = async (req: AuthenticatedRequest, res: Response) => {
     const course = await Course.findByPk(id, {
       include: [
         {
-          model: Tutor,
+          model: User,
           as: "tutor",
-          attributes: [
-            "id",
-            "first_name",
-            "last_name",
-            "email",
-            "bio",
-            "expertise",
-          ],
+          attributes: ["id", "firstName", "lastName", "email"],
         },
         {
           model: Lesson,
@@ -380,9 +410,16 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
-    const tutor = await Tutor.findByPk(tutorId);
+    const user = await User.findByPk(tutorId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const tutor = await Tutor.findOne({ where: { userId: tutorId } });
     if (!tutor) {
-      return res.status(404).json({ message: "Tutor not found" });
+      return res
+        .status(404)
+        .json({ message: "User does not have a tutor profile" });
     }
 
     const course = await Course.create({
@@ -400,16 +437,9 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
     const createdCourse = await Course.findByPk(course.get("id") as string, {
       include: [
         {
-          model: Tutor,
+          model: User,
           as: "tutor",
-          attributes: [
-            "id",
-            "first_name",
-            "last_name",
-            "email",
-            "bio",
-            "expertise",
-          ],
+          attributes: ["id", "firstName", "lastName", "email"],
         },
       ],
     });
@@ -438,9 +468,18 @@ const updateCourse = async (req: AuthenticatedRequest, res: Response) => {
     }
 
     if (updateData.tutorId) {
-      const tutor = await Tutor.findByPk(updateData.tutorId);
+      const user = await User.findByPk(updateData.tutorId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const tutor = await Tutor.findOne({
+        where: { userId: updateData.tutorId },
+      });
       if (!tutor) {
-        return res.status(404).json({ message: "Tutor not found" });
+        return res
+          .status(404)
+          .json({ message: "User does not have a tutor profile" });
       }
     }
 
@@ -449,16 +488,9 @@ const updateCourse = async (req: AuthenticatedRequest, res: Response) => {
     const updatedCourse = await Course.findByPk(id, {
       include: [
         {
-          model: Tutor,
+          model: User,
           as: "tutor",
-          attributes: [
-            "id",
-            "first_name",
-            "last_name",
-            "email",
-            "bio",
-            "expertise",
-          ],
+          attributes: ["id", "firstName", "lastName", "email"],
         },
       ],
     });
@@ -687,14 +719,14 @@ const getAllTutors = async (req: AuthenticatedRequest, res: Response) => {
 
     if (search) {
       whereClause[Op.or] = [
-        { first_name: { [Op.iLike]: `%${search}%` } },
-        { last_name: { [Op.iLike]: `%${search}%` } },
-        { email: { [Op.iLike]: `%${search}%` } },
+        { first_name: { [Op.like]: `%${search}%` } },
+        { last_name: { [Op.like]: `%${search}%` } },
+        { email: { [Op.like]: `%${search}%` } },
       ];
     }
 
     if (expertise) {
-      whereClause.expertise = { [Op.contains]: [expertise] };
+      whereClause.expertise = { [Op.like]: `%${expertise}%` };
     }
 
     const { count, rows: tutors } = await Tutor.findAndCountAll({
@@ -791,12 +823,34 @@ const createTutor = async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res
+        .status(409)
+        .json({ message: "User with this email already exists" });
+    }
+
     const existingTutor = await Tutor.findOne({ where: { email } });
     if (existingTutor) {
       return res.status(409).json({ message: "Tutor already exists" });
     }
 
-    const tutor = await Tutor.create({
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const user = await User.create({
+      email,
+      password: hashedPassword,
+      firstName,
+      lastName,
+      phone: phone || null,
+      avatar: avatar || null,
+      role: "tutor",
+    });
+
+    const userData = user.get({ plain: true }) as any;
+    console.log("Creating tutor with userId:", userData.id);
+    console.log("Tutor data:", {
+      userId: userData.id,
       first_name: firstName,
       last_name: lastName,
       email: email,
@@ -806,10 +860,43 @@ const createTutor = async (req: AuthenticatedRequest, res: Response) => {
       avatar: avatar || null,
     });
 
+    const tutor = await Tutor.create({
+      userId: userData.id,
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      bio: bio || "",
+      expertise: Array.isArray(expertise) ? expertise : [expertise],
+      isVerified: false,
+      avatar: avatar || undefined,
+    });
+
+    const tutorData = tutor.get({ plain: true }) as any;
+    console.log("Tutor created successfully:", tutorData);
+
     res.status(201).json({
       success: true,
       message: "Tutor created successfully",
-      data: tutor,
+      data: {
+        user: {
+          id: userData.id,
+          email: userData.email,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          role: userData.role,
+        },
+        tutor: {
+          id: tutorData.id,
+          userId: tutorData.userId,
+          first_name: tutorData.first_name,
+          last_name: tutorData.last_name,
+          email: tutorData.email,
+          bio: tutorData.bio,
+          expertise: tutorData.expertise,
+          isVerified: tutorData.isVerified,
+          avatar: tutorData.avatar,
+        },
+      },
     });
   } catch (error) {
     handleError(res, error, "Error creating tutor");

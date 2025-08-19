@@ -11,6 +11,8 @@ const TutorsTable = () => {
     (state: RootState) => state.admin
   );
 
+  console.log("Tutors data:", tutors);
+
   const handleEdit = (tutorId: string) => {
     dispatch(setShowEditTutorForm(tutorId));
   };
@@ -47,6 +49,18 @@ const TutorsTable = () => {
           Loading tutors...
         </p>
       </div>
+    );
+  }
+
+  const validTutors = tutors.filter(
+    (tutor) => tutor && tutor.id && tutor.first_name && tutor.last_name
+  );
+
+  if (validTutors.length < tutors.length) {
+    console.warn(
+      `Filtered out ${
+        tutors.length - validTutors.length
+      } tutors with missing data`
     );
   }
 
@@ -137,7 +151,7 @@ const TutorsTable = () => {
             </tr>
           </thead>
           <tbody className="bg-white/50 dark:bg-gray-800/50 divide-y divide-gray-200/50 dark:divide-gray-700/50">
-            {tutors.map((tutor) => (
+            {validTutors.map((tutor) => (
               <tr
                 key={tutor.id}
                 className="hover:bg-gray-50/80 dark:hover:bg-gray-700/80 transition-colors duration-200"
@@ -149,20 +163,23 @@ const TutorsTable = () => {
                         <img
                           className="h-12 w-12 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700 shadow-md"
                           src={tutor.avatar}
-                          alt={`${tutor.first_name} ${tutor.last_name}`}
+                          alt={`${tutor.first_name || "Unknown"} ${
+                            tutor.last_name || "Name"
+                          }`}
                         />
                       ) : (
                         <div className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-400 via-pink-500 to-rose-600 flex items-center justify-center ring-2 ring-gray-200 dark:ring-gray-700 shadow-md">
                           <span className="text-sm font-bold text-white">
-                            {tutor.first_name.charAt(0)}
-                            {tutor.last_name.charAt(0)}
+                            {tutor.first_name?.charAt(0) || "?"}
+                            {tutor.last_name?.charAt(0) || "?"}
                           </span>
                         </div>
                       )}
                     </div>
                     <div className="ml-4">
                       <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {tutor.first_name} {tutor.last_name}
+                        {tutor.first_name || "Unknown"}{" "}
+                        {tutor.last_name || "Name"}
                       </div>
                       <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center mt-1">
                         <svg
@@ -209,7 +226,7 @@ const TutorsTable = () => {
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex flex-wrap gap-2 mb-2">
-                    {tutor.expertise.slice(0, 3).map((skill, index) => (
+                    {(tutor.expertise || []).slice(0, 3).map((skill, index) => (
                       <span
                         key={index}
                         className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 dark:from-blue-900 dark:to-indigo-900 dark:text-blue-200 shadow-sm"
@@ -217,13 +234,13 @@ const TutorsTable = () => {
                         {skill}
                       </span>
                     ))}
-                    {tutor.expertise.length > 3 && (
+                    {(tutor.expertise || []).length > 3 && (
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 dark:from-gray-700 dark:to-gray-800 dark:text-gray-200 shadow-sm">
-                        +{tutor.expertise.length - 3} more
+                        +{(tutor.expertise || []).length - 3} more
                       </span>
                     )}
                   </div>
-                  {tutor.bio && (
+                  {tutor.bio && tutor.bio.trim() && (
                     <div className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs flex items-start">
                       <svg
                         className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0"

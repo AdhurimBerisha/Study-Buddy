@@ -194,8 +194,8 @@ export const fetchTutors = createAsyncThunk(
   "admin/fetchTutors",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get("/tutors");
-      return response.data.tutors || [];
+      const response = await api.get("/admin/tutors");
+      return response.data.data || [];
     } catch (error: unknown) {
       const apiError = error as ApiError;
       const errorMessage =

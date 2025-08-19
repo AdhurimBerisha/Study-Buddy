@@ -8,14 +8,24 @@ import LessonProgress from "./LessonProgress";
 import Purchase from "./Purchase";
 import Tutor from "./Tutor";
 
-Tutor.hasMany(Course, {
-  foreignKey: "tutorId",
-  as: "courses",
+User.hasOne(Tutor, {
+  foreignKey: "userId",
+  as: "tutorProfile",
 });
 
-Course.belongsTo(Tutor, {
+Tutor.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user",
+});
+
+Course.belongsTo(User, {
   foreignKey: "tutorId",
   as: "tutor",
+});
+
+User.hasMany(Course, {
+  foreignKey: "tutorId",
+  as: "tutorCourses",
 });
 
 Course.hasMany(Lesson, {

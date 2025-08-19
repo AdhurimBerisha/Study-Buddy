@@ -3,6 +3,7 @@ import sequelize from "../config/db";
 
 export interface TutorAttributes {
   id: string;
+  userId: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -38,6 +39,16 @@ Tutor.init(
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
+    },
+    userId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      field: "user_id",
+      references: {
+        model: "users",
+        key: "id",
+      },
+      unique: true,
     },
     first_name: {
       type: DataTypes.STRING,

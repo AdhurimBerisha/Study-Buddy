@@ -76,7 +76,7 @@ Course.init(
       allowNull: false,
       field: "tutor_id",
       references: {
-        model: "tutors",
+        model: "users",
         key: "id",
       },
     },
