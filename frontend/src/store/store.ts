@@ -5,6 +5,7 @@ import groupsReducer from "./slice/groupsSlice";
 import learningReducer from "./slice/learningSlice";
 import coursesReducer from "./slice/coursesSlice";
 import adminReducer from "./slice/adminSlice";
+import dashboardReducer from "./slice/dashboardSlice";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     learning: learningReducer,
     courses: coursesReducer,
     admin: adminReducer,
+    dashboard: dashboardReducer,
   },
 });
 

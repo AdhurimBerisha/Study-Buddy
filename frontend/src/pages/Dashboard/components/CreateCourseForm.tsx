@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../../store/store";
+import { createCourse } from "../../../store/slice/dashboardSlice";
 
 interface Lesson {
   title: string;
@@ -26,7 +29,11 @@ const CreateCourseForm = ({
   onClose: () => void;
   onSuccess?: () => void;
 }) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const { creatingCourse, courseError } = useSelector(
+    (state: RootState) => state.dashboard
+  );
+
   const [formData, setFormData] = useState<CourseFormData>({
     title: "",
     description: "",
@@ -89,7 +96,6 @@ const CreateCourseForm = ({
 
     if (!validateForm()) return;
 
-    setIsSubmitting(true);
     try {
       const validLessons = formData.lessons
         .filter((lesson) => lesson.title.trim() && lesson.content.trim())
@@ -105,22 +111,22 @@ const CreateCourseForm = ({
         setErrors({
           submit: "At least one lesson with title and content is required",
         });
-        setIsSubmitting(false);
         return;
       }
 
+      await dispatch(
+        createCourse({
+          ...formData,
+          totalLessons: validLessons.length,
+          lessons: validLessons,
+        })
+      ).unwrap();
+
       alert(`Course created successfully with ${validLessons.length} lessons!`);
-
-      if (onSuccess) {
-        onSuccess();
-      }
-
+      if (onSuccess) onSuccess();
       onClose();
     } catch (error) {
       console.error("Failed to create course:", error);
-      setErrors({ submit: "Failed to create course. Please try again." });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -599,6 +605,12 @@ const CreateCourseForm = ({
             </div>
           )}
 
+          {courseError && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+              <p className="text-red-800 dark:text-red-200">{courseError}</p>
+            </div>
+          )}
+
           {/* Form Actions */}
           <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
             <button
@@ -610,10 +622,10 @@ const CreateCourseForm = ({
             </button>
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={creatingCourse}
               className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
             >
-              {isSubmitting ? (
+              {creatingCourse ? (
                 <div className="flex items-center space-x-2">
                   <svg
                     className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
