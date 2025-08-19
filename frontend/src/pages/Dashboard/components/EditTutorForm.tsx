@@ -86,7 +86,6 @@ const EditTutorForm = ({ tutorId }: EditTutorFormProps) => {
     }
 
     try {
-      // Transform the data to match backend expectations
       const transformedData = {
         first_name: formData.firstName,
         last_name: formData.lastName,

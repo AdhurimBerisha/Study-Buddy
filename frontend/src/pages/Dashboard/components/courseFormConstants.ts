@@ -1,0 +1,31 @@
+export const categories = [
+  "Programming",
+  "Web Development",
+  "Mobile Development",
+  "Data Science",
+  "Machine Learning",
+  "Design",
+  "Business",
+  "Marketing",
+  "Finance",
+  "Health & Fitness",
+  "Music",
+  "Art",
+  "Language",
+  "Other",
+];
+
+export const languages = [
+  "English",
+  "Spanish",
+  "French",
+  "German",
+  "Italian",
+  "Portuguese",
+  "Russian",
+  "Chinese",
+  "Japanese",
+  "Korean",
+  "Arabic",
+  "Other",
+];
