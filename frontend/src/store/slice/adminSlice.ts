@@ -81,11 +81,39 @@ interface Tutor {
   updatedAt: string;
 }
 
+interface Group {
+  id: string;
+  name: string;
+  description?: string;
+  category: string;
+  level: string;
+  maxMembers?: number;
+  createdBy: string;
+  createdAt: string;
+  creator?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  members?: Array<{
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    GroupMember: {
+      role: "member" | "admin";
+      joinedAt: string;
+    };
+  }>;
+}
+
 interface AdminState {
   stats: DashboardStats | null;
   users: User[];
   courses: Course[];
   tutors: Tutor[];
+  groups: Group[];
 
   usersPagination: {
     currentPage: number;
@@ -105,11 +133,18 @@ interface AdminState {
     totalItems: number;
     itemsPerPage: number;
   };
+  groupsPagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  };
 
   loadingStats: boolean;
   loadingUsers: boolean;
   loadingCourses: boolean;
   loadingTutors: boolean;
+  loadingGroups: boolean;
 
   showCreateUserForm: boolean;
 
@@ -139,6 +174,7 @@ const initialState: AdminState = {
   users: [],
   courses: [],
   tutors: [],
+  groups: [],
 
   usersPagination: {
     currentPage: 1,
@@ -158,11 +194,18 @@ const initialState: AdminState = {
     totalItems: 0,
     itemsPerPage: 5,
   },
+  groupsPagination: {
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 5,
+  },
 
   loadingStats: false,
   loadingUsers: false,
   loadingCourses: false,
   loadingTutors: false,
+  loadingGroups: false,
 
   showCreateUserForm: false,
 
@@ -285,6 +328,33 @@ export const fetchTutors = createAsyncThunk(
       const apiError = error as ApiError;
       const errorMessage =
         apiError.response?.data?.message || "Failed to fetch tutors";
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
+export const fetchGroups = createAsyncThunk(
+  "admin/fetchGroups",
+  async (
+    params: { page?: number; limit?: number; search?: string } = {},
+    { rejectWithValue }
+  ) => {
+    try {
+      const { page = 1, limit = 5, search } = params;
+      const queryParams = new URLSearchParams();
+      queryParams.append("page", page.toString());
+      queryParams.append("limit", limit.toString());
+      if (search) queryParams.append("search", search);
+
+      const response = await api.get(`/admin/groups?${queryParams.toString()}`);
+      return {
+        data: response.data.data || [],
+        pagination: response.data.pagination,
+      };
+    } catch (error: unknown) {
+      const apiError = error as ApiError;
+      const errorMessage =
+        apiError.response?.data?.message || "Failed to fetch groups";
       return rejectWithValue(errorMessage);
     }
   }
@@ -531,6 +601,9 @@ const adminSlice = createSlice({
       state.tutorsPagination.itemsPerPage = action.payload;
       state.tutorsPagination.currentPage = 1;
     },
+    setGroupsPage: (state, action) => {
+      state.groupsPagination.currentPage = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -611,6 +684,28 @@ const adminSlice = createSlice({
       })
       .addCase(fetchTutors.rejected, (state, action) => {
         state.loadingTutors = false;
+        state.error = action.payload as string;
+      });
+
+    builder
+      .addCase(fetchGroups.pending, (state) => {
+        state.loadingGroups = true;
+        state.error = null;
+      })
+      .addCase(fetchGroups.fulfilled, (state, action) => {
+        state.loadingGroups = false;
+        state.groups = action.payload.data;
+        if (action.payload.pagination) {
+          state.groupsPagination = {
+            currentPage: action.payload.pagination.currentPage,
+            totalPages: action.payload.pagination.totalPages,
+            totalItems: action.payload.pagination.totalGroups,
+            itemsPerPage: action.payload.pagination.groupsPerPage,
+          };
+        }
+      })
+      .addCase(fetchGroups.rejected, (state, action) => {
+        state.loadingGroups = false;
         state.error = action.payload as string;
       });
 
@@ -785,6 +880,7 @@ export const {
   setCoursesItemsPerPage,
   setTutorsPage,
   setTutorsItemsPerPage,
+  setGroupsPage,
 } = adminSlice.actions;
 
 export default adminSlice.reducer;

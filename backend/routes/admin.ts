@@ -7,6 +7,7 @@ import {
   updateUser,
   deleteUser,
   changeUserRole,
+  getAllGroups,
 } from "../controllers/adminUserController";
 
 import {
@@ -46,6 +47,8 @@ router.post("/users", createUser);
 router.put("/users/:id", updateUser);
 router.delete("/users/:id", deleteUser);
 router.put("/users/:id/role", changeUserRole);
+
+router.get("/groups", getAllGroups);
 
 router.get("/courses", getAllCourses);
 router.get("/courses/:id", getCourseById);

@@ -448,7 +448,6 @@ const getGroupMessages = async (req: AuthenticatedRequest, res: Response) => {
     });
 
     if (!membership) {
-      console.log("❌ User not a member of group");
       return res
         .status(403)
         .json({ message: "You must be a member to view messages" });

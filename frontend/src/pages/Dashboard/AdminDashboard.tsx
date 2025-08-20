@@ -6,6 +6,7 @@ import {
   fetchUsers,
   fetchCourses,
   fetchTutors,
+  fetchGroups,
   setShowCreateUserForm,
   setShowCreateTutorForm,
   clearMessage,
@@ -19,6 +20,7 @@ import EditTutorForm from "./components/EditTutorForm";
 import UsersTable from "./components/UsersTable";
 import CoursesTable from "./components/CoursesTable";
 import TutorsTable from "./components/TutorsTable";
+import GroupsTable from "./components/GroupsTable";
 import MessageDisplay from "./components/MessageDisplay";
 
 const AdminDashboard = () => {
@@ -41,6 +43,7 @@ const AdminDashboard = () => {
     dispatch(fetchUsers({ page: 1, limit: 5 }));
     dispatch(fetchCourses({ page: 1, limit: 5 }));
     dispatch(fetchTutors({ page: 1, limit: 5 }));
+    dispatch(fetchGroups({ page: 1, limit: 5 }));
   }, [dispatch]);
 
   useEffect(() => {
@@ -264,6 +267,40 @@ const AdminDashboard = () => {
                 <EditTutorForm tutorId={showEditTutorForm} />
               )}
               <TutorsTable />
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/5 to-pink-800/5 rounded-3xl blur-2xl"></div>
+            <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20 dark:border-gray-700/30">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <svg
+                      className="w-6 h-6 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                      Group Management
+                    </h2>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      View and monitor study groups
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <GroupsTable />
             </div>
           </div>
         </div>

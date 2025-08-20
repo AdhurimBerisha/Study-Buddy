@@ -1,6 +1,6 @@
 import type { Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/requireAuth";
-import { User, Tutor, Purchase } from "../models";
+import { User, Tutor, Purchase, Group } from "../models";
 import { handleError } from "../helpers/errorHelper";
 import {
   checkAdminAuth,
@@ -205,6 +205,55 @@ const changeUserRole = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+const getAllGroups = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!checkAdminAuth(req, res)) return;
+
+    const { page, limit } = getPaginationParams(req.query);
+    const whereClause = buildSearchWhereClause(
+      req.query.search as string,
+      ["name", "description", "category"],
+      {}
+    );
+
+    const { count, rows: groups } = await listEntities(
+      Group,
+      whereClause,
+      page,
+      limit,
+      [
+        {
+          model: User,
+          as: "creator",
+          attributes: ["id", "firstName", "lastName", "email"],
+        },
+        {
+          model: User,
+          as: "members",
+          attributes: ["id", "firstName", "lastName", "email"],
+          through: {
+            attributes: ["role", "joinedAt"],
+          },
+        },
+      ],
+      [
+        "id",
+        "name",
+        "description",
+        "category",
+        "level",
+        "maxMembers",
+        "createdBy",
+        "createdAt",
+      ]
+    );
+
+    res.json(createPaginationResponse(groups, count, page, limit, "Groups"));
+  } catch (error) {
+    handleError(res, error, "Error fetching groups");
+  }
+};
+
 export {
   getAllUsers,
   getUserById,
@@ -212,4 +261,5 @@ export {
   updateUser,
   deleteUser,
   changeUserRole,
+  getAllGroups,
 };
