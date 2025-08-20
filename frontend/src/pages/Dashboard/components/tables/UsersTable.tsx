@@ -1,12 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../../store/store";
+import type { AppDispatch, RootState } from "../../../../store/store";
 import {
   changeUserRole,
   deleteUser,
   fetchUsers,
   setUsersPage,
-} from "../../../store/slice/adminSlice";
-import { Pagination } from "../../../components";
+} from "../../../../store/slice/adminSlice";
+import { Pagination } from "../../../../components";
 
 const UsersTable = () => {
   const dispatch = useDispatch<AppDispatch>();

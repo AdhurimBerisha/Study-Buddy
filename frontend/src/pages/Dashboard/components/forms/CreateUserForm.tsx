@@ -1,10 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
-import type { AppDispatch, RootState } from "../../../store/store";
+import type { AppDispatch, RootState } from "../../../../store/store";
 import {
   createUser,
   setShowCreateUserForm,
-} from "../../../store/slice/adminSlice";
+} from "../../../../store/slice/adminSlice";
 import { InputField, SelectField } from "./CourseFormParts";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 

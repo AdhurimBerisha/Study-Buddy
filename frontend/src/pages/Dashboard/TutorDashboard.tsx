@@ -7,10 +7,10 @@ import {
   setShowCreateCourseForm,
   clearMessage,
 } from "../../store/slice/tutorSlice";
-import TutorDashboardStats from "./components/TutorDashboardStats";
-import CreateCourseForm from "./components/CreateCourseForm";
-import TutorCoursesTable from "./components/TutorCoursesTable";
-import TutorMessageDisplay from "./components/TutorMessageDisplay";
+import TutorDashboardStats from "./components/stats/TutorDashboardStats";
+import CreateCourseForm from "./components/forms/CreateCourseForm";
+import TutorCoursesTable from "./components/tables/TutorCoursesTable";
+import TutorMessageDisplay from "./components/messages/TutorMessageDisplay";
 
 const TutorDashboard = () => {
   const dispatch = useDispatch<AppDispatch>();

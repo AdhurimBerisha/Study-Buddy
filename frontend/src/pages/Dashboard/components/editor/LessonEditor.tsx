@@ -1,5 +1,5 @@
 import React from "react";
-import type { Lesson } from "./courseTypes";
+import type { Lesson } from "../../types/courseTypes";
 
 interface LessonEditorProps {
   lesson: Lesson;

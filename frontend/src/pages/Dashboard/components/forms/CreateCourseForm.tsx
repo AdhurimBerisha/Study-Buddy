@@ -1,15 +1,15 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useForm, useFieldArray } from "react-hook-form";
-import type { AppDispatch, RootState } from "../../../store/store";
-import { createTutorCourse } from "../../../store/slice/tutorSlice";
-import type { CourseFormData } from "./courseTypes";
+import type { AppDispatch, RootState } from "../../../../store/store";
+import { createTutorCourse } from "../../../../store/slice/tutorSlice";
+import type { CourseFormData } from "../../types/courseTypes";
 import {
   InputField,
   SelectField,
   TextAreaField,
   LessonFields,
 } from "./CourseFormParts";
-import { categories, languages } from "./courseFormConstants";
+import { categories, languages } from "../../constants/courseFormConstants";
 import { AiOutlinePlus, AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const defaultValues: CourseFormData = {
@@ -73,8 +73,10 @@ const CreateCourseForm = ({
         duration:
           typeof lesson.duration === "number" && lesson.duration > 0
             ? lesson.duration
-            : null,
-        resources: lesson.resources?.trim() ? lesson.resources.trim() : null,
+            : undefined, // Changed from null to undefined
+        resources: lesson.resources?.trim()
+          ? lesson.resources.trim()
+          : undefined, // Changed from null to undefined
       }));
 
     if (validLessons.length === 0) {

@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
-import type { AppDispatch, RootState } from "../../../store/store";
-import { updateCourse, setShowEditCourseForm } from "../../../store/slice/adminSlice";
-import api from "../../../services/api";
+import type { AppDispatch, RootState } from "../../../../store/store";
+import {
+  updateCourse,
+  setShowEditCourseForm,
+} from "../../../../store/slice/adminSlice";
+import api from "../../../../services/api";
 import { InputField, SelectField, TextAreaField } from "./CourseFormParts";
-import { categories, languages } from "./courseFormConstants";
+import { categories, languages } from "../../constants/courseFormConstants";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 interface Tutor {
@@ -45,7 +48,11 @@ const defaultValues: EditCourseFormValues = {
   tutorId: "",
 };
 
-const EditCourseForm = ({ courseId, loadingTutors, tutors }: EditCourseFormProps) => {
+const EditCourseForm = ({
+  courseId,
+  loadingTutors,
+  tutors,
+}: EditCourseFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { updatingCourse } = useSelector((state: RootState) => state.admin);
 
@@ -72,7 +79,8 @@ const EditCourseForm = ({ courseId, loadingTutors, tutors }: EditCourseFormProps
           level: course.level || "",
           price: typeof course.price === "number" ? course.price : 0,
           thumbnail: course.thumbnail || "",
-          totalLessons: typeof course.totalLessons === "number" ? course.totalLessons : 0,
+          totalLessons:
+            typeof course.totalLessons === "number" ? course.totalLessons : 0,
           tutorId: course.tutorId || "",
         };
         reset(values);
@@ -233,7 +241,8 @@ const EditCourseForm = ({ courseId, loadingTutors, tutors }: EditCourseFormProps
           >
             {updatingCourse ? (
               <span className="inline-flex items-center">
-                <AiOutlineLoading3Quarters className="animate-spin h-4 w-4 mr-2" /> Updating...
+                <AiOutlineLoading3Quarters className="animate-spin h-4 w-4 mr-2" />{" "}
+                Updating...
               </span>
             ) : (
               "Update Course"

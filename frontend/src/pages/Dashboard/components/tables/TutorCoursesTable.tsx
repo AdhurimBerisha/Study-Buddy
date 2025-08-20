@@ -1,11 +1,11 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../../store/store";
+import type { AppDispatch } from "../../../../store/store";
 import {
   fetchTutorCourses,
   setCoursesPage,
-} from "../../../store/slice/tutorSlice";
-import { Pagination } from "../../../components";
+} from "../../../../store/slice/tutorSlice";
+import { Pagination } from "../../../../components";
 
 interface Course {
   id: string;

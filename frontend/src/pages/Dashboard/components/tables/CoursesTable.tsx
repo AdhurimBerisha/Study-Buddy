@@ -1,12 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../../store/store";
+import type { AppDispatch, RootState } from "../../../../store/store";
 import {
   deleteCourse,
   setShowEditCourseForm,
   fetchCourses,
   setCoursesPage,
-} from "../../../store/slice/adminSlice";
-import { Pagination } from "../../../components";
+} from "../../../../store/slice/adminSlice";
+import { Pagination } from "../../../../components";
 
 interface Course {
   id: string;

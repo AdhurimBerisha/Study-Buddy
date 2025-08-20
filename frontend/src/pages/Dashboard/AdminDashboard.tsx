@@ -11,17 +11,17 @@ import {
   setShowCreateTutorForm,
   clearMessage,
 } from "../../store/slice/adminSlice";
-import DashboardStats from "./components/DashboardStats";
-import CreateUserForm from "./components/CreateUserForm";
+import DashboardStats from "./components/stats/DashboardStats";
+import CreateUserForm from "./components/forms/CreateUserForm";
 
-import EditCourseForm from "./components/EditCourseForm";
-import CreateTutorForm from "./components/CreateTutorForm";
-import EditTutorForm from "./components/EditTutorForm";
-import UsersTable from "./components/UsersTable";
-import CoursesTable from "./components/CoursesTable";
-import TutorsTable from "./components/TutorsTable";
-import GroupsTable from "./components/GroupsTable";
-import MessageDisplay from "./components/MessageDisplay";
+import EditCourseForm from "./components/forms/EditCourseForm";
+import CreateTutorForm from "./components/forms/CreateTutorForm";
+import EditTutorForm from "./components/forms/EditTutorForm";
+import UsersTable from "./components/tables/UsersTable";
+import CoursesTable from "./components/tables/CoursesTable";
+import TutorsTable from "./components/tables/TutorsTable";
+import GroupsTable from "./components/tables/GroupsTable";
+import MessageDisplay from "./components/messages/MessageDisplay";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch<AppDispatch>();

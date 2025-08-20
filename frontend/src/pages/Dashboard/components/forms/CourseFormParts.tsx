@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 import type { UseFormRegister, FieldErrors } from "react-hook-form";
-import type { CourseFormData } from "./courseTypes";
+import type { CourseFormData } from "../../types/courseTypes";
 
 type InputProps = {
   label: string;

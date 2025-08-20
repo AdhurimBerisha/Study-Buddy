@@ -1,52 +1,80 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
-import type { AppDispatch, RootState } from "../../../store/store";
+import type { AppDispatch, RootState } from "../../../../store/store";
 import {
-  createTutor,
-  setShowCreateTutorForm,
-} from "../../../store/slice/adminSlice";
+  updateTutor,
+  setShowEditTutorForm,
+} from "../../../../store/slice/adminSlice";
+import api from "../../../../services/api";
 import { InputField, TextAreaField } from "./CourseFormParts";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
-interface CreateTutorFormValues {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  phone: string;
-  avatar?: string;
-  bio?: string;
-  expertise: string[];
+interface EditTutorFormProps {
+  tutorId: string;
 }
 
-const defaultValues: CreateTutorFormValues = {
+interface EditTutorFormValues {
+  firstName: string;
+  lastName: string;
+  avatar: string;
+  bio: string;
+  expertise: string[];
+  isVerified: boolean;
+}
+
+const defaultValues: EditTutorFormValues = {
   firstName: "",
   lastName: "",
-  email: "",
-  password: "",
-  phone: "",
   avatar: "",
   bio: "",
   expertise: [],
+  isVerified: false,
 };
 
-const CreateTutorForm = () => {
+const EditTutorForm = ({ tutorId }: EditTutorFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { creatingTutor } = useSelector((state: RootState) => state.admin);
+  const { updatingTutor } = useSelector((state: RootState) => state.admin);
 
   const {
     register,
     handleSubmit,
     setValue,
     getValues,
+    reset,
     watch,
     setError,
     formState: { errors },
-  } = useForm<CreateTutorFormValues>({ defaultValues, mode: "onSubmit" });
+  } = useForm<EditTutorFormValues>({ defaultValues, mode: "onSubmit" });
 
+  const [loading, setLoading] = useState(true);
   const [expertiseInput, setExpertiseInput] = useState("");
   const expertise = watch("expertise");
+
+  useEffect(() => {
+    const fetchTutor = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get(`/admin/tutors/${tutorId}`);
+        const tutor = response.data.data;
+        const values: EditTutorFormValues = {
+          firstName: tutor.first_name || "",
+          lastName: tutor.last_name || "",
+          avatar: tutor.avatar || "",
+          bio: tutor.bio || "",
+          expertise: Array.isArray(tutor.expertise) ? tutor.expertise : [],
+          isVerified: Boolean(tutor.isVerified),
+        };
+        reset(values);
+      } catch (error) {
+        console.error("Failed to fetch tutor:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (tutorId) fetchTutor();
+  }, [tutorId, reset]);
 
   const handleAddExpertise = () => {
     const value = expertiseInput.trim();
@@ -69,7 +97,7 @@ const CreateTutorForm = () => {
     );
   };
 
-  const onSubmit = async (data: CreateTutorFormValues) => {
+  const onSubmit = async (data: EditTutorFormValues) => {
     const skills = (data.expertise || []).filter(
       (s) => s && s.trim().length > 0
     );
@@ -81,16 +109,31 @@ const CreateTutorForm = () => {
       return;
     }
 
+    const transformedData = {
+      first_name: data.firstName,
+      last_name: data.lastName,
+      avatar: data.avatar,
+      bio: data.bio,
+      expertise: skills,
+      isVerified: data.isVerified,
+    };
+
     try {
-      await dispatch(createTutor({ ...data, expertise: skills })).unwrap();
+      await dispatch(
+        updateTutor({ tutorId, tutorData: transformedData })
+      ).unwrap();
     } catch (error) {
-      console.error("Failed to create tutor:", error);
+      console.error("Failed to update tutor:", error);
     }
   };
 
-  const handleCancel = () => {
-    dispatch(setShowCreateTutorForm(false));
-  };
+  if (loading) {
+    return (
+      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+        <div className="text-center py-4">Loading tutor data...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
@@ -111,36 +154,27 @@ const CreateTutorForm = () => {
           />
 
           <InputField
-            label="Email *"
-            type="email"
-            placeholder="Enter email"
-            error={errors.email?.message as string}
-            {...register("email", { required: "Email is required" })}
-          />
-
-          <InputField
-            label="Password *"
-            type="password"
-            placeholder="Enter password"
-            error={errors.password?.message as string}
-            {...register("password", { required: "Password is required" })}
-          />
-
-          <InputField
-            label="Phone"
-            type="tel"
-            placeholder="Enter phone"
-            error={errors.phone?.message as string}
-            {...register("phone")}
-          />
-
-          <InputField
             label="Avatar URL"
             type="url"
             placeholder="https://example.com/avatar.jpg"
             error={errors.avatar?.message as string}
             {...register("avatar")}
           />
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Verification Status
+            </label>
+            <select
+              {...register("isVerified", {
+                setValueAs: (v) => v === true || v === "true",
+              })}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+            >
+              <option value="false">Not Verified</option>
+              <option value="true">Verified</option>
+            </select>
+          </div>
         </div>
 
         <TextAreaField
@@ -203,23 +237,23 @@ const CreateTutorForm = () => {
         <div className="flex justify-end space-x-3">
           <button
             type="button"
-            onClick={handleCancel}
+            onClick={() => dispatch(setShowEditTutorForm(null))}
             className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-600 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-200"
           >
             Cancel
           </button>
           <button
             type="submit"
-            disabled={creatingTutor}
+            disabled={updatingTutor}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
           >
-            {creatingTutor ? (
+            {updatingTutor ? (
               <span className="inline-flex items-center">
                 <AiOutlineLoading3Quarters className="animate-spin h-4 w-4 mr-2" />{" "}
-                Creating...
+                Updating...
               </span>
             ) : (
-              "Create Tutor"
+              "Update Tutor"
             )}
           </button>
         </div>
@@ -228,4 +262,4 @@ const CreateTutorForm = () => {
   );
 };
 
-export default CreateTutorForm;
+export default EditTutorForm;

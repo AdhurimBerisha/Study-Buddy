@@ -1,80 +1,52 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
-import type { AppDispatch, RootState } from "../../../store/store";
+import type { AppDispatch, RootState } from "../../../../store/store";
 import {
-  updateTutor,
-  setShowEditTutorForm,
-} from "../../../store/slice/adminSlice";
-import api from "../../../services/api";
+  createTutor,
+  setShowCreateTutorForm,
+} from "../../../../store/slice/adminSlice";
 import { InputField, TextAreaField } from "./CourseFormParts";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
-interface EditTutorFormProps {
-  tutorId: string;
-}
-
-interface EditTutorFormValues {
+interface CreateTutorFormValues {
   firstName: string;
   lastName: string;
-  avatar: string;
-  bio: string;
+  email: string;
+  password: string;
+  phone: string;
+  avatar?: string;
+  bio?: string;
   expertise: string[];
-  isVerified: boolean;
 }
 
-const defaultValues: EditTutorFormValues = {
+const defaultValues: CreateTutorFormValues = {
   firstName: "",
   lastName: "",
+  email: "",
+  password: "",
+  phone: "",
   avatar: "",
   bio: "",
   expertise: [],
-  isVerified: false,
 };
 
-const EditTutorForm = ({ tutorId }: EditTutorFormProps) => {
+const CreateTutorForm = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { updatingTutor } = useSelector((state: RootState) => state.admin);
+  const { creatingTutor } = useSelector((state: RootState) => state.admin);
 
   const {
     register,
     handleSubmit,
     setValue,
     getValues,
-    reset,
     watch,
     setError,
     formState: { errors },
-  } = useForm<EditTutorFormValues>({ defaultValues, mode: "onSubmit" });
+  } = useForm<CreateTutorFormValues>({ defaultValues, mode: "onSubmit" });
 
-  const [loading, setLoading] = useState(true);
   const [expertiseInput, setExpertiseInput] = useState("");
   const expertise = watch("expertise");
-
-  useEffect(() => {
-    const fetchTutor = async () => {
-      try {
-        setLoading(true);
-        const response = await api.get(`/admin/tutors/${tutorId}`);
-        const tutor = response.data.data;
-        const values: EditTutorFormValues = {
-          firstName: tutor.first_name || "",
-          lastName: tutor.last_name || "",
-          avatar: tutor.avatar || "",
-          bio: tutor.bio || "",
-          expertise: Array.isArray(tutor.expertise) ? tutor.expertise : [],
-          isVerified: Boolean(tutor.isVerified),
-        };
-        reset(values);
-      } catch (error) {
-        console.error("Failed to fetch tutor:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (tutorId) fetchTutor();
-  }, [tutorId, reset]);
 
   const handleAddExpertise = () => {
     const value = expertiseInput.trim();
@@ -97,7 +69,7 @@ const EditTutorForm = ({ tutorId }: EditTutorFormProps) => {
     );
   };
 
-  const onSubmit = async (data: EditTutorFormValues) => {
+  const onSubmit = async (data: CreateTutorFormValues) => {
     const skills = (data.expertise || []).filter(
       (s) => s && s.trim().length > 0
     );
@@ -109,31 +81,16 @@ const EditTutorForm = ({ tutorId }: EditTutorFormProps) => {
       return;
     }
 
-    const transformedData = {
-      first_name: data.firstName,
-      last_name: data.lastName,
-      avatar: data.avatar,
-      bio: data.bio,
-      expertise: skills,
-      isVerified: data.isVerified,
-    };
-
     try {
-      await dispatch(
-        updateTutor({ tutorId, tutorData: transformedData })
-      ).unwrap();
+      await dispatch(createTutor({ ...data, expertise: skills })).unwrap();
     } catch (error) {
-      console.error("Failed to update tutor:", error);
+      console.error("Failed to create tutor:", error);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
-        <div className="text-center py-4">Loading tutor data...</div>
-      </div>
-    );
-  }
+  const handleCancel = () => {
+    dispatch(setShowCreateTutorForm(false));
+  };
 
   return (
     <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
@@ -154,27 +111,36 @@ const EditTutorForm = ({ tutorId }: EditTutorFormProps) => {
           />
 
           <InputField
+            label="Email *"
+            type="email"
+            placeholder="Enter email"
+            error={errors.email?.message as string}
+            {...register("email", { required: "Email is required" })}
+          />
+
+          <InputField
+            label="Password *"
+            type="password"
+            placeholder="Enter password"
+            error={errors.password?.message as string}
+            {...register("password", { required: "Password is required" })}
+          />
+
+          <InputField
+            label="Phone"
+            type="tel"
+            placeholder="Enter phone"
+            error={errors.phone?.message as string}
+            {...register("phone")}
+          />
+
+          <InputField
             label="Avatar URL"
             type="url"
             placeholder="https://example.com/avatar.jpg"
             error={errors.avatar?.message as string}
             {...register("avatar")}
           />
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Verification Status
-            </label>
-            <select
-              {...register("isVerified", {
-                setValueAs: (v) => v === true || v === "true",
-              })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
-            >
-              <option value="false">Not Verified</option>
-              <option value="true">Verified</option>
-            </select>
-          </div>
         </div>
 
         <TextAreaField
@@ -237,23 +203,23 @@ const EditTutorForm = ({ tutorId }: EditTutorFormProps) => {
         <div className="flex justify-end space-x-3">
           <button
             type="button"
-            onClick={() => dispatch(setShowEditTutorForm(null))}
+            onClick={handleCancel}
             className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-600 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-200"
           >
             Cancel
           </button>
           <button
             type="submit"
-            disabled={updatingTutor}
+            disabled={creatingTutor}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
           >
-            {updatingTutor ? (
+            {creatingTutor ? (
               <span className="inline-flex items-center">
                 <AiOutlineLoading3Quarters className="animate-spin h-4 w-4 mr-2" />{" "}
-                Updating...
+                Creating...
               </span>
             ) : (
-              "Update Tutor"
+              "Create Tutor"
             )}
           </button>
         </div>
@@ -262,4 +228,4 @@ const EditTutorForm = ({ tutorId }: EditTutorFormProps) => {
   );
 };
 
-export default EditTutorForm;
+export default CreateTutorForm;
