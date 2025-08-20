@@ -3,7 +3,10 @@ import type { AppDispatch, RootState } from "../../../store/store";
 import {
   deleteCourse,
   setShowEditCourseForm,
+  fetchCourses,
+  setCoursesPage,
 } from "../../../store/slice/adminSlice";
+import { Pagination } from "../../../components";
 
 interface Course {
   id: string;
@@ -25,9 +28,18 @@ interface Course {
 
 const CoursesTable = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { courses, updatingCourse, deletingCourseId } = useSelector(
-    (state: RootState) => state.admin
-  );
+  const { courses, updatingCourse, deletingCourseId, coursesPagination } =
+    useSelector((state: RootState) => state.admin);
+
+  const handlePageChange = (page: number) => {
+    dispatch(setCoursesPage(page));
+    dispatch(
+      fetchCourses({
+        page,
+        limit: coursesPagination.itemsPerPage,
+      })
+    );
+  };
 
   const handleEditCourse = (course: Course) => {
     dispatch(setShowEditCourseForm(course.id));
@@ -332,6 +344,15 @@ const CoursesTable = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      <Pagination
+        currentPage={coursesPagination.currentPage}
+        totalPages={coursesPagination.totalPages}
+        totalItems={coursesPagination.totalItems}
+        itemsPerPage={coursesPagination.itemsPerPage}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

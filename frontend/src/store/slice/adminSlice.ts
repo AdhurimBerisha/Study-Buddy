@@ -87,6 +87,26 @@ interface AdminState {
   courses: Course[];
   tutors: Tutor[];
 
+  // Pagination state
+  usersPagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  };
+  coursesPagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  };
+  tutorsPagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  };
+
   loadingStats: boolean;
   loadingUsers: boolean;
   loadingCourses: boolean;
@@ -120,6 +140,26 @@ const initialState: AdminState = {
   users: [],
   courses: [],
   tutors: [],
+
+  // Pagination state
+  usersPagination: {
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 5,
+  },
+  coursesPagination: {
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 5,
+  },
+  tutorsPagination: {
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 5,
+  },
 
   loadingStats: false,
   loadingUsers: false,
@@ -162,10 +202,23 @@ export const fetchDashboardStats = createAsyncThunk(
 
 export const fetchUsers = createAsyncThunk(
   "admin/fetchUsers",
-  async (_, { rejectWithValue }) => {
+  async (
+    params: { page?: number; limit?: number; search?: string } = {},
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await api.get("/admin/users");
-      return response.data.data;
+      const { page = 1, limit = 10, search } = params;
+      const queryParams = new URLSearchParams();
+      queryParams.append("page", page.toString());
+      queryParams.append("limit", limit.toString());
+      if (search) queryParams.append("search", search);
+
+      const response = await api.get(`/admin/users?${queryParams.toString()}`);
+
+      return {
+        data: response.data.data,
+        pagination: response.data.pagination,
+      };
     } catch (error: unknown) {
       const apiError = error as ApiError;
       const errorMessage =
@@ -177,10 +230,32 @@ export const fetchUsers = createAsyncThunk(
 
 export const fetchCourses = createAsyncThunk(
   "admin/fetchCourses",
-  async (_, { rejectWithValue }) => {
+  async (
+    params: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      category?: string;
+      level?: string;
+    } = {},
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await api.get("/admin/courses");
-      return response.data.data;
+      const { page = 1, limit = 10, search, category, level } = params;
+      const queryParams = new URLSearchParams();
+      queryParams.append("page", page.toString());
+      queryParams.append("limit", limit.toString());
+      if (search) queryParams.append("search", search);
+      if (category) queryParams.append("category", category);
+      if (level) queryParams.append("level", level);
+
+      const response = await api.get(
+        `/admin/courses?${queryParams.toString()}`
+      );
+      return {
+        data: response.data.data,
+        pagination: response.data.pagination,
+      };
     } catch (error: unknown) {
       const apiError = error as ApiError;
       const errorMessage =
@@ -192,10 +267,22 @@ export const fetchCourses = createAsyncThunk(
 
 export const fetchTutors = createAsyncThunk(
   "admin/fetchTutors",
-  async (_, { rejectWithValue }) => {
+  async (
+    params: { page?: number; limit?: number; search?: string } = {},
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await api.get("/admin/tutors");
-      return response.data.data || [];
+      const { page = 1, limit = 10, search } = params;
+      const queryParams = new URLSearchParams();
+      queryParams.append("page", page.toString());
+      queryParams.append("limit", limit.toString());
+      if (search) queryParams.append("search", search);
+
+      const response = await api.get(`/admin/tutors?${queryParams.toString()}`);
+      return {
+        data: response.data.data || [],
+        pagination: response.data.pagination,
+      };
     } catch (error: unknown) {
       const apiError = error as ApiError;
       const errorMessage =
@@ -424,6 +511,29 @@ const adminSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+
+    // Pagination actions
+    setUsersPage: (state, action) => {
+      state.usersPagination.currentPage = action.payload;
+    },
+    setUsersItemsPerPage: (state, action) => {
+      state.usersPagination.itemsPerPage = action.payload;
+      state.usersPagination.currentPage = 1; // Reset to first page
+    },
+    setCoursesPage: (state, action) => {
+      state.coursesPagination.currentPage = action.payload;
+    },
+    setCoursesItemsPerPage: (state, action) => {
+      state.coursesPagination.itemsPerPage = action.payload;
+      state.coursesPagination.currentPage = 1; // Reset to first page
+    },
+    setTutorsPage: (state, action) => {
+      state.tutorsPagination.currentPage = action.payload;
+    },
+    setTutorsItemsPerPage: (state, action) => {
+      state.tutorsPagination.itemsPerPage = action.payload;
+      state.tutorsPagination.currentPage = 1; // Reset to first page
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -447,7 +557,16 @@ const adminSlice = createSlice({
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.loadingUsers = false;
-        state.users = action.payload;
+        state.users = action.payload.data;
+
+        if (action.payload.pagination) {
+          state.usersPagination = {
+            currentPage: action.payload.pagination.currentPage,
+            totalPages: action.payload.pagination.totalPages,
+            totalItems: action.payload.pagination.totalUsers,
+            itemsPerPage: action.payload.pagination.usersPerPage,
+          };
+        }
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loadingUsers = false;
@@ -461,7 +580,15 @@ const adminSlice = createSlice({
       })
       .addCase(fetchCourses.fulfilled, (state, action) => {
         state.loadingCourses = false;
-        state.courses = action.payload;
+        state.courses = action.payload.data;
+        if (action.payload.pagination) {
+          state.coursesPagination = {
+            currentPage: action.payload.pagination.currentPage,
+            totalPages: action.payload.pagination.totalPages,
+            totalItems: action.payload.pagination.totalCourses,
+            itemsPerPage: action.payload.pagination.coursesPerPage,
+          };
+        }
       })
       .addCase(fetchCourses.rejected, (state, action) => {
         state.loadingCourses = false;
@@ -475,7 +602,15 @@ const adminSlice = createSlice({
       })
       .addCase(fetchTutors.fulfilled, (state, action) => {
         state.loadingTutors = false;
-        state.tutors = action.payload;
+        state.tutors = action.payload.data;
+        if (action.payload.pagination) {
+          state.tutorsPagination = {
+            currentPage: action.payload.pagination.currentPage,
+            totalPages: action.payload.pagination.totalPages,
+            totalItems: action.payload.pagination.totalTutors,
+            itemsPerPage: action.payload.pagination.tutorsPerPage,
+          };
+        }
       })
       .addCase(fetchTutors.rejected, (state, action) => {
         state.loadingTutors = false;
@@ -646,6 +781,14 @@ export const {
   setMessage,
   clearMessage,
   clearError,
+
+  // Pagination actions
+  setUsersPage,
+  setUsersItemsPerPage,
+  setCoursesPage,
+  setCoursesItemsPerPage,
+  setTutorsPage,
+  setTutorsItemsPerPage,
 } = adminSlice.actions;
 
 export default adminSlice.reducer;

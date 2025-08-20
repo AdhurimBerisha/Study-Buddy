@@ -1,13 +1,29 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store/store";
-import { changeUserRole, deleteUser } from "../../../store/slice/adminSlice";
+import {
+  changeUserRole,
+  deleteUser,
+  fetchUsers,
+  setUsersPage,
+} from "../../../store/slice/adminSlice";
+import { Pagination } from "../../../components";
 
 const UsersTable = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { users, deletingUserId } = useSelector(
+  const { users, deletingUserId, usersPagination } = useSelector(
     (state: RootState) => state.admin
   );
   const currentUser = useSelector((state: RootState) => state.auth.user);
+
+  const handlePageChange = (page: number) => {
+    dispatch(setUsersPage(page));
+    dispatch(
+      fetchUsers({
+        page,
+        limit: usersPagination.itemsPerPage,
+      })
+    );
+  };
 
   const handleChangeRole = async (userId: string, role: string) => {
     try {
@@ -271,6 +287,15 @@ const UsersTable = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      <Pagination
+        currentPage={usersPagination.currentPage}
+        totalPages={usersPagination.totalPages}
+        totalItems={usersPagination.totalItems}
+        itemsPerPage={usersPagination.itemsPerPage}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

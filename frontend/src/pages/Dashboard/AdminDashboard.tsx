@@ -38,9 +38,9 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     dispatch(fetchDashboardStats());
-    dispatch(fetchUsers());
-    dispatch(fetchCourses());
-    dispatch(fetchTutors());
+    dispatch(fetchUsers({ page: 1, limit: 5 }));
+    dispatch(fetchCourses({ page: 1, limit: 5 }));
+    dispatch(fetchTutors({ page: 1, limit: 5 }));
   }, [dispatch]);
 
   useEffect(() => {

@@ -3,13 +3,25 @@ import type { AppDispatch, RootState } from "../../../store/store";
 import {
   deleteTutor,
   setShowEditTutorForm,
+  fetchTutors,
+  setTutorsPage,
 } from "../../../store/slice/adminSlice";
+import { Pagination } from "../../../components";
 
 const TutorsTable = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { tutors, deletingTutorId, loadingTutors } = useSelector(
-    (state: RootState) => state.admin
-  );
+  const { tutors, deletingTutorId, loadingTutors, tutorsPagination } =
+    useSelector((state: RootState) => state.admin);
+
+  const handlePageChange = (page: number) => {
+    dispatch(setTutorsPage(page));
+    dispatch(
+      fetchTutors({
+        page,
+        limit: tutorsPagination.itemsPerPage,
+      })
+    );
+  };
 
   const handleEdit = (tutorId: string) => {
     dispatch(setShowEditTutorForm(tutorId));
@@ -404,6 +416,15 @@ const TutorsTable = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      <Pagination
+        currentPage={tutorsPagination.currentPage}
+        totalPages={tutorsPagination.totalPages}
+        totalItems={tutorsPagination.totalItems}
+        itemsPerPage={tutorsPagination.itemsPerPage}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };
