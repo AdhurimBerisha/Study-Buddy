@@ -50,8 +50,10 @@ interface DashboardStats {
     total: number;
     regular: number;
     admin: number;
-    tutor: number;
     recent: number;
+  };
+  tutors: {
+    total: number;
   };
   courses: {
     total: number;
