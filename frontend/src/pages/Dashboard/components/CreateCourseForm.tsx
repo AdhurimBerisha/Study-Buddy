@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm, useFieldArray } from "react-hook-form";
 import type { AppDispatch, RootState } from "../../../store/store";
@@ -11,11 +10,7 @@ import {
   LessonFields,
 } from "./CourseFormParts";
 import { categories, languages } from "./courseFormConstants";
-import {
-  AiOutlineClose,
-  AiOutlinePlus,
-  AiOutlineLoading3Quarters,
-} from "react-icons/ai";
+import { AiOutlinePlus, AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const defaultValues: CourseFormData = {
   title: "",
@@ -50,18 +45,7 @@ const CreateCourseForm = ({
     formState: { errors },
   } = useForm<CourseFormData>({ defaultValues, mode: "onSubmit" });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "lessons",
-  });
-
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [onClose]);
+  const { fields, append, remove } = useFieldArray({ control, name: "lessons" });
 
   const addLesson = () =>
     append({
@@ -116,33 +100,28 @@ const CreateCourseForm = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[1000] bg-black bg-opacity-50 flex items-center justify-center p-4 " onClick={onClose}>
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-        <div className="sticky top-0 bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700 rounded-t-2xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Create New Course
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                Build your course with lessons and content
-              </p>
-            </div>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+    <div className="relative overflow-hidden bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200/50 dark:border-blue-700/50 rounded-2xl p-6 mb-6 shadow-lg">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/10 to-indigo-600/10 rounded-full blur-3xl"></div>
+      <div className="relative">
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+            <svg
+              className="w-5 h-5 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <AiOutlineClose className="w-6 h-6" />
-            </button>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Create New Course</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Add a new course to the platform</p>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
-              Course Information
-            </h3>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <InputField
                 label="Course Title *"
@@ -209,17 +188,13 @@ const CreateCourseForm = ({
               rows={4}
               placeholder="Describe your course content, objectives, and what students will learn..."
               error={errors.description?.message as string}
-              {...register("description", {
-                required: "Description is required",
-              })}
+              {...register("description", { required: "Description is required" })}
             />
           </div>
 
           <div className="space-y-6">
-            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-2">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Course Lessons ({fields.length})
-              </h3>
+            <div className="flex items-center justify-between">
+              <h4 className="text-md font-semibold text-gray-900 dark:text-white">Course Lessons ({fields.length})</h4>
               <button
                 type="button"
                 onClick={addLesson}
@@ -244,9 +219,7 @@ const CreateCourseForm = ({
 
           {errors.root?.submit && (
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-              <p className="text-red-800 dark:text-red-200">
-                {errors.root.submit.message}
-              </p>
+              <p className="text-red-800 dark:text-red-200">{errors.root.submit.message}</p>
             </div>
           )}
 
@@ -256,18 +229,18 @@ const CreateCourseForm = ({
             </div>
           )}
 
-          <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex justify-end space-x-4 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-3 text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-600 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-500 transition-all duration-200 font-medium"
+              className="px-6 py-3 text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-600 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-500 transition-all duration-200 font-medium shadow-sm hover:shadow-md"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={creatingCourse}
-              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {creatingCourse ? (
                 <div className="flex items-center space-x-2">
