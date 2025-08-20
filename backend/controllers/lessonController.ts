@@ -17,7 +17,7 @@ const checkCourseOwnership = async (courseId: string, userId: string) => {
   if (!course) throw new Error("Course not found");
 
   const courseData = course.toJSON();
-  if (courseData.createdBy !== userId) {
+  if (courseData.tutorId !== userId) {
     throw new Error("Only the instructor can perform this action");
   }
   return course;
