@@ -218,7 +218,12 @@ const AdminDashboard = () => {
                 </button>
               </div>
 
-              {showCreateCourseForm && <CreateCourseForm />}
+              {showCreateCourseForm && (
+                <CreateCourseForm
+                  onClose={() => dispatch(setShowCreateCourseForm(false))}
+                  onSuccess={() => dispatch(fetchCourses())}
+                />
+              )}
               {showEditCourseForm && (
                 <EditCourseForm
                   courseId={showEditCourseForm}
