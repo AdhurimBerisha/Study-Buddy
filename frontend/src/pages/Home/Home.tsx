@@ -22,7 +22,9 @@ const Home = () => {
   return (
     <div>
       <Hero />
-      <CoursesGrid items={loading ? [] : courses.slice(0, 4)} />
+      <div className="pt-8">
+        <CoursesGrid items={loading ? [] : courses.slice(0, 4)} />
+      </div>
       <HowItWorks />
       <CodeEditorSection />
       <Features />
