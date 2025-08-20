@@ -45,8 +45,9 @@ const Login = () => {
     try {
       await dispatch(login(formData)).unwrap();
       toast.success("Login successful! Welcome back!");
-    } catch {
-      toast.error("Login failed. Please check your credentials.");
+    } catch (error: any) {
+      // The error message will be displayed in the error div below the form
+      // No need for toast here as the error state will show the message
     }
   };
 

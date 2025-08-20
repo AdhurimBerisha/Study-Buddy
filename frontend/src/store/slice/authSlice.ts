@@ -30,47 +30,74 @@ const initialState: AuthState = {
 
 const login = createAsyncThunk(
   "auth/login",
-  async ({ email, password }: { email: string; password: string }) => {
-    const response = await api.post("/auth/login", { email, password });
-    const { token, user, redirectTo } = response.data;
-    localStorage.setItem("token", token);
-    return { token, user, redirectTo };
+  async (
+    { email, password }: { email: string; password: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await api.post("/auth/login", { email, password });
+      const { token, user, redirectTo } = response.data;
+      localStorage.setItem("token", token);
+      return { token, user, redirectTo };
+    } catch (error: any) {
+      // Return the error message from the backend response
+      return rejectWithValue({
+        message: error.response?.data?.message || "Login failed",
+      });
+    }
   }
 );
 
 const googleLogin = createAsyncThunk(
   "auth/googleLogin",
-  async (googleToken: string) => {
-    const response = await api.post("/auth/google", { token: googleToken });
-    const { token, user, redirectTo } = response.data;
-    localStorage.setItem("token", token);
-    return { token, user, redirectTo };
+  async (googleToken: string, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/auth/google", { token: googleToken });
+      const { token, user, redirectTo } = response.data;
+      localStorage.setItem("token", token);
+      return { token, user, redirectTo };
+    } catch (error: any) {
+      // Return the error message from the backend response
+      return rejectWithValue({
+        message: error.response?.data?.message || "Google login failed",
+      });
+    }
   }
 );
 
 const register = createAsyncThunk(
   "auth/register",
-  async ({
-    email,
-    password,
-    firstName,
-    lastName,
-    phone,
-  }: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-    phone?: string;
-  }) => {
-    const response = await api.post("/auth/register", {
+  async (
+    {
       email,
       password,
       firstName,
       lastName,
       phone,
-    });
-    return response.data;
+    }: {
+      email: string;
+      password: string;
+      firstName: string;
+      lastName: string;
+      phone?: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await api.post("/auth/register", {
+        email,
+        password,
+        firstName,
+        lastName,
+        phone,
+      });
+      return response.data;
+    } catch (error: any) {
+      // Return the error message from the backend response
+      return rejectWithValue({
+        message: error.response?.data?.message || "Registration failed",
+      });
+    }
   }
 );
 
@@ -152,7 +179,10 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Login failed";
+        // Extract error message from the backend response
+        const errorMessage =
+          action.payload?.message || action.error.message || "Login failed";
+        state.error = errorMessage;
       })
 
       .addCase(googleLogin.pending, (state) => {
@@ -168,7 +198,12 @@ const authSlice = createSlice({
       })
       .addCase(googleLogin.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Google login failed";
+        // Extract error message from the backend response
+        const errorMessage =
+          action.payload?.message ||
+          action.error.message ||
+          "Google login failed";
+        state.error = errorMessage;
       });
 
     builder
@@ -183,7 +218,12 @@ const authSlice = createSlice({
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Registration failed";
+        // Extract error message from the backend response
+        const errorMessage =
+          action.payload?.message ||
+          action.error.message ||
+          "Registration failed";
+        state.error = errorMessage;
       });
 
     builder
