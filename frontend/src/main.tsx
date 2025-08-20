@@ -8,7 +8,6 @@ import { store } from "./store/store.ts";
 import ThemeProvider from "./contexts/ThemeContext.tsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
-// Register service worker to handle Google OAuth requests properly
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("/sw.js").catch((error) => {

@@ -1,7 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import type { AppDispatch, RootState } from "../../../store/store";
-import { createUser, setShowCreateUserForm } from "../../../store/slice/adminSlice";
+import {
+  createUser,
+  setShowCreateUserForm,
+} from "../../../store/slice/adminSlice";
 import { InputField, SelectField } from "./CourseFormParts";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
@@ -41,7 +44,6 @@ const CreateUserForm = () => {
     try {
       const payload = { ...data, phone: data.phone ?? "" };
       await dispatch(createUser(payload)).unwrap();
-      // Keep behavior consistent with previous version: do not auto-close here.
     } catch (error) {
       console.error("Failed to create user:", error);
     }
@@ -63,12 +65,21 @@ const CreateUserForm = () => {
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
             </svg>
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Create New User</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Add a new user to the platform</p>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Create New User
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Add a new user to the platform
+            </p>
           </div>
         </div>
 

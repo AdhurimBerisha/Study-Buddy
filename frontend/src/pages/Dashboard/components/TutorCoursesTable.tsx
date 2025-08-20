@@ -1,4 +1,11 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../../../store/store";
+import {
+  fetchTutorCourses,
+  setCoursesPage,
+} from "../../../store/slice/tutorSlice";
+import { Pagination } from "../../../components";
 
 interface Course {
   id: string;
@@ -23,12 +30,25 @@ interface Course {
 interface TutorCoursesTableProps {
   courses: Course[];
   loading: boolean;
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  };
 }
 
 const TutorCoursesTable: React.FC<TutorCoursesTableProps> = ({
   courses,
   loading,
+  pagination,
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handlePageChange = (page: number) => {
+    dispatch(setCoursesPage(page));
+    dispatch(fetchTutorCourses({ page, limit: pagination.itemsPerPage }));
+  };
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -177,6 +197,14 @@ const TutorCoursesTable: React.FC<TutorCoursesTableProps> = ({
           ))}
         </tbody>
       </table>
+
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.totalItems}
+        itemsPerPage={pagination.itemsPerPage}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

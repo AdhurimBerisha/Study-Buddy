@@ -21,11 +21,12 @@ const TutorDashboard = () => {
     loadingCourses,
     showCreateCourseForm,
     message,
+    coursesPagination,
   } = useSelector((state: RootState) => state.tutor);
 
   useEffect(() => {
     dispatch(fetchTutorDashboardStats());
-    dispatch(fetchTutorCourses());
+    dispatch(fetchTutorCourses({ page: 1, limit: 5 }));
   }, [dispatch]);
 
   useEffect(() => {
@@ -82,7 +83,6 @@ const TutorDashboard = () => {
         <TutorMessageDisplay />
 
         <div className="space-y-12">
-          {/* Dashboard Stats */}
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-green-600/10 to-emerald-600/10 rounded-3xl blur-3xl"></div>
             <div className="relative bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20 dark:border-gray-700/30">
@@ -90,7 +90,6 @@ const TutorDashboard = () => {
             </div>
           </div>
 
-          {/* Course Management */}
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-blue-800/5 rounded-3xl blur-2xl"></div>
             <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20 dark:border-gray-700/30">
@@ -149,13 +148,17 @@ const TutorDashboard = () => {
                 <CreateCourseForm
                   onClose={() => dispatch(setShowCreateCourseForm(false))}
                   onSuccess={() => {
-                    dispatch(fetchTutorCourses());
+                    dispatch(fetchTutorCourses({ page: 1, limit: 5 }));
                     dispatch(fetchTutorDashboardStats());
                   }}
                 />
               )}
 
-              <TutorCoursesTable courses={courses} loading={loadingCourses} />
+              <TutorCoursesTable
+                courses={courses}
+                loading={loadingCourses}
+                pagination={coursesPagination}
+              />
             </div>
           </div>
         </div>

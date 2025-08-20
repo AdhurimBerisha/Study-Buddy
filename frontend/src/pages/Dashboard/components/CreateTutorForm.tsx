@@ -2,7 +2,10 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import type { AppDispatch, RootState } from "../../../store/store";
-import { createTutor, setShowCreateTutorForm } from "../../../store/slice/adminSlice";
+import {
+  createTutor,
+  setShowCreateTutorForm,
+} from "../../../store/slice/adminSlice";
 import { InputField, TextAreaField } from "./CourseFormParts";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
@@ -50,7 +53,10 @@ const CreateTutorForm = () => {
     if (!value) return;
     const current = getValues("expertise") || [];
     if (current.includes(value)) return;
-    setValue("expertise", [...current, value], { shouldDirty: true, shouldValidate: true });
+    setValue("expertise", [...current, value], {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
     setExpertiseInput("");
   };
 
@@ -64,7 +70,9 @@ const CreateTutorForm = () => {
   };
 
   const onSubmit = async (data: CreateTutorFormValues) => {
-    const skills = (data.expertise || []).filter((s) => s && s.trim().length > 0);
+    const skills = (data.expertise || []).filter(
+      (s) => s && s.trim().length > 0
+    );
     if (skills.length === 0) {
       setError("root.submit", {
         type: "manual",
@@ -75,7 +83,6 @@ const CreateTutorForm = () => {
 
     try {
       await dispatch(createTutor({ ...data, expertise: skills })).unwrap();
-      // keeping behavior: do not auto-close here
     } catch (error) {
       console.error("Failed to create tutor:", error);
     }
@@ -187,7 +194,9 @@ const CreateTutorForm = () => {
 
         {errors.root?.submit && (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
-            <p className="text-red-800 dark:text-red-200 text-sm">{errors.root.submit.message}</p>
+            <p className="text-red-800 dark:text-red-200 text-sm">
+              {errors.root.submit.message}
+            </p>
           </div>
         )}
 
@@ -206,7 +215,8 @@ const CreateTutorForm = () => {
           >
             {creatingTutor ? (
               <span className="inline-flex items-center">
-                <AiOutlineLoading3Quarters className="animate-spin h-4 w-4 mr-2" /> Creating...
+                <AiOutlineLoading3Quarters className="animate-spin h-4 w-4 mr-2" />{" "}
+                Creating...
               </span>
             ) : (
               "Create Tutor"

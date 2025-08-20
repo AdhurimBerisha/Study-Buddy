@@ -345,7 +345,6 @@ const CoursesTable = () => {
         </table>
       </div>
 
-      {/* Pagination */}
       <Pagination
         currentPage={coursesPagination.currentPage}
         totalPages={coursesPagination.totalPages}

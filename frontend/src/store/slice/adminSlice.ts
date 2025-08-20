@@ -87,7 +87,6 @@ interface AdminState {
   courses: Course[];
   tutors: Tutor[];
 
-  // Pagination state
   usersPagination: {
     currentPage: number;
     totalPages: number;
@@ -141,7 +140,6 @@ const initialState: AdminState = {
   courses: [],
   tutors: [],
 
-  // Pagination state
   usersPagination: {
     currentPage: 1,
     totalPages: 1,
@@ -512,27 +510,26 @@ const adminSlice = createSlice({
       state.error = null;
     },
 
-    // Pagination actions
     setUsersPage: (state, action) => {
       state.usersPagination.currentPage = action.payload;
     },
     setUsersItemsPerPage: (state, action) => {
       state.usersPagination.itemsPerPage = action.payload;
-      state.usersPagination.currentPage = 1; // Reset to first page
+      state.usersPagination.currentPage = 1;
     },
     setCoursesPage: (state, action) => {
       state.coursesPagination.currentPage = action.payload;
     },
     setCoursesItemsPerPage: (state, action) => {
       state.coursesPagination.itemsPerPage = action.payload;
-      state.coursesPagination.currentPage = 1; // Reset to first page
+      state.coursesPagination.currentPage = 1;
     },
     setTutorsPage: (state, action) => {
       state.tutorsPagination.currentPage = action.payload;
     },
     setTutorsItemsPerPage: (state, action) => {
       state.tutorsPagination.itemsPerPage = action.payload;
-      state.tutorsPagination.currentPage = 1; // Reset to first page
+      state.tutorsPagination.currentPage = 1;
     },
   },
   extraReducers: (builder) => {
@@ -782,7 +779,6 @@ export const {
   clearMessage,
   clearError,
 
-  // Pagination actions
   setUsersPage,
   setUsersItemsPerPage,
   setCoursesPage,

@@ -36,6 +36,24 @@ interface Course {
   }[];
 }
 
+interface CreateCourseData {
+  title: string;
+  description: string;
+  category: string;
+  language: string;
+  level: string;
+  price?: number;
+  thumbnail?: string;
+  totalLessons?: number;
+  lessons?: Array<{
+    title: string;
+    content: string;
+    order: number;
+    duration?: number;
+    resources?: string;
+  }>;
+}
+
 interface DashboardStats {
   totalCourses: number;
   totalStudents: number;
@@ -51,6 +69,13 @@ interface TutorState {
   message: string | null;
   creatingCourse: boolean;
   courseError: string | null;
+
+  coursesPagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  };
 }
 
 const initialState: TutorState = {
@@ -62,6 +87,13 @@ const initialState: TutorState = {
   message: null,
   creatingCourse: false,
   courseError: null,
+
+  coursesPagination: {
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 5,
+  },
 };
 
 export const fetchTutorDashboardStats = createAsyncThunk(
@@ -81,10 +113,23 @@ export const fetchTutorDashboardStats = createAsyncThunk(
 
 export const fetchTutorCourses = createAsyncThunk(
   "tutor/fetchCourses",
-  async (_, { rejectWithValue }) => {
+  async (
+    params: { page?: number; limit?: number } = {},
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await api.get("/tutors/dashboard/courses");
-      return response.data.data;
+      const { page = 1, limit = 5 } = params;
+      const queryParams = new URLSearchParams();
+      queryParams.append("page", page.toString());
+      queryParams.append("limit", limit.toString());
+
+      const response = await api.get(
+        `/tutors/dashboard/courses?${queryParams.toString()}`
+      );
+      return {
+        data: response.data.data,
+        pagination: response.data.pagination,
+      };
     } catch (error) {
       const apiError = error as ApiError;
       return rejectWithValue(
@@ -96,7 +141,7 @@ export const fetchTutorCourses = createAsyncThunk(
 
 export const createTutorCourse = createAsyncThunk(
   "tutor/createCourse",
-  async (courseData: any, { rejectWithValue }) => {
+  async (courseData: CreateCourseData, { rejectWithValue }) => {
     try {
       const response = await api.post("/tutors/courses", courseData);
       return response.data.data;
@@ -122,10 +167,14 @@ const tutorSlice = createSlice({
     setMessage: (state, action) => {
       state.message = action.payload;
     },
+
+    setCoursesPage: (state, action) => {
+      state.coursesPagination.currentPage = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
-      // Dashboard Stats
+
       .addCase(fetchTutorDashboardStats.pending, (state) => {
         state.loadingStats = true;
       })
@@ -137,19 +186,27 @@ const tutorSlice = createSlice({
         state.loadingStats = false;
         state.message = action.payload as string;
       })
-      // Courses
+
       .addCase(fetchTutorCourses.pending, (state) => {
         state.loadingCourses = true;
       })
       .addCase(fetchTutorCourses.fulfilled, (state, action) => {
         state.loadingCourses = false;
-        state.courses = action.payload;
+        state.courses = action.payload.data;
+        if (action.payload.pagination) {
+          state.coursesPagination = {
+            currentPage: action.payload.pagination.currentPage,
+            totalPages: action.payload.pagination.totalPages,
+            totalItems: action.payload.pagination.totalCourses,
+            itemsPerPage: action.payload.pagination.coursesPerPage,
+          };
+        }
       })
       .addCase(fetchTutorCourses.rejected, (state, action) => {
         state.loadingCourses = false;
         state.message = action.payload as string;
       })
-      // Create Course
+
       .addCase(createTutorCourse.pending, (state) => {
         state.creatingCourse = true;
         state.courseError = null;
@@ -160,6 +217,8 @@ const tutorSlice = createSlice({
         state.showCreateCourseForm = false;
         state.creatingCourse = false;
         state.courseError = null;
+
+        state.coursesPagination.currentPage = 1;
       })
       .addCase(createTutorCourse.rejected, (state, action) => {
         state.message = action.payload as string;
@@ -169,6 +228,10 @@ const tutorSlice = createSlice({
   },
 });
 
-export const { setShowCreateCourseForm, clearMessage, setMessage } =
-  tutorSlice.actions;
+export const {
+  setShowCreateCourseForm,
+  clearMessage,
+  setMessage,
+  setCoursesPage,
+} = tutorSlice.actions;
 export default tutorSlice.reducer;

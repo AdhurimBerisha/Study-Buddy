@@ -288,7 +288,6 @@ const UsersTable = () => {
         </table>
       </div>
 
-      {/* Pagination */}
       <Pagination
         currentPage={usersPagination.currentPage}
         totalPages={usersPagination.totalPages}

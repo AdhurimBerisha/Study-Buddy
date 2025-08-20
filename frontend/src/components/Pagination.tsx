@@ -58,16 +58,13 @@ const Pagination: React.FC<PaginationProps> = ({
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 px-6 py-4 bg-gray-50/50 dark:bg-gray-800/50 border-t border-gray-200/50 dark:border-gray-700/50">
-      {/* Page info */}
       <div className="text-sm text-gray-600 dark:text-gray-400">
         Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
         {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{" "}
         results
       </div>
 
-      {/* Pagination controls */}
       <div className="flex items-center space-x-1">
-        {/* Previous button */}
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
@@ -88,7 +85,6 @@ const Pagination: React.FC<PaginationProps> = ({
           </svg>
         </button>
 
-        {/* Page numbers */}
         {getPageNumbers().map((page, index) => (
           <React.Fragment key={index}>
             {page === "..." ? (
@@ -110,7 +106,6 @@ const Pagination: React.FC<PaginationProps> = ({
           </React.Fragment>
         ))}
 
-        {/* Next button */}
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}

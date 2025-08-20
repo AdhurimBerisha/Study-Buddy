@@ -20,7 +20,6 @@ const TutorDashboardStats: React.FC<TutorDashboardStatsProps> = ({ stats }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {/* Total Courses */}
       <div className="relative group">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-blue-800/10 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
         <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 dark:border-gray-700/30 hover:shadow-xl transition-all duration-300">
@@ -52,7 +51,6 @@ const TutorDashboardStats: React.FC<TutorDashboardStatsProps> = ({ stats }) => {
         </div>
       </div>
 
-      {/* Total Students */}
       <div className="relative group">
         <div className="absolute inset-0 bg-gradient-to-r from-green-600/10 to-emerald-800/10 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
         <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 dark:border-gray-700/30 hover:shadow-xl transition-all duration-300">
@@ -84,7 +82,6 @@ const TutorDashboardStats: React.FC<TutorDashboardStatsProps> = ({ stats }) => {
         </div>
       </div>
 
-      {/* Total Revenue */}
       <div className="relative group">
         <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/10 to-amber-800/10 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
         <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 dark:border-gray-700/30 hover:shadow-xl transition-all duration-300">

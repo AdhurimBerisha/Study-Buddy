@@ -2,6 +2,7 @@ import { Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/requireAuth";
 import { Tutor, Course, User, Lesson } from "../models";
 import { handleError } from "../helpers/errorHelper";
+import { createPaginationResponse } from "../helpers/adminHelper";
 import { Op, QueryTypes } from "sequelize";
 import sequelize from "../config/db";
 
@@ -267,7 +268,11 @@ const getTutorCourses = async (req: AuthenticatedRequest, res: Response) => {
         .json({ message: "Only tutors can access this endpoint" });
     }
 
-    const courses = await Course.findAll({
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 5;
+    const offset = (page - 1) * limit;
+
+    const { count, rows: courses } = await Course.findAndCountAll({
       where: { tutorId: userId },
       include: [
         {
@@ -283,12 +288,19 @@ const getTutorCourses = async (req: AuthenticatedRequest, res: Response) => {
         },
       ],
       order: [["createdAt", "DESC"]],
+      limit,
+      offset,
     });
 
-    res.json({
-      success: true,
-      data: courses,
-    });
+    const response = createPaginationResponse(
+      courses,
+      count,
+      page,
+      limit,
+      "Courses"
+    );
+
+    res.json(response);
   } catch (error) {
     handleError(res, error, "Error fetching tutor courses");
   }
