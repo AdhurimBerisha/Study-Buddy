@@ -379,81 +379,6 @@ const getCourseById = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-const createCourse = async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const adminId = checkAdminAuth(req, res);
-    if (!adminId) return;
-
-    const {
-      title,
-      description,
-      category,
-      language,
-      level,
-      price,
-      thumbnail,
-      totalLessons,
-      tutorId,
-    } = req.body;
-
-    if (
-      !title ||
-      !description ||
-      !category ||
-      !language ||
-      !level ||
-      !tutorId
-    ) {
-      return res.status(400).json({
-        message:
-          "Title, description, category, language, level, and tutorId are required",
-      });
-    }
-
-    const user = await User.findByPk(tutorId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const tutor = await Tutor.findOne({ where: { userId: tutorId } });
-    if (!tutor) {
-      return res
-        .status(404)
-        .json({ message: "User does not have a tutor profile" });
-    }
-
-    const course = await Course.create({
-      title,
-      description,
-      category,
-      language,
-      level,
-      price: price || 0,
-      thumbnail,
-      totalLessons,
-      tutorId,
-    });
-
-    const createdCourse = await Course.findByPk(course.get("id") as string, {
-      include: [
-        {
-          model: User,
-          as: "tutor",
-          attributes: ["id", "firstName", "lastName", "email"],
-        },
-      ],
-    });
-
-    res.status(201).json({
-      success: true,
-      message: "Course created successfully",
-      data: createdCourse,
-    });
-  } catch (error) {
-    handleError(res, error, "Error creating course");
-  }
-};
-
 const updateCourse = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = checkAdminAuth(req, res);
@@ -1064,7 +989,6 @@ export {
   changeUserRole,
   getAllCourses,
   getCourseById,
-  createCourse,
   updateCourse,
   deleteCourse,
   getCourseLessons,

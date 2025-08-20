@@ -93,13 +93,13 @@ interface AdminState {
   loadingTutors: boolean;
 
   showCreateUserForm: boolean;
-  showCreateCourseForm: boolean;
+
   showEditCourseForm: string | null;
   showCreateTutorForm: boolean;
   showEditTutorForm: string | null;
 
   creatingUser: boolean;
-  creatingCourse: boolean;
+
   updatingCourse: boolean;
   deletingUserId: string | null;
   deletingCourseId: string | null;
@@ -127,13 +127,13 @@ const initialState: AdminState = {
   loadingTutors: false,
 
   showCreateUserForm: false,
-  showCreateCourseForm: false,
+
   showEditCourseForm: null,
   showCreateTutorForm: false,
   showEditTutorForm: null,
 
   creatingUser: false,
-  creatingCourse: false,
+
   updatingCourse: false,
   deletingUserId: null,
   deletingCourseId: null,
@@ -264,34 +264,6 @@ export const deleteUser = createAsyncThunk(
       const apiError = error as ApiError;
       const errorMessage =
         apiError.response?.data?.message || "Failed to delete user";
-      return rejectWithValue(errorMessage);
-    }
-  }
-);
-
-export const createCourse = createAsyncThunk(
-  "admin/createCourse",
-  async (
-    courseData: {
-      title: string;
-      description: string;
-      category: string;
-      language: string;
-      level: string;
-      price: number;
-      thumbnail: string;
-      totalLessons: number;
-      tutorId: string;
-    },
-    { rejectWithValue }
-  ) => {
-    try {
-      const response = await api.post("/admin/courses", courseData);
-      return response.data.data;
-    } catch (error: unknown) {
-      const apiError = error as ApiError;
-      const errorMessage =
-        apiError.response?.data?.message || "Failed to create course";
       return rejectWithValue(errorMessage);
     }
   }
@@ -431,9 +403,7 @@ const adminSlice = createSlice({
     setShowCreateUserForm: (state, action) => {
       state.showCreateUserForm = action.payload;
     },
-    setShowCreateCourseForm: (state, action) => {
-      state.showCreateCourseForm = action.payload;
-    },
+
     setShowEditCourseForm: (state, action) => {
       state.showEditCourseForm = action.payload;
     },
@@ -562,26 +532,6 @@ const adminSlice = createSlice({
       });
 
     builder
-      .addCase(createCourse.pending, (state) => {
-        state.creatingCourse = true;
-        state.error = null;
-      })
-      .addCase(createCourse.fulfilled, (state, action) => {
-        state.creatingCourse = false;
-        state.courses.unshift(action.payload);
-        state.message = {
-          type: "success",
-          text: "Course created successfully!",
-        };
-        state.showCreateCourseForm = false;
-      })
-      .addCase(createCourse.rejected, (state, action) => {
-        state.creatingCourse = false;
-        state.error = action.payload as string;
-        state.message = { type: "error", text: action.payload as string };
-      });
-
-    builder
       .addCase(updateCourse.pending, (state) => {
         state.updatingCourse = true;
         state.error = null;
@@ -689,7 +639,7 @@ const adminSlice = createSlice({
 
 export const {
   setShowCreateUserForm,
-  setShowCreateCourseForm,
+
   setShowEditCourseForm,
   setShowCreateTutorForm,
   setShowEditTutorForm,

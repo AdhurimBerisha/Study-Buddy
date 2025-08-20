@@ -7,13 +7,12 @@ import {
   fetchCourses,
   fetchTutors,
   setShowCreateUserForm,
-  setShowCreateCourseForm,
   setShowCreateTutorForm,
   clearMessage,
 } from "../../store/slice/adminSlice";
 import DashboardStats from "./components/DashboardStats";
 import CreateUserForm from "./components/CreateUserForm";
-import CreateCourseForm from "./components/CreateCourseForm";
+
 import EditCourseForm from "./components/EditCourseForm";
 import CreateTutorForm from "./components/CreateTutorForm";
 import EditTutorForm from "./components/EditTutorForm";
@@ -28,7 +27,7 @@ const AdminDashboard = () => {
     stats,
     loadingStats,
     showCreateUserForm,
-    showCreateCourseForm,
+
     showEditCourseForm,
     showCreateTutorForm,
     showEditTutorForm,
@@ -189,41 +188,12 @@ const AdminDashboard = () => {
                       Course Management
                     </h2>
                     <p className="text-gray-600 dark:text-gray-400">
-                      Manage all courses and their content
+                      View, edit, and delete existing courses
                     </p>
                   </div>
                 </div>
-                <button
-                  onClick={() =>
-                    dispatch(setShowCreateCourseForm(!showCreateCourseForm))
-                  }
-                  className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-700 text-white rounded-xl hover:from-green-700 hover:to-emerald-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium flex items-center space-x-2"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                    />
-                  </svg>
-                  <span>
-                    {showCreateCourseForm ? "Cancel" : "Create New Course"}
-                  </span>
-                </button>
               </div>
 
-              {showCreateCourseForm && (
-                <CreateCourseForm
-                  onClose={() => dispatch(setShowCreateCourseForm(false))}
-                  onSuccess={() => dispatch(fetchCourses())}
-                />
-              )}
               {showEditCourseForm && (
                 <EditCourseForm
                   courseId={showEditCourseForm}

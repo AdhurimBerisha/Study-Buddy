@@ -9,7 +9,6 @@ import {
   changeUserRole,
   getAllCourses,
   getCourseById,
-  createCourse,
   updateCourse,
   deleteCourse,
   getCourseLessons,
@@ -40,7 +39,7 @@ router.put("/users/:id/role", changeUserRole);
 
 router.get("/courses", getAllCourses);
 router.get("/courses/:id", getCourseById);
-router.post("/courses", createCourse);
+
 router.put("/courses/:id", updateCourse);
 router.delete("/courses/:id", deleteCourse);
 

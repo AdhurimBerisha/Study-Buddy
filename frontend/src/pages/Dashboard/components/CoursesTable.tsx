@@ -65,7 +65,7 @@ const CoursesTable = () => {
           No courses found
         </p>
         <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
-          Create your first course to get started
+          No courses available in the system
         </p>
       </div>
     );
