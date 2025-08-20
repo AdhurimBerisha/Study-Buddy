@@ -2,7 +2,7 @@ import { Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/requireAuth";
 import { Tutor, Course, User, Lesson } from "../models";
 import { handleError } from "../helpers/errorHelper";
-import { Op } from "sequelize";
+import { Op, QueryTypes } from "sequelize";
 import sequelize from "../config/db";
 
 const createTutor = async (req: AuthenticatedRequest, res: Response) => {
@@ -87,7 +87,7 @@ const getAllTutors = async (req: AuthenticatedRequest, res: Response) => {
       ],
       limit: Number(limit),
       offset: Number(offset),
-      order: [["rating", "DESC"]],
+      order: [["createdAt", "DESC"]],
     });
 
     res.json({
@@ -253,6 +253,107 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+const getTutorCourses = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const tutor = await Tutor.findOne({ where: { userId } });
+    if (!tutor) {
+      return res
+        .status(403)
+        .json({ message: "Only tutors can access this endpoint" });
+    }
+
+    const courses = await Course.findAll({
+      where: { tutorId: userId },
+      include: [
+        {
+          model: User,
+          as: "tutor",
+          attributes: ["id", "firstName", "lastName", "email"],
+        },
+        {
+          model: Lesson,
+          as: "lessons",
+          attributes: ["id", "title", "order", "duration", "isActive"],
+          order: [["order", "ASC"]],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+
+    res.json({
+      success: true,
+      data: courses,
+    });
+  } catch (error) {
+    handleError(res, error, "Error fetching tutor courses");
+  }
+};
+
+const getTutorDashboardStats = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const tutor = await Tutor.findOne({ where: { userId } });
+    if (!tutor) {
+      return res
+        .status(403)
+        .json({ message: "Only tutors can access this endpoint" });
+    }
+
+    const courseCount = await Course.count({ where: { tutorId: userId } });
+
+    const totalStudents = await sequelize.query(
+      `
+      SELECT COUNT(DISTINCT p.userId) as studentCount
+      FROM purchases p
+      INNER JOIN courses c ON p.courseId = c.id
+      WHERE c.tutor_id = :tutorId
+    `,
+      {
+        replacements: { tutorId: userId },
+        type: QueryTypes.SELECT,
+      }
+    );
+
+    const totalRevenue = await sequelize.query(
+      `
+      SELECT COALESCE(SUM(p.amount), 0) as totalRevenue
+      FROM purchases p
+      INNER JOIN courses c ON p.courseId = c.id
+      WHERE c.tutor_id = :tutorId
+    `,
+      {
+        replacements: { tutorId: userId },
+        type: QueryTypes.SELECT,
+      }
+    );
+
+    const stats = {
+      totalCourses: courseCount,
+      totalStudents: (totalStudents[0] as any)?.studentCount || 0,
+      totalRevenue: parseFloat((totalRevenue[0] as any)?.totalRevenue || "0"),
+    };
+
+    res.json({
+      success: true,
+      data: stats,
+    });
+  } catch (error) {
+    handleError(res, error, "Error fetching tutor dashboard stats");
+  }
+};
+
 export {
   createTutor,
   getTutor,
@@ -260,4 +361,6 @@ export {
   updateTutor,
   deleteTutor,
   createCourse,
+  getTutorCourses,
+  getTutorDashboardStats,
 };

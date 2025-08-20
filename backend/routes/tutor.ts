@@ -6,12 +6,18 @@ import {
   updateTutor,
   deleteTutor,
   createCourse,
+  getTutorCourses,
+  getTutorDashboardStats,
 } from "../controllers/tutorController";
 import { requireAuth } from "../middlewares/requireAuth";
 
 const router = express.Router();
 
 router.get("/", getAllTutors);
+
+router.get("/dashboard/courses", requireAuth, getTutorCourses);
+router.get("/dashboard/stats", requireAuth, getTutorDashboardStats);
+
 router.get("/:id", getTutor);
 
 router.post("/", requireAuth, createTutor);

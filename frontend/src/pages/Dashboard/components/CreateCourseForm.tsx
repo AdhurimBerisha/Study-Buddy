@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useForm, useFieldArray } from "react-hook-form";
 import type { AppDispatch, RootState } from "../../../store/store";
-import { createCourse } from "../../../store/slice/dashboardSlice";
+import { createTutorCourse } from "../../../store/slice/tutorSlice";
 import type { CourseFormData } from "./courseTypes";
 import {
   InputField,
@@ -34,7 +34,7 @@ const CreateCourseForm = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { creatingCourse, courseError } = useSelector(
-    (state: RootState) => state.dashboard
+    (state: RootState) => state.tutor
   );
 
   const {
@@ -45,7 +45,10 @@ const CreateCourseForm = ({
     formState: { errors },
   } = useForm<CourseFormData>({ defaultValues, mode: "onSubmit" });
 
-  const { fields, append, remove } = useFieldArray({ control, name: "lessons" });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "lessons",
+  });
 
   const addLesson = () =>
     append({
@@ -84,7 +87,7 @@ const CreateCourseForm = ({
 
     try {
       await dispatch(
-        createCourse({
+        createTutorCourse({
           ...data,
           totalLessons: validLessons.length,
           lessons: validLessons,
@@ -111,12 +114,21 @@ const CreateCourseForm = ({
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
             </svg>
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Create New Course</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Add a new course to the platform</p>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Create New Course
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Add a new course to the platform
+            </p>
           </div>
         </div>
 
@@ -188,13 +200,17 @@ const CreateCourseForm = ({
               rows={4}
               placeholder="Describe your course content, objectives, and what students will learn..."
               error={errors.description?.message as string}
-              {...register("description", { required: "Description is required" })}
+              {...register("description", {
+                required: "Description is required",
+              })}
             />
           </div>
 
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h4 className="text-md font-semibold text-gray-900 dark:text-white">Course Lessons ({fields.length})</h4>
+              <h4 className="text-md font-semibold text-gray-900 dark:text-white">
+                Course Lessons ({fields.length})
+              </h4>
               <button
                 type="button"
                 onClick={addLesson}
@@ -219,7 +235,9 @@ const CreateCourseForm = ({
 
           {errors.root?.submit && (
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-              <p className="text-red-800 dark:text-red-200">{errors.root.submit.message}</p>
+              <p className="text-red-800 dark:text-red-200">
+                {errors.root.submit.message}
+              </p>
             </div>
           )}
 

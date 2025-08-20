@@ -6,6 +6,7 @@ import learningReducer from "./slice/learningSlice";
 import coursesReducer from "./slice/coursesSlice";
 import adminReducer from "./slice/adminSlice";
 import dashboardReducer from "./slice/dashboardSlice";
+import tutorReducer from "./slice/tutorSlice";
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     courses: coursesReducer,
     admin: adminReducer,
     dashboard: dashboardReducer,
+    tutor: tutorReducer,
   },
 });
 
