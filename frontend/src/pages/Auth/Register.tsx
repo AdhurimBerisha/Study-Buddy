@@ -42,20 +42,19 @@ const Register = () => {
       return;
     }
 
-    try {
-      await dispatch(
-        register({
-          email: formData.email,
-          password: formData.password,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          phone: formData.phone || undefined,
-        })
-      ).unwrap();
+    const result = await dispatch(
+      register({
+        email: formData.email,
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone || undefined,
+      })
+    );
+
+    if (register.fulfilled.match(result)) {
       toast.success("Account created successfully! Please sign in.");
       navigate("/login");
-    } catch {
-      toast.error("Registration failed. Please try again.");
     }
   };
 
