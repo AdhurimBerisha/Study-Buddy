@@ -7,22 +7,32 @@ import {
   updateUser,
   deleteUser,
   changeUserRole,
+} from "../controllers/adminUserController";
+
+import {
   getAllCourses,
   getCourseById,
   updateCourse,
   deleteCourse,
   getCourseLessons,
+} from "../controllers/adminCourseController";
+
+import {
   getLessonById,
   createLesson,
   updateLesson,
   deleteLesson,
+} from "../controllers/adminLessonController";
+
+import {
   getAllTutors,
   getTutorById,
   createTutor,
   updateTutor,
   deleteTutor,
-  getDashboardStats,
-} from "../controllers/adminController";
+} from "../controllers/adminTutorController";
+
+import { getDashboardStats } from "../controllers/adminController";
 
 const router = Router();
 
