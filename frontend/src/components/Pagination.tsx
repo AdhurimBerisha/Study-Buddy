@@ -8,13 +8,13 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({
+const Pagination = ({
   currentPage,
   totalPages,
   totalItems,
   itemsPerPage,
   onPageChange,
-}) => {
+}: PaginationProps) => {
   const getPageNumbers = () => {
     const pages = [];
     const maxVisiblePages = 5;

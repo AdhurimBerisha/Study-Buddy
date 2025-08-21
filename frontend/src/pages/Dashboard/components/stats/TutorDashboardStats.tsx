@@ -1,5 +1,3 @@
-import React from "react";
-
 interface DashboardStats {
   totalCourses: number;
   totalStudents: number;
@@ -10,7 +8,7 @@ interface TutorDashboardStatsProps {
   stats: DashboardStats;
 }
 
-const TutorDashboardStats: React.FC<TutorDashboardStatsProps> = ({ stats }) => {
+const TutorDashboardStats = ({ stats }: TutorDashboardStatsProps) => {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",

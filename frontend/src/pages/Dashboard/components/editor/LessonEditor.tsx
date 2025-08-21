@@ -1,4 +1,3 @@
-import React from "react";
 import type { Lesson } from "../../types/courseTypes";
 
 interface LessonEditorProps {
@@ -14,14 +13,14 @@ interface LessonEditorProps {
   canRemove: boolean;
 }
 
-const LessonEditor: React.FC<LessonEditorProps> = ({
+const LessonEditor = ({
   lesson,
   index,
   errors,
   onChange,
   onRemove,
   canRemove,
-}) => {
+}: LessonEditorProps) => {
   return (
     <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-6 bg-gray-50 dark:bg-gray-700/50">
       <div className="flex items-center justify-between mb-4">

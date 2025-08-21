@@ -1,4 +1,3 @@
-import React from "react";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../../../store/store";
 import {
@@ -38,11 +37,11 @@ interface TutorCoursesTableProps {
   };
 }
 
-const TutorCoursesTable: React.FC<TutorCoursesTableProps> = ({
+const TutorCoursesTable = ({
   courses,
   loading,
   pagination,
-}) => {
+}: TutorCoursesTableProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const handlePageChange = (page: number) => {

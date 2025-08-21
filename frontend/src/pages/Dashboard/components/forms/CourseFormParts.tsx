@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 import type { UseFormRegister, FieldErrors } from "react-hook-form";
 import type { CourseFormData } from "../../types/courseTypes";
 
@@ -81,13 +81,13 @@ interface LessonFieldsProps {
   onRemove: (index: number) => void;
 }
 
-export const LessonFields: React.FC<LessonFieldsProps> = ({
+export const LessonFields = ({
   index,
   register,
   errors,
   canRemove,
   onRemove,
-}) => (
+}: LessonFieldsProps) => (
   <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-6 bg-gray-50 dark:bg-gray-700/50">
     <div className="flex items-center justify-between mb-4">
       <h4 className="text-lg font-medium text-gray-900 dark:text-white">
