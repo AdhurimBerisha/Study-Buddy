@@ -401,10 +401,18 @@ const MyProfile = () => {
                   disabled={!isEditing}
                   register={register("firstName", {
                     required: "First name is required",
-                    minLength: { value: 2, message: "At least 2 characters" },
+                    minLength: {
+                      value: 2,
+                      message: "First name must be at least 2 characters",
+                    },
                     maxLength: {
                       value: 50,
-                      message: "Less than 50 characters",
+                      message: "First name must be less than 50 characters",
+                    },
+                    pattern: {
+                      value: /^[a-zA-Z\s'-]+$/,
+                      message:
+                        "First name can only contain letters, spaces, hyphens, and apostrophes",
                     },
                   })}
                   error={errors.firstName?.message}
@@ -418,10 +426,18 @@ const MyProfile = () => {
                   disabled={!isEditing}
                   register={register("lastName", {
                     required: "Last name is required",
-                    minLength: { value: 2, message: "At least 2 characters" },
+                    minLength: {
+                      value: 2,
+                      message: "Last name must be at least 2 characters",
+                    },
                     maxLength: {
                       value: 50,
-                      message: "Less than 50 characters",
+                      message: "Last name must be less than 50 characters",
+                    },
+                    pattern: {
+                      value: /^[a-zA-Z\s'-]+$/,
+                      message:
+                        "Last name can only contain letters, spaces, hyphens, and apostrophes",
                     },
                   })}
                   error={errors.lastName?.message}
@@ -439,7 +455,11 @@ const MyProfile = () => {
                   required: "Email is required",
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Invalid email address",
+                    message: "Please provide a valid email address",
+                  },
+                  maxLength: {
+                    value: 255,
+                    message: "Email must be less than 255 characters",
                   },
                 })}
                 error={errors.email?.message}
@@ -453,8 +473,12 @@ const MyProfile = () => {
                 disabled={!isEditing}
                 register={register("phone", {
                   pattern: {
-                    value: /^[+]?[\d]{1,16}$/,
-                    message: "Invalid phone number",
+                    value: /^[+]?[\d\s\-()]{10,20}$/,
+                    message: "Please provide a valid phone number",
+                  },
+                  maxLength: {
+                    value: 20,
+                    message: "Phone number must be less than 20 characters",
                   },
                 })}
                 error={errors.phone?.message}

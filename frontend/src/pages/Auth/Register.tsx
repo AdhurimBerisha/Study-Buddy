@@ -1,251 +1,293 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useForm } from "react-hook-form";
 import type { AppDispatch, RootState } from "../../store/store";
-import { register, clearError } from "../../store/slice/authSlice";
+import {
+  register as registerUser,
+  resendVerificationEmail,
+} from "../../store/slice/authSlice";
 import AuthLayout from "./AuthLayout";
 import Button from "../../components/Button";
 import GoogleSignInButton from "../../components/GoogleSignInButton";
 import { toast } from "react-toastify";
 import { useCustomPageTitle } from "../../hooks/usePageTitle";
+import FormInput from "../../components/FormInput";
+import { FaUser, FaEnvelope, FaLock, FaPhone } from "react-icons/fa";
+
+interface RegisterFormData {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+}
 
 const Register = () => {
   useCustomPageTitle("Sign Up");
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    firstName: "",
-    lastName: "",
-    phone: "",
-  });
-
   const [showVerificationReminder, setShowVerificationReminder] =
     useState(false);
+  const [verificationEmail, setVerificationEmail] = useState("");
 
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
   const { loading, error } = useSelector((state: RootState) => state.auth);
 
-  const clearForm = () => {
-    setFormData({
-      email: "",
-      password: "",
-      confirmPassword: "",
-      firstName: "",
-      lastName: "",
-      phone: "",
-    });
-  };
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<RegisterFormData>({
+    mode: "onChange",
+  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  const password = watch("password");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    dispatch(clearError());
+  const onSubmit = async (data: RegisterFormData) => {
+    try {
+      const result = await dispatch(registerUser(data));
 
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match!");
-      return;
-    }
-
-    const result = await dispatch(
-      register({
-        email: formData.email,
-        password: formData.password,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        phone: formData.phone || undefined,
-      })
-    );
-
-    if (register.fulfilled.match(result)) {
-      const payload = result.payload as {
-        requiresEmailVerification?: boolean;
-        message?: string;
-      };
-
-      if (payload.requiresEmailVerification) {
+      if (registerUser.fulfilled.match(result)) {
         toast.success(
-          "Account created successfully! Please check your email to verify your account before signing in."
+          "Registration successful! Please check your email to verify your account."
         );
+        setVerificationEmail(data.email);
         setShowVerificationReminder(true);
-        clearForm();
-      } else {
-        toast.success("Account created successfully! Please sign in.");
-        navigate("/login");
+        reset();
+      } else if (registerUser.rejected.match(result)) {
+        const errorPayload = result.payload as
+          | {
+              message?: string;
+              requiresEmailVerification?: boolean;
+              email?: string;
+            }
+          | undefined;
+
+        if (errorPayload?.requiresEmailVerification) {
+          setShowVerificationReminder(true);
+          setVerificationEmail(errorPayload.email || data.email);
+        }
       }
+    } catch (error) {
+      console.error("Registration error:", error);
     }
   };
+
+  if (showVerificationReminder) {
+    return (
+      <AuthLayout
+        title="Check Your Email"
+        subtitle="We've sent a verification link to your email address"
+        linkText="Already verified?"
+        linkTo="/login"
+        linkLabel="Sign in"
+      >
+        <div className="text-center space-y-6">
+          <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto">
+            <svg
+              className="w-8 h-8 text-green-600 dark:text-green-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              Verify your email address
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
+              We've sent a verification link to{" "}
+              <span className="font-medium text-gray-900 dark:text-gray-100">
+                {verificationEmail}
+              </span>
+            </p>
+          </div>
+
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <p className="text-blue-800 dark:text-blue-200 text-sm">
+              Please check your email and click the verification link to
+              activate your account.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={() => setShowVerificationReminder(false)}
+              className="flex-1 px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors duration-200"
+            >
+              Back to Registration
+            </button>
+            <button
+              onClick={() => {
+                dispatch(resendVerificationEmail(verificationEmail));
+                toast.info("Verification email resent!");
+              }}
+              className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200"
+            >
+              Resend Email
+            </button>
+          </div>
+        </div>
+      </AuthLayout>
+    );
+  }
 
   return (
     <AuthLayout
       title="Create Account"
-      subtitle="Join StudyBuddy and start learning together"
+      subtitle="Join StudyBuddy and start your learning journey"
       linkText="Already have an account?"
       linkTo="/login"
       linkLabel="Sign in"
     >
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="flex flex-col w-full">
-            <label className="font-semibold text-sm mb-2 text-gray-700 dark:text-gray-300">
-              First Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              required
-              placeholder="First name"
-              className="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
-            />
-          </div>
-
-          <div className="flex flex-col w-full">
-            <label className="font-semibold text-sm mb-2 text-gray-700 dark:text-gray-300">
-              Last Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              required
-              placeholder="Last name"
-              className="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col w-full">
-          <label className="font-semibold text-sm mb-2 text-gray-700 dark:text-gray-300">
-            Email <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FormInput
+            label="First Name"
+            placeholder="Enter your first name"
+            icon={<FaUser />}
             required
-            placeholder="Enter your email"
-            className="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
+            register={register("firstName", {
+              required: "First name is required",
+              minLength: {
+                value: 2,
+                message: "First name must be at least 2 characters",
+              },
+              maxLength: {
+                value: 50,
+                message: "First name must be less than 50 characters",
+              },
+              pattern: {
+                value: /^[a-zA-Z\s'-]+$/,
+                message:
+                  "First name can only contain letters, spaces, hyphens, and apostrophes",
+              },
+            })}
+            error={errors.firstName?.message}
           />
-        </div>
 
-        <div className="flex flex-col w-full">
-          <label className="font-semibold text-sm mb-2 text-gray-700 dark:text-gray-300">
-            Phone Number
-          </label>
-          <input
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            placeholder="Phone number (optional)"
-            className="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
-          />
-        </div>
-
-        <div className="flex flex-col w-full">
-          <label className="font-semibold text-sm mb-2 text-gray-700 dark:text-gray-300">
-            Password <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
+          <FormInput
+            label="Last Name"
+            placeholder="Enter your last name"
+            icon={<FaUser />}
             required
-            placeholder="Create a password"
-            className="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
+            register={register("lastName", {
+              required: "Last name is required",
+              minLength: {
+                value: 2,
+                message: "Last name must be at least 2 characters",
+              },
+              maxLength: {
+                value: 50,
+                message: "Last name must be less than 50 characters",
+              },
+              pattern: {
+                value: /^[a-zA-Z\s'-]+$/,
+                message:
+                  "Last name can only contain letters, spaces, hyphens, and apostrophes",
+              },
+            })}
+            error={errors.lastName?.message}
           />
         </div>
 
-        <div className="flex flex-col w-full">
-          <label className="font-semibold text-sm mb-2 text-gray-700 dark:text-gray-300">
-            Confirm Password <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-            placeholder="Confirm your password"
-            className="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
-          />
-        </div>
+        <FormInput
+          label="Email Address"
+          type="email"
+          placeholder="Enter your email"
+          icon={<FaEnvelope />}
+          required
+          register={register("email", {
+            required: "Email is required",
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: "Please provide a valid email address",
+            },
+            maxLength: {
+              value: 255,
+              message: "Email must be less than 255 characters",
+            },
+          })}
+          error={errors.email?.message}
+        />
+
+        <FormInput
+          label="Phone Number"
+          type="tel"
+          placeholder="Enter your phone number (optional)"
+          icon={<FaPhone />}
+          register={register("phone", {
+            pattern: {
+              value: /^[+]?[\d\s\-()]{10,20}$/,
+              message: "Please provide a valid phone number",
+            },
+            maxLength: {
+              value: 20,
+              message: "Phone number must be less than 20 characters",
+            },
+          })}
+          error={errors.phone?.message}
+        />
+
+        <FormInput
+          label="Password"
+          type="password"
+          placeholder="Create a strong password"
+          icon={<FaLock />}
+          required
+          register={register("password", {
+            required: "Password is required",
+            minLength: {
+              value: 8,
+              message: "Password must be at least 8 characters long",
+            },
+            pattern: {
+              value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+              message:
+                "Password must contain at least one lowercase letter, one uppercase letter, and one number",
+            },
+          })}
+          error={errors.password?.message}
+        />
+
+        <FormInput
+          label="Confirm Password"
+          type="password"
+          placeholder="Confirm your password"
+          icon={<FaLock />}
+          required
+          register={register("confirmPassword", {
+            required: "Please confirm your password",
+            validate: (value) => value === password || "Passwords do not match",
+          })}
+          error={errors.confirmPassword?.message}
+        />
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded-md">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg text-sm">
             {error}
           </div>
         )}
 
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Creating account..." : "Create Account"}
+        <Button
+          type="submit"
+          size="lg"
+          disabled={isSubmitting || loading}
+          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+        >
+          {isSubmitting || loading ? "Creating Account..." : "Create Account"}
         </Button>
       </form>
-
-      {showVerificationReminder && (
-        <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-          <div className="flex items-start space-x-3">
-            <div className="flex-shrink-0">
-              <svg
-                className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <h3 className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                Check Your Email
-              </h3>
-              <p className="mt-1 text-sm text-blue-700 dark:text-blue-300">
-                We've sent a verification email to{" "}
-                <strong>{formData.email}</strong>. Please check your inbox and
-                click the verification link to activate your account.
-              </p>
-              <div className="mt-2 text-xs text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 p-2 rounded">
-                💡 <strong>Tip:</strong> If clicking the link in your email
-                doesn't work, try copying and pasting it directly into your
-                browser's address bar.
-              </div>
-              <div className="mt-3 flex space-x-3">
-                <button
-                  onClick={() => navigate("/login")}
-                  className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium"
-                >
-                  Go to Login
-                </button>
-                <button
-                  onClick={() => setShowVerificationReminder(false)}
-                  className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium"
-                >
-                  Dismiss
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       <div className="mt-6">
         <div className="relative">
@@ -253,7 +295,7 @@ const Register = () => {
             <div className="w-full border-t border-gray-300 dark:border-gray-600" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400">
+            <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
               Or continue with
             </span>
           </div>
