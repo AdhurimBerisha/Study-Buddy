@@ -110,6 +110,7 @@ const userLogin = async (req: Request, res: Response) => {
     }
 
     if (!userPlain.isEmailVerified) {
+      // Admin and tutor accounts are automatically verified, so this check only applies to regular users
       return res.status(401).json({
         message:
           "Please verify your email address before logging in. Check your inbox for a verification email.",
@@ -276,6 +277,7 @@ const createAdminAccount = async (req: Request, res: Response) => {
       firstName,
       lastName,
       role: "admin",
+      isEmailVerified: true, // Admin accounts are automatically verified
     });
 
     const adminPlain = admin.get({ plain: true }) as any;
@@ -313,6 +315,7 @@ const createTutorAccount = async (req: Request, res: Response) => {
       lastName,
       phone: phone || null,
       role: "tutor",
+      isEmailVerified: true, // Tutor accounts are automatically verified
     });
 
     const tutorPlain = tutor.get({ plain: true }) as any;
@@ -344,6 +347,7 @@ const promoteToAdmin = async (req: AuthenticatedRequest, res: Response) => {
 
     await user.update({
       role: "admin",
+      isEmailVerified: true, // Promoted users are automatically verified
     });
 
     const userPlain = user.get({ plain: true }) as any;
