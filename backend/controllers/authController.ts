@@ -165,6 +165,15 @@ const googleAuth = async (req: Request, res: Response) => {
       name,
     } = payload;
 
+    console.log("Google auth payload:", {
+      email,
+      given_name,
+      family_name,
+      googleId,
+      picture,
+      name,
+    });
+
     if (!email) {
       return res
         .status(400)
@@ -202,6 +211,7 @@ const googleAuth = async (req: Request, res: Response) => {
     let user = await User.findOne({ where: { email } });
 
     if (!user) {
+      console.log("Creating new user with Google avatar:", picture);
       user = await User.create({
         email,
         firstName,
@@ -219,16 +229,27 @@ const googleAuth = async (req: Request, res: Response) => {
       }
 
       if (!(user as any).googleId) {
+        console.log("Updating existing user with Google avatar:", picture);
         await user.update({
           googleId,
           avatar: picture || (user as any).avatar,
         });
       } else if (picture && !(user as any).avatar) {
+        console.log(
+          "Updating existing user avatar with Google picture:",
+          picture
+        );
         await user.update({ avatar: picture });
       }
     }
 
     const userPlain = user.get({ plain: true }) as any;
+    console.log("Final user data being returned:", {
+      id: userPlain.id,
+      email: userPlain.email,
+      avatar: userPlain.avatar,
+      googleId: userPlain.googleId,
+    });
     delete userPlain.password;
 
     const jwtToken = generateToken({

@@ -42,6 +42,8 @@ const MyProfile = () => {
   );
   const [isEditing, setIsEditing] = useState(false);
   const [avatarError, setAvatarError] = useState<string | null>(null);
+  const [avatarLoadError, setAvatarLoadError] = useState<boolean>(false);
+  const [isAvatarLoading, setIsAvatarLoading] = useState<boolean>(false);
 
   const {
     register,
@@ -57,6 +59,93 @@ const MyProfile = () => {
     },
   });
 
+  // Function to handle Google avatar URLs more effectively
+  const getOptimizedAvatarUrl = (
+    url: string | null | undefined
+  ): string | null => {
+    if (!url) return null;
+
+    // If it's a Google avatar URL, try to optimize it
+    if (url.includes("googleusercontent.com")) {
+      // Try different size parameters that might work better
+      const baseUrl = url.split("=")[0];
+      // Try a larger size first, then fallback to original
+      return `${baseUrl}=s200-c`;
+    }
+
+    return url;
+  };
+
+  // Function to create initials for fallback avatar
+  const getInitials = (firstName: string, lastName: string): string => {
+    const first = firstName.charAt(0).toUpperCase();
+    const last = lastName.charAt(0).toUpperCase();
+    return `${first}${last}`;
+  };
+
+  // Function to handle avatar loading with multiple fallback strategies
+  const handleAvatarLoad = (url: string) => {
+    // Try to preload the image to check if it's accessible
+    const img = new Image();
+    img.crossOrigin = "anonymous"; // Try to handle CORS
+
+    img.onload = () => {
+      console.log("Avatar image loaded successfully:", url);
+      setAvatarLoadError(false);
+      setIsAvatarLoading(false);
+    };
+
+    img.onerror = () => {
+      console.log("Avatar image failed to load:", url);
+      // If it's a Google URL, try alternative approaches
+      if (url.includes("googleusercontent.com")) {
+        const baseUrl = url.split("=")[0];
+        const alternativeUrls = [
+          `${baseUrl}=s96-c`,
+          `${baseUrl}=s48-c`,
+          `${baseUrl}=s32-c`,
+          url, // Try original URL as last resort
+        ];
+
+        console.log("Trying alternative Google avatar URLs:", alternativeUrls);
+
+        // Try each alternative URL
+        const tryAlternativeUrl = (index: number) => {
+          if (index >= alternativeUrls.length) {
+            console.log("All alternative URLs failed");
+            setAvatarLoadError(true);
+            setIsAvatarLoading(false);
+            return;
+          }
+
+          const altUrl = alternativeUrls[index];
+          console.log(`Trying alternative URL ${index + 1}:`, altUrl);
+
+          const altImg = new Image();
+          altImg.crossOrigin = "anonymous";
+          altImg.onload = () => {
+            console.log("Alternative avatar URL worked:", altUrl);
+            setAvatarPreview(altUrl);
+            setAvatarLoadError(false);
+            setIsAvatarLoading(false);
+          };
+          altImg.onerror = () => {
+            console.log(`Alternative URL ${index + 1} failed, trying next...`);
+            tryAlternativeUrl(index + 1);
+          };
+          altImg.src = altUrl;
+        };
+
+        tryAlternativeUrl(0);
+      } else {
+        setAvatarLoadError(true);
+        setIsAvatarLoading(false);
+      }
+    };
+
+    img.src = url;
+  };
+
   useEffect(() => {
     if (!user) {
       dispatch(fetchProfile());
@@ -67,7 +156,24 @@ const MyProfile = () => {
         email: user.email,
         phone: user.phone || "",
       });
-      setAvatarPreview(user.avatar || null);
+
+      if (user.avatar) {
+        const optimizedUrl = getOptimizedAvatarUrl(user.avatar);
+        if (optimizedUrl) {
+          setAvatarPreview(optimizedUrl);
+          setIsAvatarLoading(true);
+          handleAvatarLoad(optimizedUrl);
+        } else {
+          setAvatarPreview(null);
+          setAvatarLoadError(false);
+          setIsAvatarLoading(false);
+        }
+      } else {
+        setAvatarPreview(null);
+        setAvatarLoadError(false);
+        setIsAvatarLoading(false);
+      }
+
       setSelectedAvatarFile(null);
       setAvatarError(null);
     }
@@ -190,15 +296,55 @@ const MyProfile = () => {
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
           <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-8 text-center relative">
             <div className="relative inline-block">
-              {avatarPreview ? (
-                <img
-                  src={avatarPreview}
-                  alt={`${user.firstName} avatar`}
-                  className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-white shadow-lg"
-                />
+              {avatarPreview && !avatarLoadError ? (
+                <div className="relative">
+                  {isAvatarLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-white/20 rounded-full">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                    </div>
+                  )}
+                  <img
+                    src={avatarPreview}
+                    alt={`${user.firstName} avatar`}
+                    className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-white shadow-lg"
+                    onLoadStart={() => setIsAvatarLoading(true)}
+                    onError={() => {
+                      console.log(
+                        "Avatar image failed to load:",
+                        avatarPreview
+                      );
+                      setAvatarLoadError(true);
+                      setIsAvatarLoading(false);
+                    }}
+                    onLoad={() => {
+                      console.log(
+                        "Avatar image loaded successfully:",
+                        avatarPreview
+                      );
+                      setAvatarLoadError(false);
+                      setIsAvatarLoading(false);
+                    }}
+                  />
+                </div>
               ) : (
                 <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-white/20 border-4 border-white shadow-lg flex items-center justify-center">
-                  <FaUserCircle className="w-16 h-16 sm:w-20 sm:h-20 text-white" />
+                  {user.avatar ? (
+                    // Show initials when avatar fails to load
+                    <div className="text-white font-bold text-2xl sm:text-3xl">
+                      {getInitials(user.firstName, user.lastName)}
+                    </div>
+                  ) : (
+                    <FaUserCircle className="w-16 h-16 sm:w-20 sm:h-20 text-white" />
+                  )}
+                </div>
+              )}
+
+              {/* Debug info - remove this after fixing */}
+              {avatarPreview && (
+                <div className="mt-2 text-xs text-blue-100">
+                  {avatarLoadError && (
+                    <span className="text-red-200 ml-2">(Failed to load)</span>
+                  )}
                 </div>
               )}
 
