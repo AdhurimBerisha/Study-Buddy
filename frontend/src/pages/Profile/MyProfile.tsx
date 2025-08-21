@@ -59,35 +59,29 @@ const MyProfile = () => {
     },
   });
 
-  // Function to handle Google avatar URLs more effectively
   const getOptimizedAvatarUrl = (
     url: string | null | undefined
   ): string | null => {
     if (!url) return null;
 
-    // If it's a Google avatar URL, try to optimize it
     if (url.includes("googleusercontent.com")) {
-      // Try different size parameters that might work better
       const baseUrl = url.split("=")[0];
-      // Try a larger size first, then fallback to original
+
       return `${baseUrl}=s200-c`;
     }
 
     return url;
   };
 
-  // Function to create initials for fallback avatar
   const getInitials = (firstName: string, lastName: string): string => {
     const first = firstName.charAt(0).toUpperCase();
     const last = lastName.charAt(0).toUpperCase();
     return `${first}${last}`;
   };
 
-  // Function to handle avatar loading with multiple fallback strategies
   const handleAvatarLoad = (url: string) => {
-    // Try to preload the image to check if it's accessible
     const img = new Image();
-    img.crossOrigin = "anonymous"; // Try to handle CORS
+    img.crossOrigin = "anonymous";
 
     img.onload = () => {
       console.log("Avatar image loaded successfully:", url);
@@ -97,19 +91,18 @@ const MyProfile = () => {
 
     img.onerror = () => {
       console.log("Avatar image failed to load:", url);
-      // If it's a Google URL, try alternative approaches
+
       if (url.includes("googleusercontent.com")) {
         const baseUrl = url.split("=")[0];
         const alternativeUrls = [
           `${baseUrl}=s96-c`,
           `${baseUrl}=s48-c`,
           `${baseUrl}=s32-c`,
-          url, // Try original URL as last resort
+          url,
         ];
 
         console.log("Trying alternative Google avatar URLs:", alternativeUrls);
 
-        // Try each alternative URL
         const tryAlternativeUrl = (index: number) => {
           if (index >= alternativeUrls.length) {
             console.log("All alternative URLs failed");
@@ -329,7 +322,6 @@ const MyProfile = () => {
               ) : (
                 <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-white/20 border-4 border-white shadow-lg flex items-center justify-center">
                   {user.avatar ? (
-                    // Show initials when avatar fails to load
                     <div className="text-white font-bold text-2xl sm:text-3xl">
                       {getInitials(user.firstName, user.lastName)}
                     </div>

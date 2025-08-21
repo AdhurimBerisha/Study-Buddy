@@ -165,11 +165,8 @@ const ChatLayout = () => {
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedGroup) return;
 
-    // Only send via socket, don't dispatch to Redux immediately
-    // The socket will handle the response and update Redux state
     socketService.sendMessage(selectedGroup.id, newMessage.trim());
 
-    // Clear the input immediately for better UX
     setNewMessage("");
   };
 
