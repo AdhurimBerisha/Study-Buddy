@@ -6,6 +6,8 @@ import {
   promoteToAdmin,
   createAdminAccount,
   createTutorAccount,
+  verifyEmail,
+  resendVerificationEmail,
 } from "../controllers/authController";
 import { requireAuth } from "../middlewares/requireAuth";
 
@@ -17,5 +19,7 @@ router.post("/google", googleAuth);
 router.post("/promote-admin", requireAuth, promoteToAdmin);
 router.post("/create-admin", createAdminAccount);
 router.post("/create-tutor", createTutorAccount);
+router.get("/verify-email/:token", verifyEmail);
+router.post("/resend-verification", resendVerificationEmail);
 
 export default router;

@@ -73,10 +73,10 @@ const CreateCourseForm = ({
         duration:
           typeof lesson.duration === "number" && lesson.duration > 0
             ? lesson.duration
-            : undefined, // Changed from null to undefined
+            : undefined,
         resources: lesson.resources?.trim()
           ? lesson.resources.trim()
-          : undefined, // Changed from null to undefined
+          : undefined,
       }));
 
     if (validLessons.length === 0) {

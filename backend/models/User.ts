@@ -11,6 +11,9 @@ export interface UserAttributes {
   avatar?: string | null;
   googleId?: string | null;
   role: "user" | "tutor" | "admin";
+  isEmailVerified: boolean;
+  emailVerificationToken?: string | null;
+  emailVerificationExpires?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -18,7 +21,15 @@ export interface UserAttributes {
 export interface UserCreationAttributes
   extends Optional<
     UserAttributes,
-    "id" | "phone" | "avatar" | "googleId" | "createdAt" | "updatedAt"
+    | "id"
+    | "phone"
+    | "avatar"
+    | "googleId"
+    | "isEmailVerified"
+    | "emailVerificationToken"
+    | "emailVerificationExpires"
+    | "createdAt"
+    | "updatedAt"
   > {}
 
 export class User extends Model<UserAttributes, UserCreationAttributes> {}
@@ -65,6 +76,19 @@ User.init(
       type: DataTypes.ENUM("user", "tutor", "admin"),
       allowNull: false,
       defaultValue: "user",
+    },
+    isEmailVerified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    emailVerificationToken: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    emailVerificationExpires: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
   },
   {

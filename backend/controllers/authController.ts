@@ -5,6 +5,12 @@ import { generateToken } from "../utils/jwt";
 import { OAuth2Client } from "google-auth-library";
 import { AuthenticatedRequest } from "../middlewares/requireAuth";
 import { handleError } from "../helpers/errorHelper";
+import emailService from "../services/emailService";
+import {
+  generateVerificationToken,
+  generateVerificationExpiry,
+} from "../utils/verificationToken";
+import { Op } from "sequelize";
 
 const getRedirectPath = (role: string) => {
   if (role === "admin") {
@@ -32,6 +38,8 @@ const userSignup = async (req: Request, res: Response) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
+    const verificationToken = generateVerificationToken();
+    const verificationExpiry = generateVerificationExpiry();
 
     const user = await User.create({
       email,
@@ -40,9 +48,22 @@ const userSignup = async (req: Request, res: Response) => {
       lastName,
       phone: phone || null,
       role: "user",
+      emailVerificationToken: verificationToken,
+      emailVerificationExpires: verificationExpiry,
+      isEmailVerified: false,
     });
 
     const userPlain = user.get({ plain: true }) as any;
+
+    try {
+      await emailService.sendVerificationEmail(
+        email,
+        verificationToken,
+        firstName
+      );
+    } catch (emailError) {
+      console.error("Failed to send verification email:", emailError);
+    }
 
     const token = generateToken({
       userId: userPlain.id,
@@ -52,12 +73,15 @@ const userSignup = async (req: Request, res: Response) => {
 
     res.status(201).json({
       success: true,
-      message: "User created successfully",
+      message:
+        "User created successfully. Please check your email to verify your account.",
       token,
       user: userPlain,
       redirectTo: getRedirectPath(userPlain.role),
+      requiresEmailVerification: true,
     });
   } catch (e) {
+    console.error("Error during user creation:", e);
     handleError(res, e, "Error creating user");
   }
 };
@@ -83,6 +107,15 @@ const userLogin = async (req: Request, res: Response) => {
     const isValid = await bcrypt.compare(password, userPlain.password);
     if (!isValid) {
       return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    if (!userPlain.isEmailVerified) {
+      return res.status(401).json({
+        message:
+          "Please verify your email address before logging in. Check your inbox for a verification email.",
+        requiresEmailVerification: true,
+        email: userPlain.email,
+      });
     }
 
     delete userPlain.password;
@@ -320,6 +353,118 @@ const promoteToAdmin = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+const verifyEmail = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.params;
+
+    if (!token) {
+      return res
+        .status(400)
+        .json({ message: "Verification token is required" });
+    }
+
+    const userWithToken = await User.findOne({
+      where: {
+        emailVerificationToken: token,
+      },
+    });
+
+    if (userWithToken && userWithToken.get("isEmailVerified")) {
+      return res.json({
+        success: true,
+        message: "Email is already verified! You can log in to your account.",
+        alreadyVerified: true,
+      });
+    }
+
+    if (!userWithToken) {
+      return res.json({
+        success: true,
+        message:
+          "This verification link has already been used. Your email is verified and you can log in to your account.",
+        alreadyVerified: true,
+        tokenConsumed: true,
+      });
+    }
+
+    const user = await User.findOne({
+      where: {
+        emailVerificationToken: token,
+        emailVerificationExpires: { [Op.gt]: new Date() },
+      },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid or expired verification token",
+      });
+    }
+
+    await user.update({
+      isEmailVerified: true,
+      emailVerificationToken: null,
+      emailVerificationExpires: null,
+    });
+
+    return res.json({
+      success: true,
+      message:
+        "Email verified successfully! You can now log in to your account.",
+    });
+  } catch (e) {
+    console.error("Error in verifyEmail:", e);
+    handleError(res, e, "Error verifying email");
+  }
+};
+
+const resendVerificationEmail = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.get("isEmailVerified")) {
+      return res.status(400).json({ message: "Email is already verified" });
+    }
+
+    const verificationToken = generateVerificationToken();
+    const verificationExpiry = generateVerificationExpiry();
+
+    await user.update({
+      emailVerificationToken: verificationToken,
+      emailVerificationExpires: verificationExpiry,
+    });
+
+    try {
+      await emailService.sendVerificationEmail(
+        email,
+        verificationToken,
+        user.get("firstName") as string
+      );
+    } catch (emailError) {
+      console.error("Failed to send verification email:", emailError);
+      return res.status(500).json({
+        message: "Failed to send verification email. Please try again later.",
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Verification email sent successfully. Please check your inbox.",
+    });
+  } catch (e) {
+    handleError(res, e, "Error resending verification email");
+  }
+};
+
 export {
   userSignup,
   userLogin,
@@ -327,4 +472,6 @@ export {
   promoteToAdmin,
   createAdminAccount,
   createTutorAccount,
+  verifyEmail,
+  resendVerificationEmail,
 };

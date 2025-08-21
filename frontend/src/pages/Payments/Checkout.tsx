@@ -38,7 +38,7 @@ const Checkout = () => {
     if (state && state.type === "tutor") {
       const amt = state.booking.isTrial
         ? state.tutor.trialRate
-        : state.tutor.trialRate * 2; // Use trial rate * 2 for regular lessons
+        : state.tutor.trialRate * 2;
       const label = state.booking.isTrial ? "Trial Lesson" : "1 Hour Lesson";
 
       const numericAmount = Number(amt) || 0;

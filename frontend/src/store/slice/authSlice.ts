@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import type { RootState } from "../store";
 import api from "../../services/api";
 
 export interface User {
@@ -18,6 +17,10 @@ export interface AuthState {
   loading: boolean;
   error: string | null;
   redirectTo?: string;
+}
+
+interface ErrorPayload {
+  message: string;
 }
 
 const initialState: AuthState = {
@@ -39,11 +42,12 @@ const login = createAsyncThunk(
       const { token, user, redirectTo } = response.data;
       localStorage.setItem("token", token);
       return { token, user, redirectTo };
-    } catch (error: any) {
-      // Return the error message from the backend response
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Login failed";
       return rejectWithValue({
-        message: error.response?.data?.message || "Login failed",
-      });
+        message: errorMessage,
+      } as ErrorPayload);
     }
   }
 );
@@ -56,11 +60,12 @@ const googleLogin = createAsyncThunk(
       const { token, user, redirectTo } = response.data;
       localStorage.setItem("token", token);
       return { token, user, redirectTo };
-    } catch (error: any) {
-      // Return the error message from the backend response
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Google login failed";
       return rejectWithValue({
-        message: error.response?.data?.message || "Google login failed",
-      });
+        message: errorMessage,
+      } as ErrorPayload);
     }
   }
 );
@@ -92,11 +97,12 @@ const register = createAsyncThunk(
         phone,
       });
       return response.data;
-    } catch (error: any) {
-      // Return the error message from the backend response
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Registration failed";
       return rejectWithValue({
-        message: error.response?.data?.message || "Registration failed",
-      });
+        message: errorMessage,
+      } as ErrorPayload);
     }
   }
 );
@@ -179,9 +185,11 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        // Extract error message from the backend response
+
         const errorMessage =
-          action.payload?.message || action.error.message || "Login failed";
+          (action.payload as ErrorPayload)?.message ||
+          action.error.message ||
+          "Login failed";
         state.error = errorMessage;
       })
 
@@ -198,9 +206,9 @@ const authSlice = createSlice({
       })
       .addCase(googleLogin.rejected, (state, action) => {
         state.loading = false;
-        // Extract error message from the backend response
+
         const errorMessage =
-          action.payload?.message ||
+          (action.payload as ErrorPayload)?.message ||
           action.error.message ||
           "Google login failed";
         state.error = errorMessage;
@@ -218,9 +226,9 @@ const authSlice = createSlice({
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
-        // Extract error message from the backend response
+
         const errorMessage =
-          action.payload?.message ||
+          (action.payload as ErrorPayload)?.message ||
           action.error.message ||
           "Registration failed";
         state.error = errorMessage;

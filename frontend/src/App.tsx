@@ -26,6 +26,7 @@ import MyLearning from "./pages/Learning/MyLearning";
 import CourseReader from "./pages/Learning/CourseReader";
 import CodeEditorDemo from "./pages/CodeEditorDemo/CodeEditorDemo";
 import Dashboard from "./pages/Dashboard/Dashboard";
+import EmailVerification from "./pages/EmailVerification/EmailVerification";
 import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -110,6 +111,7 @@ const App = () => {
           }
         />
         <Route path="/code-editor" element={<CodeEditorDemo />} />
+        <Route path="/verify-email" element={<EmailVerification />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
