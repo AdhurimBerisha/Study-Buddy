@@ -18,19 +18,9 @@ Tutor.belongsTo(User, {
   as: "user",
 });
 
-Tutor.hasMany(Course, {
-  foreignKey: "tutorId",
-  as: "courses",
-});
-
-Course.belongsTo(Tutor, {
-  foreignKey: "tutorId",
-  as: "tutor",
-});
-
 Course.belongsTo(User, {
   foreignKey: "tutorId",
-  as: "tutorUser",
+  as: "tutor",
 });
 
 User.hasMany(Course, {
