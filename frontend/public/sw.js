@@ -1,14 +1,50 @@
 self.addEventListener("fetch", (event) => {
+  const url = new URL(event.request.url);
+
   if (
-    event.request.url.includes("accounts.google.com") ||
-    event.request.url.includes("googleapis.com") ||
-    event.request.url.includes("cloudflareinsights.com") ||
-    event.request.url.includes("gsi/log")
+    url.hostname !== location.hostname ||
+    url.hostname.includes("accounts.google.com") ||
+    url.hostname.includes("googleapis.com") ||
+    url.hostname.includes("cloudflareinsights.com") ||
+    url.hostname.includes("gsi/log")
   ) {
     return;
   }
 
-  event.respondWith(fetch(event.request));
+  if (event.request.mode === "navigate") {
+    return;
+  }
+
+  if (url.pathname.includes("/verify-email")) {
+    return;
+  }
+
+  if (event.request.method !== "GET") {
+    return;
+  }
+
+  if (
+    url.pathname.includes(".js") ||
+    url.pathname.includes(".css") ||
+    url.pathname.includes(".png") ||
+    url.pathname.includes(".jpg") ||
+    url.pathname.includes(".jpeg") ||
+    url.pathname.includes(".gif") ||
+    url.pathname.includes(".svg") ||
+    url.pathname.includes(".ico") ||
+    url.pathname.includes(".woff") ||
+    url.pathname.includes(".woff2") ||
+    url.pathname.includes(".ttf") ||
+    url.pathname.includes(".eot")
+  ) {
+    event.respondWith(
+      fetch(event.request).catch((error) => {
+        console.log("Service Worker fetch failed:", error);
+
+        return fetch(event.request);
+      })
+    );
+  }
 });
 
 self.addEventListener("install", (event) => {

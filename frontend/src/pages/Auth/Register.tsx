@@ -21,9 +21,23 @@ const Register = () => {
     phone: "",
   });
 
+  const [showVerificationReminder, setShowVerificationReminder] =
+    useState(false);
+
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { loading, error } = useSelector((state: RootState) => state.auth);
+
+  const clearForm = () => {
+    setFormData({
+      email: "",
+      password: "",
+      confirmPassword: "",
+      firstName: "",
+      lastName: "",
+      phone: "",
+    });
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -53,8 +67,21 @@ const Register = () => {
     );
 
     if (register.fulfilled.match(result)) {
-      toast.success("Account created successfully! Please sign in.");
-      navigate("/login");
+      const payload = result.payload as {
+        requiresEmailVerification?: boolean;
+        message?: string;
+      };
+
+      if (payload.requiresEmailVerification) {
+        toast.success(
+          "Account created successfully! Please check your email to verify your account before signing in."
+        );
+        setShowVerificationReminder(true);
+        clearForm();
+      } else {
+        toast.success("Account created successfully! Please sign in.");
+        navigate("/login");
+      }
     }
   };
 
@@ -168,6 +195,57 @@ const Register = () => {
           {loading ? "Creating account..." : "Create Account"}
         </Button>
       </form>
+
+      {showVerificationReminder && (
+        <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <div className="flex items-start space-x-3">
+            <div className="flex-shrink-0">
+              <svg
+                className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                Check Your Email
+              </h3>
+              <p className="mt-1 text-sm text-blue-700 dark:text-blue-300">
+                We've sent a verification email to{" "}
+                <strong>{formData.email}</strong>. Please check your inbox and
+                click the verification link to activate your account.
+              </p>
+              <div className="mt-2 text-xs text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 p-2 rounded">
+                💡 <strong>Tip:</strong> If clicking the link in your email
+                doesn't work, try copying and pasting it directly into your
+                browser's address bar.
+              </div>
+              <div className="mt-3 flex space-x-3">
+                <button
+                  onClick={() => navigate("/login")}
+                  className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium"
+                >
+                  Go to Login
+                </button>
+                <button
+                  onClick={() => setShowVerificationReminder(false)}
+                  className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="mt-6">
         <div className="relative">

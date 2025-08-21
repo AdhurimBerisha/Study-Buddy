@@ -43,6 +43,12 @@ const login = createAsyncThunk(
       localStorage.setItem("token", token);
       return { token, user, redirectTo };
     } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        const axiosError = error as { response?: { data?: unknown } };
+        if (axiosError.response?.data) {
+          return rejectWithValue(axiosError.response.data);
+        }
+      }
       const errorMessage =
         error instanceof Error ? error.message : "Login failed";
       return rejectWithValue({
@@ -137,6 +143,32 @@ const updateProfile = createAsyncThunk(
     } else {
       const response = await api.put("/users/me", profileData || {});
       return response.data.data || response.data;
+    }
+  }
+);
+
+const resendVerificationEmail = createAsyncThunk(
+  "auth/resendVerificationEmail",
+  async (email: string, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/auth/resend-verification-email", {
+        email,
+      });
+      return response.data;
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        const axiosError = error as { response?: { data?: unknown } };
+        if (axiosError.response?.data) {
+          return rejectWithValue(axiosError.response.data);
+        }
+      }
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to resend verification email";
+      return rejectWithValue({
+        message: errorMessage,
+      } as ErrorPayload);
     }
   }
 );
@@ -278,4 +310,11 @@ export const {
   clearRedirect,
 } = authSlice.actions;
 
-export { login, googleLogin, register, fetchProfile, updateProfile };
+export {
+  login,
+  googleLogin,
+  register,
+  fetchProfile,
+  updateProfile,
+  resendVerificationEmail,
+};
