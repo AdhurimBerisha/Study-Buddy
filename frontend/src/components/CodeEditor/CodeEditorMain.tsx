@@ -89,7 +89,7 @@ const CodeEditorMain = ({ showPreview }: CodeEditorMainProps) => {
     <div
       ref={editorRef}
       className={`flex-1 relative overflow-auto min-h-[300px] ${
-        showPreview ? "w-full lg:w-[45%]" : "w-full lg:w-[calc(100%-200px)]"
+        showPreview ? "w-full lg:w-[50%]" : "w-full lg:w-[calc(100%-200px)]"
       }`}
     >
       <div className="w-full h-full overflow-auto min-h-[300px]">

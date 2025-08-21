@@ -48,11 +48,7 @@ const CodeEditor = ({
           onTogglePreview={onTogglePreview}
         />
 
-        <div
-          style={{ height: height || "600px" }}
-          data-editor-container
-          className="min-h-[400px] w-full"
-        >
+        <div style={{ height }} data-editor-container>
           <SandpackProvider
             template={selectedTemplate}
             files={files}
@@ -60,12 +56,11 @@ const CodeEditor = ({
           >
             <SandpackLayout className="min-h-0 flex flex-col overflow-hidden">
               <div
-                className="flex flex-col lg:flex-row overflow-hidden flex-1"
+                className="flex overflow-hidden"
                 style={{
                   height: showConsole
                     ? `calc(${height} - ${consoleHeight})`
                     : height,
-                  minHeight: "300px",
                 }}
               >
                 <CodeEditorSidebar showFileExplorer={showFileExplorer} />
