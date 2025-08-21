@@ -7,15 +7,12 @@ import {
   setChatWidgetOpen,
   loadMessages,
   markGroupAsRead,
-  receiveMessage,
-  sendMessage,
 } from "../store/slice/chatSlice";
 import { fetchMyGroups } from "../store/slice/groupsSlice";
 import socketService from "../services/socket";
 import { groupAPI } from "../services/api";
 import Badge from "./Badge";
-import { useUnreadCount } from "../hooks/useUnreadCount";
-import { requestNotificationPermission } from "../utils/notifications";
+
 import { toast } from "react-toastify";
 
 interface ApiMessage {
@@ -168,17 +165,11 @@ const ChatLayout = () => {
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedGroup) return;
 
+    // Only send via socket, don't dispatch to Redux immediately
+    // The socket will handle the response and update Redux state
     socketService.sendMessage(selectedGroup.id, newMessage.trim());
 
-    dispatch(
-      sendMessage({
-        groupId: selectedGroup.id,
-        content: newMessage.trim(),
-        sender: "You",
-      })
-    );
-
-    toast.success("Message sent successfully!");
+    // Clear the input immediately for better UX
     setNewMessage("");
   };
 
@@ -331,7 +322,9 @@ const ChatLayout = () => {
                   <p className="text-sm sm:text-base">{msg.content}</p>
                   <p
                     className={`text-xs mt-2 text-right ${
-                      msg.sender === "You" ? "text-blue-100" : "text-gray-500 dark:text-gray-400"
+                      msg.sender === "You"
+                        ? "text-blue-100"
+                        : "text-gray-500 dark:text-gray-400"
                     }`}
                   >
                     {msg.timestamp}

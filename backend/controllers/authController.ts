@@ -165,15 +165,6 @@ const googleAuth = async (req: Request, res: Response) => {
       name,
     } = payload;
 
-    console.log("Google auth payload:", {
-      email,
-      given_name,
-      family_name,
-      googleId,
-      picture,
-      name,
-    });
-
     if (!email) {
       return res
         .status(400)
@@ -244,12 +235,6 @@ const googleAuth = async (req: Request, res: Response) => {
     }
 
     const userPlain = user.get({ plain: true }) as any;
-    console.log("Final user data being returned:", {
-      id: userPlain.id,
-      email: userPlain.email,
-      avatar: userPlain.avatar,
-      googleId: userPlain.googleId,
-    });
     delete userPlain.password;
 
     const jwtToken = generateToken({
