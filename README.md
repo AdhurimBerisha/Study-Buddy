@@ -11,6 +11,7 @@ StudyBuddy is a modern e-learning platform built for aspiring tech professionals
 - Track your progress and set personal learning goals
 - Engage with peers through real-time group study sessions
 - Explore curated learning paths tailored to various tech careers
+- Manage and monitor activities through a dedicated dashboard for tutors and admins
 
 ## Tech Stack
 
