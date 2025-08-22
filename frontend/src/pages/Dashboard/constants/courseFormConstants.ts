@@ -1,18 +1,12 @@
 export const categories = [
-  "Programming",
-  "Web Development",
+  "Web Development - Front End",
+  "Web Development - Back End",
+  "Software Development",
+  "Networking & Security",
   "Mobile Development",
   "Data Science",
-  "Machine Learning",
-  "Design",
-  "Business",
-  "Marketing",
-  "Finance",
-  "Health & Fitness",
-  "Music",
-  "Art",
-  "Language",
-  "Other",
+  "DevOps & Cloud",
+  "Game Development",
 ];
 
 export const languages = [
