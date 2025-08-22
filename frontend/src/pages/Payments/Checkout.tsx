@@ -12,8 +12,8 @@ type CheckoutState =
     }
   | {
       type: "tutor";
-      tutor: { name: string; trialRate: number };
-      booking: { isTrial: boolean };
+      tutor: { name: string };
+      booking: { duration: number };
     };
 
 const Checkout = () => {
@@ -36,18 +36,12 @@ const Checkout = () => {
       };
     }
     if (state && state.type === "tutor") {
-      const amt = state.booking.isTrial
-        ? state.tutor.trialRate
-        : state.tutor.trialRate * 2;
-      const label = state.booking.isTrial ? "Trial Lesson" : "1 Hour Lesson";
+      const label = `Book ${state.tutor.name}`;
 
-      const numericAmount = Number(amt) || 0;
       return {
-        title: `${label} with ${state.tutor.name}`,
-        amount: numericAmount,
-        subtitle: state.booking.isTrial
-          ? "Discounted one-time trial lesson"
-          : "Standard hourly private lesson",
+        title: `${label}`,
+        amount: 0,
+        subtitle: "Tutor booking feature coming soon",
       };
     }
     return { title: "Checkout", amount: 0, subtitle: "" };

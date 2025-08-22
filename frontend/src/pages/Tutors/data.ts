@@ -7,7 +7,6 @@ export type Tutor = {
   headline: string;
   description: string;
   speaks: string;
-  trialRate: string;
 };
 
 export const tutors: Tutor[] = [
@@ -21,7 +20,6 @@ export const tutors: Tutor[] = [
     description:
       "consectetur adipisicing elit, sed do eiusmod ut labore et magna aliqua...",
     speaks: "English (Native), French C1",
-    trialRate: "USD 6.50",
   },
   {
     id: "amilia-luna",
@@ -34,7 +32,6 @@ export const tutors: Tutor[] = [
     description:
       "consectetur adipisicing elit, sed do eiusmod ut labore et magna aliqua...",
     speaks: "English (Native)",
-    trialRate: "USD 6.00",
   },
   {
     id: "amilia-luna",
@@ -46,7 +43,6 @@ export const tutors: Tutor[] = [
     description:
       "consectetur adipisicing elit, sed do eiusmod ut labore et magna aliqua...",
     speaks: "English (Native)",
-    trialRate: "USD 6.00",
   },
   {
     id: "amilia-luna",
@@ -58,7 +54,6 @@ export const tutors: Tutor[] = [
     description:
       "consectetur adipisicing elit, sed do eiusmod ut labore et magna aliqua...",
     speaks: "English (Native)",
-    trialRate: "USD 6.00",
   },
   {
     id: "amilia-luna",
@@ -70,7 +65,6 @@ export const tutors: Tutor[] = [
     description:
       "consectetur adipisicing elit, sed do eiusmod ut labore et magna aliqua...",
     speaks: "English (Native)",
-    trialRate: "USD 6.00",
   },
 ];
 

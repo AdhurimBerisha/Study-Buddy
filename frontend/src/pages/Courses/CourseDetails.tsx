@@ -303,7 +303,7 @@ const CourseDetails = () => {
                   <div className="mt-3 text-sm text-gray-600 dark:text-gray-400">
                     <span className="mr-3">{tutor.lessons} lessons</span>
 
-                    <span>Trial: {tutor.trialRate}</span>
+                    <span>Available for consultation</span>
                   </div>
                   <div className="mt-4 flex gap-3">
                     <Link to={`/tutors/${toTutorSlug(tutor.name)}`}>
@@ -315,11 +315,8 @@ const CourseDetails = () => {
                         type: "tutor",
                         tutor: {
                           name: tutor.name,
-                          trialRate: parseFloat(
-                            tutor.trialRate.replace(/[^0-9.]/g, "")
-                          ),
                         },
-                        booking: { isTrial: true },
+                        booking: { duration: 1 },
                       }}
                     >
                       <Button size="sm" variant="secondary">
