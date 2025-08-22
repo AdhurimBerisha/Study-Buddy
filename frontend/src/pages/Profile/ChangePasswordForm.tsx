@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaLock } from "react-icons/fa";
 import FormInput from "../../components/FormInput";
@@ -20,7 +20,7 @@ interface ApiError {
   };
 }
 
-const ChangePasswordForm: React.FC = () => {
+const ChangePasswordForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const {
