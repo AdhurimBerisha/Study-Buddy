@@ -8,6 +8,8 @@ import {
   createTutorAccount,
   verifyEmail,
   resendVerificationEmail,
+  forgotPassword,
+  resetPassword,
 } from "../controllers/authController";
 import { requireAuth } from "../middlewares/requireAuth";
 import {
@@ -67,5 +69,9 @@ router.post(
   handleValidationErrors,
   resendVerificationEmail
 );
+
+router.post("/forgot-password", authRateLimit, forgotPassword);
+
+router.post("/reset-password", authRateLimit, resetPassword);
 
 export default router;

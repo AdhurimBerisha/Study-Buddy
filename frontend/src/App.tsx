@@ -7,6 +7,8 @@ import About from "./pages/About/About";
 import Contact from "./pages/Contact/Contact";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
 import Navbar from "./components/Navbar";
 import Courses from "./pages/Courses/Courses";
 import CourseDetails from "./pages/Courses/CourseDetails";
@@ -114,6 +116,8 @@ const App = () => {
         <Route path="/verify-email" element={<EmailVerification />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       {showChatLayout && <ChatLayout />}

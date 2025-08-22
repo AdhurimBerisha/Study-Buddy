@@ -110,7 +110,6 @@ const userLogin = async (req: Request, res: Response) => {
     }
 
     if (!userPlain.isEmailVerified) {
-      // Admin and tutor accounts are automatically verified, so this check only applies to regular users
       return res.status(401).json({
         message:
           "Please verify your email address before logging in. Check your inbox for a verification email.",
@@ -277,7 +276,7 @@ const createAdminAccount = async (req: Request, res: Response) => {
       firstName,
       lastName,
       role: "admin",
-      isEmailVerified: true, // Admin accounts are automatically verified
+      isEmailVerified: true,
     });
 
     const adminPlain = admin.get({ plain: true }) as any;
@@ -315,7 +314,7 @@ const createTutorAccount = async (req: Request, res: Response) => {
       lastName,
       phone: phone || null,
       role: "tutor",
-      isEmailVerified: true, // Tutor accounts are automatically verified
+      isEmailVerified: true,
     });
 
     const tutorPlain = tutor.get({ plain: true }) as any;
@@ -347,7 +346,7 @@ const promoteToAdmin = async (req: AuthenticatedRequest, res: Response) => {
 
     await user.update({
       role: "admin",
-      isEmailVerified: true, // Promoted users are automatically verified
+      isEmailVerified: true,
     });
 
     const userPlain = user.get({ plain: true }) as any;
@@ -475,6 +474,107 @@ const resendVerificationEmail = async (req: Request, res: Response) => {
   }
 };
 
+const forgotPassword = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.json({
+        success: true,
+        message:
+          "If an account with that email exists, a password reset link has been sent.",
+      });
+    }
+
+    const resetToken = generateVerificationToken();
+    const resetExpiry = new Date(Date.now() + 60 * 60 * 1000);
+
+    await user.update({
+      resetPasswordToken: resetToken,
+      resetPasswordExpires: resetExpiry,
+    });
+
+    try {
+      await emailService.sendPasswordResetEmail(
+        email,
+        resetToken,
+        user.get("firstName") as string
+      );
+    } catch (emailError) {
+      console.error("Failed to send password reset email:", emailError);
+
+      await user.update({
+        resetPasswordToken: null,
+        resetPasswordExpires: null,
+      });
+      return res.status(500).json({
+        message: "Failed to send password reset email. Please try again later.",
+      });
+    }
+
+    return res.json({
+      success: true,
+      message:
+        "If an account with that email exists, a password reset link has been sent.",
+    });
+  } catch (e) {
+    handleError(res, e, "Error processing password reset request");
+  }
+};
+
+const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+      return res.status(400).json({
+        message: "Reset token and new password are required",
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        message: "Password must be at least 6 characters long",
+      });
+    }
+
+    const user = await User.findOne({
+      where: {
+        resetPasswordToken: token,
+        resetPasswordExpires: { [Op.gt]: new Date() },
+      },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid or expired reset token",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+    await user.update({
+      password: hashedPassword,
+      resetPasswordToken: null,
+      resetPasswordExpires: null,
+    });
+
+    return res.json({
+      success: true,
+      message:
+        "Password reset successfully. You can now log in with your new password.",
+    });
+  } catch (e) {
+    handleError(res, e, "Error resetting password");
+  }
+};
+
 export {
   userSignup,
   userLogin,
@@ -484,4 +584,6 @@ export {
   createTutorAccount,
   verifyEmail,
   resendVerificationEmail,
+  forgotPassword,
+  resetPassword,
 };

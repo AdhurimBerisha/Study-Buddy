@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { useCustomPageTitle } from "../../hooks/usePageTitle";
 import FormInput from "../../components/FormInput";
 import { FaEnvelope, FaLock } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 interface LoginFormData {
   email: string;
@@ -169,6 +170,15 @@ const Login = () => {
           })}
           error={errors.password?.message}
         />
+
+        <div className="flex justify-end">
+          <Link
+            to="/forgot-password"
+            className="text-sm text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
+          >
+            Forgot Password?
+          </Link>
+        </div>
 
         {error && (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg text-sm">

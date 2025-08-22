@@ -14,6 +14,8 @@ export interface UserAttributes {
   isEmailVerified: boolean;
   emailVerificationToken?: string | null;
   emailVerificationExpires?: Date | null;
+  resetPasswordToken?: string | null;
+  resetPasswordExpires?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -28,6 +30,8 @@ export interface UserCreationAttributes
     | "isEmailVerified"
     | "emailVerificationToken"
     | "emailVerificationExpires"
+    | "resetPasswordToken"
+    | "resetPasswordExpires"
     | "createdAt"
     | "updatedAt"
   > {}
@@ -87,6 +91,14 @@ User.init(
       allowNull: true,
     },
     emailVerificationExpires: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    resetPasswordToken: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    resetPasswordExpires: {
       type: DataTypes.DATE,
       allowNull: true,
     },
