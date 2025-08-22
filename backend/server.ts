@@ -13,6 +13,7 @@ import groupRoutes from "./routes/group";
 import tutorRoutes from "./routes/tutor";
 import lessonRoutes from "./routes/lesson";
 import purchaseRoutes from "./routes/purchase";
+import paymentRoutes from "./routes/payment";
 import adminRoutes from "./routes/admin";
 import socketManager from "./config/socket";
 
@@ -31,6 +32,7 @@ app.use("/api/groups", groupRoutes);
 app.use("/api/tutors", tutorRoutes);
 app.use("/api/lessons", lessonRoutes);
 app.use("/api/purchases", purchaseRoutes);
+app.use("/api/payments", paymentRoutes);
 app.use("/api/admin", adminRoutes);
 
 app.get("/", (_req, res) => {

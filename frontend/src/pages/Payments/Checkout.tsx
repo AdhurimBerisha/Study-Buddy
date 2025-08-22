@@ -1,26 +1,22 @@
 import { useMemo } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import Button from "../../components/Button";
-import { useLearning } from "../../hooks/useLearning";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import { useAuth } from "../../hooks/useAuth";
 import { toast } from "react-toastify";
+import StripePaymentForm from "../../components/StripePaymentForm";
+import Button from "../../components/Button";
 
-type CheckoutState =
-  | {
-      type: "course";
-      course: { id: string; title: string; price: number };
-    }
-  | {
-      type: "tutor";
-      tutor: { name: string };
-      booking: { duration: number };
-    };
+type CheckoutState = {
+  course: { id: string; title: string; price: number };
+};
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY!);
 
 const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { purchaseCourse } = useLearning();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   const state = useMemo(
     () => (location.state || {}) as CheckoutState,
@@ -28,48 +24,15 @@ const Checkout = () => {
   );
 
   const { title, amount, subtitle } = useMemo(() => {
-    if (state && state.type === "course") {
+    if (state) {
       return {
         title: `Purchase: ${state.course.title}`,
         amount: Number(state.course.price) || 0,
         subtitle: "Full course access - one-time purchase",
       };
     }
-    if (state && state.type === "tutor") {
-      const label = `Book ${state.tutor.name}`;
-
-      return {
-        title: `${label}`,
-        amount: 0,
-        subtitle: "Tutor booking feature coming soon",
-      };
-    }
     return { title: "Checkout", amount: 0, subtitle: "" };
   }, [state]);
-
-  const handleComplete = async () => {
-    if (!isAuthenticated) {
-      toast.error("Please log in to complete this purchase.");
-      navigate("/login");
-      return;
-    }
-
-    toast.success("Payment successful! Redirecting to your course...");
-    if (state && state.type === "course") {
-      try {
-        await purchaseCourse(state.course.id);
-        toast.success("Course purchased successfully!");
-        navigate(`/learning/course/${state.course.id}`, { replace: true });
-        return;
-      } catch (error) {
-        console.error("Failed to purchase course:", error);
-        toast.error("Failed to purchase course. Please try again.");
-        navigate("/learning", { replace: true });
-        return;
-      }
-    }
-    navigate("/learning", { replace: true });
-  };
 
   if (!state) {
     return (
@@ -86,7 +49,7 @@ const Checkout = () => {
     );
   }
 
-  if (state.type === "course" && !isAuthenticated) {
+  if (!isAuthenticated) {
     return (
       <div className="max-w-3xl mx-auto px-6 py-16">
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-10 text-center border border-gray-100 dark:border-gray-700">
@@ -119,43 +82,44 @@ const Checkout = () => {
           <p className="text-gray-600 dark:text-gray-400 mt-2">{subtitle}</p>
         </div>
         <div className="p-6 sm:p-10">
-          <div className="bg-white dark:bg-gray-700 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-gray-600">
-            <div className="flex items-center justify-between text-lg text-gray-900 dark:text-gray-100">
-              <span>Total</span>
-              <span className="font-bold text-blue-600 dark:text-blue-400">
-                $
-                {(typeof amount === "number" && !isNaN(amount)
-                  ? amount
-                  : 0
-                ).toFixed(2)}
-              </span>
+          {isAuthenticated ? (
+            <div className="bg-white dark:bg-gray-700 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-gray-600">
+              <div className="flex items-center justify-between text-lg text-gray-900 dark:text-gray-100 mb-6">
+                <span>Total</span>
+                <span className="font-bold text-blue-600 dark:text-blue-400">
+                  ${amount.toFixed(2)}
+                </span>
+              </div>
+
+              <Elements stripe={stripePromise}>
+                <StripePaymentForm
+                  amount={amount}
+                  courseId={state.course.id}
+                  userId={user?.id || ""}
+                  onSuccess={() => {
+                    toast.success(
+                      "Payment successful! Redirecting to your course..."
+                    );
+                    navigate(`/learning/course/${state.course.id}`, {
+                      replace: true,
+                    });
+                  }}
+                  onError={() => {
+                    toast.error("Payment failed. Please try again.");
+                  }}
+                />
+              </Elements>
             </div>
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <input
-                className="border rounded-lg px-4 py-3 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 border-gray-300 dark:border-gray-500"
-                placeholder="Card number"
-              />
-              <input
-                className="border rounded-lg px-4 py-3 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 border-gray-300 dark:border-gray-500"
-                placeholder="MM/YY"
-              />
-              <input
-                className="border rounded-lg px-4 py-3 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 border-gray-300 dark:border-gray-500"
-                placeholder="CVC"
-              />
-              <input
-                className="border rounded-lg px-4 py-3 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 border-gray-300 dark:border-gray-500"
-                placeholder="Cardholder name"
-              />
+          ) : (
+            <div className="bg-white dark:bg-gray-700 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-gray-600 text-center">
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                No items to checkout.
+              </p>
+              <Link to="/">
+                <Button>Go Home</Button>
+              </Link>
             </div>
-            <Button className="mt-6 w-full" onClick={handleComplete}>
-              Pay $
-              {(typeof amount === "number" && !isNaN(amount)
-                ? amount
-                : 0
-              ).toFixed(2)}
-            </Button>
-          </div>
+          )}
         </div>
       </div>
     </div>
