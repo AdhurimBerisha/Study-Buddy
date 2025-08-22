@@ -33,7 +33,7 @@ const LazyImage = ({
         }
       },
       {
-        rootMargin: "50px", // Start loading 50px before image comes into view
+        rootMargin: "50px",
         threshold: 0.1,
       }
     );
