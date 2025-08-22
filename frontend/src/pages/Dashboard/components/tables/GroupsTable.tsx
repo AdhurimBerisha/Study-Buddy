@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../../store/store";
 import { fetchGroups, setGroupsPage } from "../../../../store/slice/adminSlice";
-import { Pagination } from "../../../../components";
+import Pagination from "../../../../components/Pagination";
 
 const GroupsTable = () => {
   const dispatch = useDispatch<AppDispatch>();

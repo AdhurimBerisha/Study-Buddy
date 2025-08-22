@@ -4,7 +4,7 @@ import {
   fetchTutorCourses,
   setCoursesPage,
 } from "../../../../store/slice/tutorSlice";
-import { Pagination } from "../../../../components";
+import Pagination from "../../../../components/Pagination";
 
 interface Course {
   id: string;

@@ -28,6 +28,19 @@ User.hasMany(Course, {
   as: "tutorCourses",
 });
 
+// Add association between Tutor and Course through User
+Tutor.hasMany(Course, {
+  foreignKey: "tutorId",
+  sourceKey: "userId",
+  as: "courses",
+});
+
+Course.belongsTo(Tutor, {
+  foreignKey: "tutorId",
+  targetKey: "userId",
+  as: "tutorProfile",
+});
+
 Course.hasMany(Lesson, {
   foreignKey: "courseId",
   as: "lessons",

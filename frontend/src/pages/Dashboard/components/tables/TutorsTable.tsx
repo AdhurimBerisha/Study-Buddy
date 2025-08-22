@@ -6,7 +6,7 @@ import {
   fetchTutors,
   setTutorsPage,
 } from "../../../../store/slice/adminSlice";
-import { Pagination } from "../../../../components";
+import Pagination from "../../../../components/Pagination";
 
 const TutorsTable = () => {
   const dispatch = useDispatch<AppDispatch>();

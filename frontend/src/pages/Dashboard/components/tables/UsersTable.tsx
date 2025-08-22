@@ -6,7 +6,7 @@ import {
   fetchUsers,
   setUsersPage,
 } from "../../../../store/slice/adminSlice";
-import { Pagination } from "../../../../components";
+import Pagination from "../../../../components/Pagination";
 
 const UsersTable = () => {
   const dispatch = useDispatch<AppDispatch>();

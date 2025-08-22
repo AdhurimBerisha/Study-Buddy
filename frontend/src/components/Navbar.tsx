@@ -9,6 +9,7 @@ import type { RootState } from "../store/store";
 import Badge from "./Badge";
 import ThemeToggle from "./ThemeToggle";
 import { getDisplayName } from "../utils/nameUtils";
+import { useRoutePreloader } from "../hooks/useRoutePreloader";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,6 +19,7 @@ const Navbar = () => {
     useState(false);
   const location = useLocation();
   const isGroupsActive = location.pathname.startsWith("/groups");
+  const { preloadOnHover } = useRoutePreloader();
 
   const { user, isAuthenticated, logout } = useAuth();
   const { unreadCountsByGroupId } = useSelector(
@@ -65,6 +67,7 @@ const Navbar = () => {
                       : "text-gray-900 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400"
                   }`
                 }
+                onMouseEnter={() => preloadOnHover("/")}
               >
                 Home
               </NavLink>
@@ -77,6 +80,7 @@ const Navbar = () => {
                       ? "text-blue-600 dark:text-blue-400 font-semibold"
                       : "text-gray-900 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400"
                   }`}
+                  onMouseEnter={() => preloadOnHover("/courses")}
                 >
                   Courses
                   <svg
@@ -98,12 +102,14 @@ const Navbar = () => {
                     <NavLink
                       to="/courses"
                       className="block px-4 py-2 text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                      onMouseEnter={() => preloadOnHover("/courses")}
                     >
                       All Courses
                     </NavLink>
                     <NavLink
                       to="/learning"
                       className="block px-4 py-2 text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                      onMouseEnter={() => preloadOnHover("/learning")}
                     >
                       My Learning
                     </NavLink>
@@ -120,6 +126,7 @@ const Navbar = () => {
                       : "text-gray-900 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400"
                   }`
                 }
+                onMouseEnter={() => preloadOnHover("/tutors")}
               >
                 Tutors
               </NavLink>
@@ -132,6 +139,7 @@ const Navbar = () => {
                       ? "text-blue-600 dark:text-blue-400 font-semibold"
                       : "text-gray-900 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400"
                   }`}
+                  onMouseEnter={() => preloadOnHover("/groups")}
                 >
                   Groups
                   {totalUnreadCount > 0 && (
@@ -199,6 +207,7 @@ const Navbar = () => {
                       : "text-gray-900 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400"
                   }`
                 }
+                onMouseEnter={() => preloadOnHover("/code-editor")}
               >
                 Code Editor
               </NavLink>
@@ -212,6 +221,7 @@ const Navbar = () => {
                       : "text-gray-900 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400"
                   }`
                 }
+                onMouseEnter={() => preloadOnHover("/about")}
               >
                 About
               </NavLink>
@@ -225,6 +235,7 @@ const Navbar = () => {
                       : "text-gray-900 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400"
                   }`
                 }
+                onMouseEnter={() => preloadOnHover("/contact")}
               >
                 Contact
               </NavLink>
@@ -270,6 +281,7 @@ const Navbar = () => {
                         <NavLink
                           to="/dashboard"
                           className="block px-4 py-2 text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:text-blue-400 transition-colors duration-200"
+                          onMouseEnter={() => preloadOnHover("/dashboard")}
                         >
                           Dashboard
                         </NavLink>
@@ -277,6 +289,7 @@ const Navbar = () => {
                       <NavLink
                         to="/profile"
                         className="block px-4 py-2 text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                        onMouseEnter={() => preloadOnHover("/profile")}
                       >
                         Profile
                       </NavLink>
@@ -294,12 +307,14 @@ const Navbar = () => {
                   <NavLink
                     to="/login"
                     className="px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200"
+                    onMouseEnter={() => preloadOnHover("/login")}
                   >
                     Sign In
                   </NavLink>
                   <NavLink
                     to="/register"
                     className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500 transition-colors duration-200"
+                    onMouseEnter={() => preloadOnHover("/register")}
                   >
                     Sign Up
                   </NavLink>
