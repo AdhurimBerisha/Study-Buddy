@@ -138,4 +138,18 @@ export const tutorAPI = {
   deleteTutor: (id: string) => api.delete(`/tutors/${id}`),
 };
 
+export const userAPI = {
+  getProfile: () => api.get("/users/me"),
+
+  updateProfile: (data: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phone?: string;
+  }) => api.put("/users/me", data),
+
+  changePassword: (data: { currentPassword: string; newPassword: string }) =>
+    api.put("/users/change-password", data),
+};
+
 export default api;

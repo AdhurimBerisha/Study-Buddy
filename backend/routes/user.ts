@@ -1,6 +1,10 @@
 import express from "express";
 import { requireAuth } from "../middlewares/requireAuth";
-import { myProfile, updateProfile } from "../controllers/userController";
+import {
+  myProfile,
+  updateProfile,
+  changePassword,
+} from "../controllers/userController";
 import { uploadAvatar, handleUploadError } from "../middlewares/upload";
 import {
   validateProfileUpdate,
@@ -22,5 +26,7 @@ router.put(
   handleValidationErrors,
   updateProfile
 );
+
+router.put("/change-password", requireAuth, changePassword);
 
 export default router;

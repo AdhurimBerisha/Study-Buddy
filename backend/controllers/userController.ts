@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Op } from "sequelize";
+import bcrypt from "bcryptjs";
 import { User } from "../models/User";
 import { findUserById, removePassword } from "../helpers/userHelper";
 import { handleError } from "../helpers/errorHelper";
@@ -67,4 +68,68 @@ const updateProfile = async (req: RequestWithUser, res: Response) => {
   }
 };
 
-export { myProfile, updateProfile };
+const changePassword = async (req: RequestWithUser, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Current password and new password are required",
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "New password must be at least 6 characters long",
+      });
+    }
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const currentPasswordHash = user.get("password") as string | null;
+    if (!currentPasswordHash) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Cannot change password for accounts without a password (e.g., Google accounts)",
+      });
+    }
+
+    const isCurrentPasswordValid = await bcrypt.compare(
+      currentPassword,
+      currentPasswordHash
+    );
+
+    if (!isCurrentPasswordValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Current password is incorrect",
+      });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 12);
+
+    await user.update({ password: hashedNewPassword });
+
+    res.json({
+      success: true,
+      message: "Password changed successfully",
+    });
+  } catch (error) {
+    handleError(res, error, "Error changing password");
+  }
+};
+
+export { myProfile, updateProfile, changePassword };

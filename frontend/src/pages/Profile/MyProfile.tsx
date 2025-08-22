@@ -10,6 +10,7 @@ import {
   FaCamera,
   FaSave,
   FaEdit,
+  FaLock,
 } from "react-icons/fa";
 import Button from "../../components/Button";
 import { useState, useEffect } from "react";
@@ -20,6 +21,7 @@ import {
 } from "../../store/slice/authSlice";
 import { toast } from "react-toastify";
 import { useCustomPageTitle } from "../../hooks/usePageTitle";
+import ChangePasswordForm from "./ChangePasswordForm";
 
 interface ProfileFormData {
   firstName: string;
@@ -491,6 +493,18 @@ const MyProfile = () => {
                 </div>
               )}
             </form>
+
+            {/* Change Password Section - Integrated within profile card */}
+            <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Change Password
+                </h3>
+                <FaLock className="w-5 h-5 text-gray-400" />
+              </div>
+
+              <ChangePasswordForm />
+            </div>
           </div>
         </div>
       </div>
