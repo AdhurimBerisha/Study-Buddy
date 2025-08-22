@@ -6,7 +6,6 @@ export interface CourseAttributes {
   title: string;
   description: string;
   category: string;
-  language: string;
   level: "beginner" | "intermediate" | "advanced";
   price: number;
   thumbnail?: string | null;
@@ -45,11 +44,7 @@ Course.init(
       allowNull: false,
       validate: { len: [1, 100] },
     },
-    language: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: { len: [1, 100] },
-    },
+
     level: {
       type: DataTypes.ENUM("beginner", "intermediate", "advanced"),
       allowNull: false,

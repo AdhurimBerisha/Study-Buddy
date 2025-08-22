@@ -1,50 +1,10 @@
 import { Link } from "react-router-dom";
-import {
-  FaHtml5,
-  FaNodeJs,
-  FaPython,
-  FaMicrosoft,
-  FaNetworkWired,
-  FaCode,
-  FaUsers,
-  FaDollarSign,
-  FaGraduationCap,
-} from "react-icons/fa";
-import { SiSpringboot } from "react-icons/si";
+import { FaUsers, FaDollarSign, FaGraduationCap, FaCode } from "react-icons/fa";
 import Button from "../../components/Button";
 import type { Course } from "../../store/slice/coursesSlice";
 import LazyImage from "../../components/LazyImage";
 
 type CardProps = Course;
-
-const coursesIcons: Record<string, React.ReactNode> = {
-  html: <FaHtml5 className="text-4xl text-orange-500" />,
-  css: <FaHtml5 className="text-4xl text-orange-500" />,
-  javascript: <FaHtml5 className="text-4xl text-orange-500" />,
-  node: <FaNodeJs className="text-4xl text-green-600" />,
-  java: <FaNodeJs className="text-4xl text-green-600" />,
-  spring: <SiSpringboot className="text-4xl text-green-500" />,
-  python: <FaPython className="text-4xl text-blue-600" />,
-  "c#": <FaMicrosoft className="text-4xl text-purple-600" />,
-  "c++": <FaMicrosoft className="text-4xl text-purple-600" />,
-  bash: <FaNetworkWired className="text-4xl text-blue-500" />,
-  ansible: <FaNetworkWired className="text-4xl text-blue-500" />,
-  cisco: <FaNetworkWired className="text-4xl text-blue-500" />,
-};
-
-const getCoursesIcon = (courses: string): React.ReactNode => {
-  const lowerLang = courses.toLowerCase();
-
-  const matchedCourses = Object.keys(coursesIcons).find((key) =>
-    lowerLang.includes(key)
-  );
-
-  return matchedCourses ? (
-    coursesIcons[matchedCourses]
-  ) : (
-    <FaCode className="text-4xl text-gray-600" />
-  );
-};
 
 const categoryColors: Record<string, string> = {
   "web development": "bg-blue-500",
@@ -71,7 +31,6 @@ const CoursesCard = (course: CardProps) => {
     id,
     title,
     category,
-    language,
     level,
     price,
     thumbnail,
@@ -101,17 +60,11 @@ const CoursesCard = (course: CardProps) => {
         {category}
       </div>
 
-      <div className="mb-4 flex justify-center">{getCoursesIcon(language)}</div>
-
       <Link to={`/courses/${id}`} className="block mb-4">
         <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 leading-tight min-h-[4rem] flex items-center justify-center px-2">
           {title}
         </h3>
       </Link>
-
-      <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-        {language}
-      </p>
 
       <div className="space-y-2 mb-4">
         <div className="flex items-center justify-center space-x-2">

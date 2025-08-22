@@ -8,18 +8,3 @@ export const categories = [
   "DevOps & Cloud",
   "Game Development",
 ];
-
-export const languages = [
-  "English",
-  "Spanish",
-  "French",
-  "German",
-  "Italian",
-  "Portuguese",
-  "Russian",
-  "Chinese",
-  "Japanese",
-  "Korean",
-  "Arabic",
-  "Other",
-];

@@ -106,7 +106,7 @@ const getLearningDashboard = async (
         {
           model: Course,
           as: "course",
-          attributes: ["id", "title", "language", "thumbnail"],
+          attributes: ["id", "title", "thumbnail"],
         },
       ],
       order: [["purchaseDate", "DESC"]],
@@ -146,7 +146,7 @@ const getLearningDashboard = async (
         const courseData = {
           id: course.id,
           title: course.title,
-          language: course.language,
+
           imageUrl: course.thumbnail,
           progress: progressPercentage,
           lastAccessed,

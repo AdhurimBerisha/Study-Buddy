@@ -9,14 +9,14 @@ import {
   TextAreaField,
   LessonFields,
 } from "./CourseFormParts";
-import { categories, languages } from "../../constants/courseFormConstants";
+import { categories } from "../../constants/courseFormConstants";
 import { AiOutlinePlus, AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const defaultValues: CourseFormData = {
   title: "",
   description: "",
   category: "",
-  language: "",
+
   level: "beginner",
   price: 0,
   thumbnail: "",
@@ -153,19 +153,6 @@ const CreateCourseForm = ({
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
-                  </option>
-                ))}
-              </SelectField>
-
-              <SelectField
-                label="Language *"
-                error={errors.language?.message as string}
-                {...register("language", { required: "Language is required" })}
-              >
-                <option value="">Select language</option>
-                {languages.map((lang) => (
-                  <option key={lang} value={lang}>
-                    {lang}
                   </option>
                 ))}
               </SelectField>

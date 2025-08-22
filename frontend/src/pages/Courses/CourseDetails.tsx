@@ -125,9 +125,7 @@ const CourseDetails = () => {
               <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
                 {course.title}
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 text-lg mb-3">
-                {course.language}
-              </p>
+
               <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
                 <span className="bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 px-3 py-1 rounded-full flex items-center gap-2">
                   <FaUsers className="text-blue-600 dark:text-blue-400" />
@@ -177,7 +175,7 @@ const CourseDetails = () => {
               What you'll learn
             </h3>
             <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 leading-relaxed">
-              <li>Foundations and core concepts for {course.language}</li>
+              <li>Foundations and core concepts for {course.category}</li>
               <li>Hands-on projects and real-world scenarios</li>
               <li>Best practices, patterns and performance</li>
               <li>Interview-ready exercises and guidance</li>

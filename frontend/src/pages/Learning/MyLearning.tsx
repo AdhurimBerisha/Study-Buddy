@@ -10,7 +10,6 @@ import LazyImage from "../../components/LazyImage";
 interface PurchasedCourse {
   id: string;
   title: string;
-  language: string;
   imageUrl: string;
   progress: number;
   lastAccessed: string;
@@ -210,12 +209,6 @@ const MyLearning = () => {
               </div>
 
               <div className="p-6">
-                <div className="mb-3">
-                  <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded-full">
-                    {course.language}
-                  </span>
-                </div>
-
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 line-clamp-2">
                   {course.title}
                 </h3>

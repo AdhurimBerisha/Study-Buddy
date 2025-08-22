@@ -45,7 +45,6 @@ const listCourses = async (req: AuthenticatedRequest, res: Response) => {
         [Op.or]: [
           { title: { [Op.iLike]: `%${search}%` } },
           { description: { [Op.iLike]: `%${search}%` } },
-          { language: { [Op.iLike]: `%${search}%` } },
         ],
       }),
     };
@@ -87,7 +86,6 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
       title,
       description,
       category,
-      language,
       level,
       price,
       thumbnail,
@@ -95,17 +93,10 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
       tutorId,
     } = req.body;
 
-    if (
-      !title ||
-      !description ||
-      !category ||
-      !language ||
-      !level ||
-      !tutorId
-    ) {
+    if (!title || !description || !category || !level || !tutorId) {
       return res.status(400).json({
         message:
-          "Title, description, category, language, level, and tutorId are required",
+          "Title, description, category, level, and tutorId are required",
       });
     }
 
@@ -120,7 +111,6 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
       title,
       description,
       category,
-      language,
       level,
       price: price || 0,
       thumbnail,

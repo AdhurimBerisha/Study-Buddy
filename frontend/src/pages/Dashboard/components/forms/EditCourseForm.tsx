@@ -8,7 +8,7 @@ import {
 } from "../../../../store/slice/adminSlice";
 import api from "../../../../services/api";
 import { InputField, SelectField, TextAreaField } from "./CourseFormParts";
-import { categories, languages } from "../../constants/courseFormConstants";
+import { categories } from "../../constants/courseFormConstants";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 interface Tutor {
@@ -28,7 +28,6 @@ interface EditCourseFormValues {
   title: string;
   description: string;
   category: string;
-  language: string;
   level: string;
   price: number;
   thumbnail: string;
@@ -40,7 +39,6 @@ const defaultValues: EditCourseFormValues = {
   title: "",
   description: "",
   category: "",
-  language: "",
   level: "",
   price: 0,
   thumbnail: "",
@@ -75,7 +73,7 @@ const EditCourseForm = ({
           title: course.title || "",
           description: course.description || "",
           category: course.category || "",
-          language: course.language || "",
+
           level: course.level || "",
           price: typeof course.price === "number" ? course.price : 0,
           thumbnail: course.thumbnail || "",
