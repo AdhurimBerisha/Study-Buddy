@@ -5,6 +5,7 @@ import {
   setCoursesPage,
 } from "../../../../store/slice/tutorSlice";
 import Pagination from "../../../../components/Pagination";
+import LazyImage from "../../../../components/LazyImage";
 
 interface Course {
   id: string;
@@ -133,7 +134,7 @@ const TutorCoursesTable = ({
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
                   {course.thumbnail ? (
-                    <img
+                    <LazyImage
                       className="h-10 w-10 rounded-lg object-cover"
                       src={course.thumbnail}
                       alt={course.title}

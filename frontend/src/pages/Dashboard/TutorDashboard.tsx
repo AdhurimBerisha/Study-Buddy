@@ -11,7 +11,6 @@ import TutorDashboardStats from "./components/stats/TutorDashboardStats";
 import { Suspense, lazy } from "react";
 import LoadingSpinner from "../../components/LoadingSpinner";
 
-// Lazy load heavy components
 const CreateCourseForm = lazy(
   () => import("./components/forms/CreateCourseForm")
 );

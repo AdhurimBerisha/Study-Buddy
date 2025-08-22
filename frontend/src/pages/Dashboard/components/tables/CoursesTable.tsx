@@ -7,6 +7,7 @@ import {
   setCoursesPage,
 } from "../../../../store/slice/adminSlice";
 import Pagination from "../../../../components/Pagination";
+import LazyImage from "../../../../components/LazyImage";
 
 interface Course {
   id: string;
@@ -142,7 +143,7 @@ const CoursesTable = () => {
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-14 w-14">
                       {course.thumbnail ? (
-                        <img
+                        <LazyImage
                           className="h-14 w-14 rounded-xl object-cover ring-2 ring-gray-200 dark:ring-gray-700 shadow-md"
                           src={course.thumbnail}
                           alt={course.title}

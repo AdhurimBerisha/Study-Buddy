@@ -15,7 +15,6 @@ import DashboardStats from "./components/stats/DashboardStats";
 import { Suspense, lazy } from "react";
 import LoadingSpinner from "../../components/LoadingSpinner";
 
-// Lazy load heavy components
 const CreateUserForm = lazy(() => import("./components/forms/CreateUserForm"));
 const EditCourseForm = lazy(() => import("./components/forms/EditCourseForm"));
 const CreateTutorForm = lazy(

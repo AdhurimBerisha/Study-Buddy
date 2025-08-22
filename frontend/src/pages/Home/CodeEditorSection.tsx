@@ -1,10 +1,7 @@
 import { Link } from "react-router-dom";
 import { FaCode, FaPlay, FaEye, FaTerminal, FaFileCode } from "react-icons/fa";
-import { useEffect } from "react";
 
-// Preload CodeEditor when user shows interest
 const preloadCodeEditor = () => {
-  // This will start loading the CodeEditor bundle
   import("../../components/CodeEditor/CodeEditor");
 };
 

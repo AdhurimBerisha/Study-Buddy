@@ -9,6 +9,7 @@ import {
 import Button from "../../components/Button";
 import { tutorAPI } from "../../services/api";
 import type { Tutor } from "../../types/tutor";
+import LazyImage from "../../components/LazyImage";
 
 const TutorDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -72,7 +73,7 @@ const TutorDetails = () => {
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-4xl overflow-hidden">
               {tutor.avatar ? (
-                <img
+                <LazyImage
                   src={tutor.avatar}
                   alt={`${tutor.first_name} ${tutor.last_name}`}
                   className="w-16 h-16 object-cover"

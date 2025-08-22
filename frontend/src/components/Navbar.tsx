@@ -10,6 +10,7 @@ import Badge from "./Badge";
 import ThemeToggle from "./ThemeToggle";
 import { getDisplayName } from "../utils/nameUtils";
 import { useRoutePreloader } from "../hooks/useRoutePreloader";
+import LazyImage from "./LazyImage";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -249,7 +250,7 @@ const Navbar = () => {
                 <div className="relative group">
                   <button className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200 focus:outline-none">
                     {user?.avatar ? (
-                      <img
+                      <LazyImage
                         src={user.avatar}
                         alt="User Avatar"
                         className="w-8 h-8 rounded-full object-cover"
@@ -566,7 +567,7 @@ const Navbar = () => {
                   <>
                     <div className="flex items-center gap-3 text-white">
                       {user?.avatar ? (
-                        <img
+                        <LazyImage
                           src={user.avatar}
                           alt="User Avatar"
                           className="w-10 h-10 rounded-full object-cover"

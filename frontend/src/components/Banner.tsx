@@ -1,4 +1,5 @@
 import Button from "./Button";
+import LazyImage from "./LazyImage";
 
 interface BannerProps {
   imageSrc: string;
@@ -25,11 +26,10 @@ const Banner = ({
     <section className="px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
       <div className="max-w-7xl mx-auto">
         <div className="relative w-full min-h-[300px] sm:min-h-[400px] md:min-h-[500px] lg:min-h-[600px] xl:min-h-[650px] rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl">
-          <img
+          <LazyImage
             src={imageSrc}
             alt="Banner"
             className="w-full h-full object-cover absolute inset-0 z-0"
-            loading="lazy"
           />
 
           <div className={`absolute inset-0 ${overlayClass} z-10`} />

@@ -1,4 +1,5 @@
 import howItWorks from "../../assets/howItWorks.webp";
+import LazyImage from "../../components/LazyImage";
 
 const steps = [
   {
@@ -36,7 +37,7 @@ const HowItWorks = () => {
         </div>
 
         <div className="relative">
-          <img
+          <LazyImage
             src={howItWorks}
             alt="Student using laptop"
             className="rounded-3xl shadow-lg"

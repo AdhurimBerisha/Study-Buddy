@@ -7,6 +7,7 @@ import {
   setUsersPage,
 } from "../../../../store/slice/adminSlice";
 import Pagination from "../../../../components/Pagination";
+import LazyImage from "../../../../components/LazyImage";
 
 const UsersTable = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -104,7 +105,7 @@ const UsersTable = () => {
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-12 w-12">
                       {user.avatar ? (
-                        <img
+                        <LazyImage
                           className="h-12 w-12 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
                           src={user.avatar}
                           alt={`${user.firstName} ${user.lastName}`}

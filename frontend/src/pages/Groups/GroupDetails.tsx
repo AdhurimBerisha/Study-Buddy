@@ -14,6 +14,7 @@ import {
 import { toast } from "react-toastify";
 
 import Button from "../../components/Button";
+import LazyImage from "../../components/LazyImage";
 import {
   FaUsers,
   FaSpinner,
@@ -348,7 +349,7 @@ const GroupDetails = () => {
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center overflow-hidden">
                           {member.avatar ? (
-                            <img
+                            <LazyImage
                               src={member.avatar}
                               alt={`${member.firstName} ${member.lastName}`}
                               className="w-9 h-9 rounded-full object-cover"
@@ -428,7 +429,7 @@ const GroupDetails = () => {
                           <div key={message.id} className="flex gap-3">
                             <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center flex-shrink-0">
                               {message.user.avatar ? (
-                                <img
+                                <LazyImage
                                   src={message.user.avatar}
                                   alt={`${message.user.firstName} ${message.user.lastName}`}
                                   className="w-8 h-8 rounded-full object-cover"

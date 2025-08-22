@@ -14,6 +14,7 @@ import {
 } from "react-icons/fa";
 import Button from "../../components/Button";
 import { useState, useEffect } from "react";
+import LazyImage from "../../components/LazyImage";
 import {
   fetchProfile,
   updateProfile,
@@ -298,25 +299,24 @@ const MyProfile = () => {
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
                     </div>
                   )}
-                  <img
+                  <LazyImage
                     src={avatarPreview}
                     alt={`${user.firstName} avatar`}
                     className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-white shadow-lg"
-                    onLoadStart={() => setIsAvatarLoading(true)}
-                    onError={() => {
-                      console.log(
-                        "Avatar image failed to load:",
-                        avatarPreview
-                      );
-                      setAvatarLoadError(true);
-                      setIsAvatarLoading(false);
-                    }}
                     onLoad={() => {
                       console.log(
                         "Avatar image loaded successfully:",
                         avatarPreview
                       );
                       setAvatarLoadError(false);
+                      setIsAvatarLoading(false);
+                    }}
+                    onError={() => {
+                      console.log(
+                        "Avatar image failed to load:",
+                        avatarPreview
+                      );
+                      setAvatarLoadError(true);
                       setIsAvatarLoading(false);
                     }}
                   />

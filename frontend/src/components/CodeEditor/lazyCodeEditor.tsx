@@ -1,10 +1,9 @@
 import { lazy, Suspense } from "react";
 import LoadingSpinner from "../LoadingSpinner";
+import type { CodeEditorProps } from "./types";
 
-// Lazy load the main CodeEditor component
 const LazyCodeEditorComponent = lazy(() => import("./CodeEditor"));
 
-// Lazy load individual CodeEditor components for more granular control
 export const LazyCodeEditorHeader = lazy(() => import("./CodeEditorHeader"));
 export const LazyCodeEditorSidebar = lazy(() => import("./CodeEditorSidebar"));
 export const LazyCodeEditorMain = lazy(() => import("./CodeEditorMain"));
@@ -14,20 +13,7 @@ export const LazyCodeEditorStatusBar = lazy(
   () => import("./CodeEditorStatusBar")
 );
 
-// Main lazy CodeEditor with Suspense wrapper
-interface LazyCodeEditorProps {
-  files?: any;
-  template?: string;
-  showFileExplorer?: boolean;
-  showConsole?: boolean;
-  showPreview?: boolean;
-  onToggleFileExplorer?: () => void;
-  onToggleConsole?: () => void;
-  onTogglePreview?: () => void;
-  height?: string;
-  consoleHeight?: string;
-  className?: string;
-}
+type LazyCodeEditorProps = CodeEditorProps;
 
 export const LazyCodeEditor = (props: LazyCodeEditorProps) => {
   return (
@@ -49,5 +35,4 @@ export const LazyCodeEditor = (props: LazyCodeEditorProps) => {
   );
 };
 
-// Export the lazy components for individual use
 export default LazyCodeEditor;

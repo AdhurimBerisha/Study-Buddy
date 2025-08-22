@@ -13,6 +13,7 @@ import {
 import { SiSpringboot } from "react-icons/si";
 import Button from "../../components/Button";
 import type { Course } from "../../store/slice/coursesSlice";
+import LazyImage from "../../components/LazyImage";
 
 type CardProps = Course;
 
@@ -86,7 +87,7 @@ const CoursesCard = (course: CardProps) => {
     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-md rounded-xl p-6 text-center h-full flex flex-col">
       {thumbnail && (
         <div className="mb-4 rounded-lg overflow-hidden">
-          <img
+          <LazyImage
             src={thumbnail}
             alt={title}
             className="w-full h-32 object-cover"

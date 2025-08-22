@@ -5,6 +5,7 @@ import { FaBookOpen, FaArrowRight, FaClock } from "react-icons/fa";
 import { useLearning } from "../../hooks/useLearning";
 import { useAuth } from "../../hooks/useAuth";
 import { useCustomPageTitle } from "../../hooks/usePageTitle";
+import LazyImage from "../../components/LazyImage";
 
 interface PurchasedCourse {
   id: string;
@@ -192,7 +193,7 @@ const MyLearning = () => {
               className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-shadow"
             >
               <div className="relative">
-                <img
+                <LazyImage
                   src={course.imageUrl}
                   alt={course.title}
                   className="w-full h-48 object-cover"

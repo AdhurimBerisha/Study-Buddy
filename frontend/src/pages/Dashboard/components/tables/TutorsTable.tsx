@@ -7,6 +7,7 @@ import {
   setTutorsPage,
 } from "../../../../store/slice/adminSlice";
 import Pagination from "../../../../components/Pagination";
+import LazyImage from "../../../../components/LazyImage";
 
 const TutorsTable = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -170,7 +171,7 @@ const TutorsTable = () => {
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-12 w-12">
                       {tutor.avatar ? (
-                        <img
+                        <LazyImage
                           className="h-12 w-12 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700 shadow-md"
                           src={tutor.avatar}
                           alt={`${tutor.first_name || "Unknown"} ${

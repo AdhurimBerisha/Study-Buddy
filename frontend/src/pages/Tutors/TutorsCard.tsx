@@ -3,6 +3,7 @@ import Button from "../../components/Button";
 import { Link } from "react-router-dom";
 import type { Tutor } from "../../types/tutor";
 import { FaUserCircle } from "react-icons/fa";
+import LazyImage from "../../components/LazyImage";
 
 type TutorCardProps = Tutor & {
   avatar?: string;
@@ -24,7 +25,7 @@ const TutorCard = ({
         <div className="w-72 bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col items-center text-center">
           <div className="w-24 h-24 rounded-full mb-4 flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-5xl overflow-hidden">
             {avatar ? (
-              <img
+              <LazyImage
                 src={avatar}
                 alt={`${first_name} ${last_name}`}
                 className="w-full h-full object-cover"
