@@ -1,5 +1,12 @@
 import { Link } from "react-router-dom";
 import { FaCode, FaPlay, FaEye, FaTerminal, FaFileCode } from "react-icons/fa";
+import { useEffect } from "react";
+
+// Preload CodeEditor when user shows interest
+const preloadCodeEditor = () => {
+  // This will start loading the CodeEditor bundle
+  import("../../components/CodeEditor/CodeEditor");
+};
 
 const CodeEditorSection = () => {
   const features = [
@@ -63,6 +70,8 @@ const CodeEditorSection = () => {
             <div className="pt-4">
               <Link
                 to="/code-editor"
+                onMouseEnter={preloadCodeEditor}
+                onFocus={preloadCodeEditor}
                 className="inline-flex items-center gap-3 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
                 <FaPlay className="w-4 h-4" />

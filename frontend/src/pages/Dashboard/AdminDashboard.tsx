@@ -12,16 +12,23 @@ import {
   clearMessage,
 } from "../../store/slice/adminSlice";
 import DashboardStats from "./components/stats/DashboardStats";
-import CreateUserForm from "./components/forms/CreateUserForm";
+import { Suspense, lazy } from "react";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
-import EditCourseForm from "./components/forms/EditCourseForm";
-import CreateTutorForm from "./components/forms/CreateTutorForm";
-import EditTutorForm from "./components/forms/EditTutorForm";
-import UsersTable from "./components/tables/UsersTable";
-import CoursesTable from "./components/tables/CoursesTable";
-import TutorsTable from "./components/tables/TutorsTable";
-import GroupsTable from "./components/tables/GroupsTable";
-import MessageDisplay from "./components/messages/MessageDisplay";
+// Lazy load heavy components
+const CreateUserForm = lazy(() => import("./components/forms/CreateUserForm"));
+const EditCourseForm = lazy(() => import("./components/forms/EditCourseForm"));
+const CreateTutorForm = lazy(
+  () => import("./components/forms/CreateTutorForm")
+);
+const EditTutorForm = lazy(() => import("./components/forms/EditTutorForm"));
+const UsersTable = lazy(() => import("./components/tables/UsersTable"));
+const CoursesTable = lazy(() => import("./components/tables/CoursesTable"));
+const TutorsTable = lazy(() => import("./components/tables/TutorsTable"));
+const GroupsTable = lazy(() => import("./components/tables/GroupsTable"));
+const MessageDisplay = lazy(
+  () => import("./components/messages/MessageDisplay")
+);
 
 const AdminDashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -318,7 +325,11 @@ const AdminDashboard = () => {
           </p>
         </div>
 
-        <MessageDisplay />
+        <Suspense
+          fallback={<LoadingSpinner text="Loading messages..." size="sm" />}
+        >
+          <MessageDisplay />
+        </Suspense>
 
         <div className="space-y-12">
           <div className="relative">
@@ -382,8 +393,14 @@ const AdminDashboard = () => {
                 </button>
               </div>
 
-              {showCreateUserForm && <CreateUserForm />}
-              <UsersTable />
+              {showCreateUserForm && (
+                <Suspense fallback={<LoadingSpinner text="Loading form..." />}>
+                  <CreateUserForm />
+                </Suspense>
+              )}
+              <Suspense fallback={<LoadingSpinner text="Loading users..." />}>
+                <UsersTable />
+              </Suspense>
             </div>
           </div>
 
@@ -419,13 +436,19 @@ const AdminDashboard = () => {
               </div>
 
               {showEditCourseForm && (
-                <EditCourseForm
-                  courseId={showEditCourseForm}
-                  loadingTutors={loadingTutors}
-                  tutors={tutors}
-                />
+                <Suspense
+                  fallback={<LoadingSpinner text="Loading editor..." />}
+                >
+                  <EditCourseForm
+                    courseId={showEditCourseForm}
+                    loadingTutors={loadingTutors}
+                    tutors={tutors}
+                  />
+                </Suspense>
               )}
-              <CoursesTable />
+              <Suspense fallback={<LoadingSpinner text="Loading courses..." />}>
+                <CoursesTable />
+              </Suspense>
             </div>
           </div>
 
@@ -483,11 +506,21 @@ const AdminDashboard = () => {
                 </button>
               </div>
 
-              {showCreateTutorForm && <CreateTutorForm />}
-              {showEditTutorForm && (
-                <EditTutorForm tutorId={showEditTutorForm} />
+              {showCreateTutorForm && (
+                <Suspense fallback={<LoadingSpinner text="Loading form..." />}>
+                  <CreateTutorForm />
+                </Suspense>
               )}
-              <TutorsTable />
+              {showEditTutorForm && (
+                <Suspense
+                  fallback={<LoadingSpinner text="Loading editor..." />}
+                >
+                  <EditTutorForm tutorId={showEditTutorForm} />
+                </Suspense>
+              )}
+              <Suspense fallback={<LoadingSpinner text="Loading tutors..." />}>
+                <TutorsTable />
+              </Suspense>
             </div>
           </div>
 
@@ -521,7 +554,9 @@ const AdminDashboard = () => {
                   </div>
                 </div>
               </div>
-              <GroupsTable />
+              <Suspense fallback={<LoadingSpinner text="Loading groups..." />}>
+                <GroupsTable />
+              </Suspense>
             </div>
           </div>
         </div>

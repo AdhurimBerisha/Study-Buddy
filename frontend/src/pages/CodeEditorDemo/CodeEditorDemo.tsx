@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CodeEditor from "../../components/CodeEditor/CodeEditor";
+import { LazyCodeEditor } from "../../components/CodeEditor/lazyCodeEditor";
 import { getFilesForTemplate } from "../../components/CodeEditor/constants";
 import type { TemplateType } from "../../components/CodeEditor/types";
 import { FaCode, FaPlay } from "react-icons/fa";
@@ -50,15 +50,15 @@ const CodeEditorDemo = () => {
       </div>
 
       <div className="flex-1">
-        <CodeEditor
+        <LazyCodeEditor
           files={getFilesForTemplate(selectedTemplate)}
           template={selectedTemplate}
           showFileExplorer={showFileExplorer}
           showConsole={showConsole}
           showPreview={showPreview}
-          onToggleFileExplorer={setShowFileExplorer}
-          onToggleConsole={setShowConsole}
-          onTogglePreview={setShowPreview}
+          onToggleFileExplorer={() => setShowFileExplorer(!showFileExplorer)}
+          onToggleConsole={() => setShowConsole(!showConsole)}
+          onTogglePreview={() => setShowPreview(!showPreview)}
           height="calc(100vh - 200px)"
           consoleHeight="200px"
           className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"

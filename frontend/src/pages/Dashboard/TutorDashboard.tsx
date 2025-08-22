@@ -8,9 +8,19 @@ import {
   clearMessage,
 } from "../../store/slice/tutorSlice";
 import TutorDashboardStats from "./components/stats/TutorDashboardStats";
-import CreateCourseForm from "./components/forms/CreateCourseForm";
-import TutorCoursesTable from "./components/tables/TutorCoursesTable";
-import TutorMessageDisplay from "./components/messages/TutorMessageDisplay";
+import { Suspense, lazy } from "react";
+import LoadingSpinner from "../../components/LoadingSpinner";
+
+// Lazy load heavy components
+const CreateCourseForm = lazy(
+  () => import("./components/forms/CreateCourseForm")
+);
+const TutorCoursesTable = lazy(
+  () => import("./components/tables/TutorCoursesTable")
+);
+const TutorMessageDisplay = lazy(
+  () => import("./components/messages/TutorMessageDisplay")
+);
 
 const TutorDashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -210,7 +220,11 @@ const TutorDashboard = () => {
           </p>
         </div>
 
-        <TutorMessageDisplay />
+        <Suspense
+          fallback={<LoadingSpinner text="Loading messages..." size="sm" />}
+        >
+          <TutorMessageDisplay />
+        </Suspense>
 
         <div className="space-y-12">
           <div className="relative">
@@ -275,20 +289,24 @@ const TutorDashboard = () => {
               </div>
 
               {showCreateCourseForm && (
-                <CreateCourseForm
-                  onClose={() => dispatch(setShowCreateCourseForm(false))}
-                  onSuccess={() => {
-                    dispatch(fetchTutorCourses({ page: 1, limit: 5 }));
-                    dispatch(fetchTutorDashboardStats());
-                  }}
-                />
+                <Suspense fallback={<LoadingSpinner text="Loading form..." />}>
+                  <CreateCourseForm
+                    onClose={() => dispatch(setShowCreateCourseForm(false))}
+                    onSuccess={() => {
+                      dispatch(fetchTutorCourses({ page: 1, limit: 5 }));
+                      dispatch(fetchTutorDashboardStats());
+                    }}
+                  />
+                </Suspense>
               )}
 
-              <TutorCoursesTable
-                courses={courses}
-                loading={loadingCourses}
-                pagination={coursesPagination}
-              />
+              <Suspense fallback={<LoadingSpinner text="Loading courses..." />}>
+                <TutorCoursesTable
+                  courses={courses}
+                  loading={loadingCourses}
+                  pagination={coursesPagination}
+                />
+              </Suspense>
             </div>
           </div>
         </div>
