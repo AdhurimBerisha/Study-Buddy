@@ -9,7 +9,6 @@ export interface TutorAttributes {
   email: string;
   bio: string;
   expertise: string[];
-  rating: number;
   totalStudents: number;
   totalLessons: number;
   isVerified: boolean;
@@ -22,7 +21,6 @@ export interface TutorCreationAttributes
   extends Optional<
     TutorAttributes,
     | "id"
-    | "rating"
     | "totalStudents"
     | "totalLessons"
     | "isVerified"
@@ -74,12 +72,6 @@ Tutor.init(
       type: DataTypes.JSON,
       allowNull: false,
       defaultValue: [],
-    },
-    rating: {
-      type: DataTypes.DECIMAL(3, 2),
-      allowNull: false,
-      defaultValue: 0,
-      validate: { min: 0, max: 5 },
     },
     totalStudents: {
       type: DataTypes.INTEGER,

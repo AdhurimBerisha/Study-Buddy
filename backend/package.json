@@ -8,6 +8,7 @@
     "start": "tsx server.ts",
     "sync-db": "tsx syncDb.js",
     "seed": "tsx seed.ts"
+
   },
   "author": "",
   "license": "ISC",

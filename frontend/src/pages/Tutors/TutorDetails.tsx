@@ -90,11 +90,6 @@ const TutorDetails = () => {
                 {tutor.first_name} {tutor.last_name}
               </h1>
               <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 mt-1">
-                <span className="flex items-center gap-1">
-                  <FaStar className="text-yellow-500" />{" "}
-                  {Number(tutor.rating).toFixed(1)}
-                </span>
-                <span>•</span>
                 <span>{tutor.totalLessons} lessons</span>
               </div>
             </div>

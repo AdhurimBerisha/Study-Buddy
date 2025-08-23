@@ -74,7 +74,6 @@ interface Tutor {
   email: string;
   bio: string;
   expertise: string[];
-  rating: number;
   totalStudents: number;
   totalLessons: number;
   isVerified: boolean;

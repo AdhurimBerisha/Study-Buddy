@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import Button from "../../components/Button";
 import { Link } from "react-router-dom";
 import type { Tutor } from "../../types/tutor";
@@ -13,8 +12,6 @@ const TutorCard = ({
   id,
   avatar,
   expertise,
-  rating,
-  totalLessons,
   first_name,
   last_name,
   bio,
@@ -36,15 +33,6 @@ const TutorCard = ({
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
             {expertise.join(", ")}
-          </div>
-          <div className="text-yellow-500 font-semibold">
-            {rating && !isNaN(Number(rating))
-              ? Number(rating).toFixed(1)
-              : "0.0"}{" "}
-            ★
-          </div>
-          <div className="text-gray-400 dark:text-gray-500 text-sm mb-3">
-            {totalLessons} Lessons
           </div>
           <Link to={`/tutors/${id}`} className="w-full">
             <Button fullWidth size="sm">

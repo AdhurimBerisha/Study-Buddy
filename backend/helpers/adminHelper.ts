@@ -129,7 +129,6 @@ export const getTutorAttributes = () => [
   "email",
   "bio",
   "expertise",
-  "rating",
   "totalStudents",
   "totalLessons",
   "isVerified",

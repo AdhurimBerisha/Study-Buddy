@@ -293,10 +293,6 @@ const CourseDetails = () => {
                         {tutor.headline}
                       </p>
                     </div>
-                    <div className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-1">
-                      <FaStar className="text-yellow-500" />{" "}
-                      {Number(tutor.rating).toFixed(1)}
-                    </div>
                   </div>
                   <div className="mt-3 text-sm text-gray-600 dark:text-gray-400">
                     <span className="mr-3">{tutor.lessons} lessons</span>

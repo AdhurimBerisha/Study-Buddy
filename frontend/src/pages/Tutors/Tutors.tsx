@@ -13,7 +13,7 @@ const Tutors = () => {
   const [visibleCount, setVisibleCount] = useState(4);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string | null>(null);
-  const [ratingSort, setRatingSort] = useState<"asc" | "desc" | null>(null);
+
   const [tutors, setTutors] = useState<Tutor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,15 +50,8 @@ const Tutors = () => {
           t.expertise.some((exp) => exp.toLowerCase().includes(q))
       );
     }
-    if (ratingSort) {
-      list = list
-        .slice()
-        .sort((a, b) =>
-          ratingSort === "asc" ? a.rating - b.rating : b.rating - a.rating
-        );
-    }
     return list;
-  }, [tutors, query, ratingSort]);
+  }, [tutors, query]);
 
   const visible = filtered.slice(0, visibleCount);
   const canShowMore = visibleCount < filtered.length;
@@ -72,12 +65,7 @@ const Tutors = () => {
         onQueryChange={setQuery}
         category={category}
         onCategoryChange={setCategory}
-        sort={ratingSort}
-        onSortChange={setRatingSort}
         searchPlaceholder="Search by tutor or category"
-        sortLabel="Sort by rating"
-        ascLabel="Lowest rated"
-        descLabel="Highest rated"
         containerClassName="mt-6 mb-6"
       />
       {loading ? (

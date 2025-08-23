@@ -1,7 +1,6 @@
 export type Tutor = {
   id: string;
   category: string;
-  rating: number;
   lessons: number;
   name: string;
   headline: string;
@@ -13,7 +12,6 @@ export const tutors: Tutor[] = [
   {
     id: "jaxon-clarke",
     category: "Web Development",
-    rating: 4.9,
     lessons: 125,
     name: "Jaxon Clarke",
     headline: "Web Developer with over 10+ years of experience from the U.S.",
@@ -24,7 +22,6 @@ export const tutors: Tutor[] = [
   {
     id: "amilia-luna",
     category: "Software Development",
-    rating: 4.3,
     lessons: 100,
     name: "Amilia Luna",
     headline:
@@ -36,7 +33,6 @@ export const tutors: Tutor[] = [
   {
     id: "amilia-luna",
     category: "English Language",
-    rating: 4.3,
     lessons: 100,
     name: "Amilia Luna",
     headline: "Native English Teacher from the U.S.",
@@ -47,7 +43,6 @@ export const tutors: Tutor[] = [
   {
     id: "amilia-luna",
     category: "English Language",
-    rating: 4.3,
     lessons: 100,
     name: "Amilia Luna",
     headline: "Native English Teacher from the U.S.",
@@ -58,7 +53,6 @@ export const tutors: Tutor[] = [
   {
     id: "amilia-luna",
     category: "English Language",
-    rating: 4.3,
     lessons: 100,
     name: "Amilia Luna",
     headline: "Native English Teacher from the U.S.",
