@@ -2,7 +2,6 @@ import { Link, useParams } from "react-router-dom";
 import {
   FaUsers,
   FaArrowLeft,
-  FaStar,
   FaBook,
   FaUserCircle,
   FaLock,
@@ -10,7 +9,6 @@ import {
 } from "react-icons/fa";
 import Button from "../../components/Button";
 import { Link as RouterLink } from "react-router-dom";
-import { tutors as allTutors, toTutorSlug } from "../Tutors/data";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../store/store";
 import { useEffect, useState } from "react";
@@ -18,8 +16,9 @@ import {
   fetchCourse,
   clearCurrentCourse,
 } from "../../store/slice/coursesSlice";
-import { purchaseAPI } from "../../services/api";
+import { purchaseAPI, tutorAPI } from "../../services/api";
 import { useCustomPageTitle } from "../../hooks/usePageTitle";
+import type { Tutor } from "../../types/tutor";
 
 const CourseDetails = () => {
   const { slug: courseId } = useParams<{ slug: string }>();
@@ -33,6 +32,8 @@ const CourseDetails = () => {
   const isAuthenticated = !!token;
   const [isPurchased, setIsPurchased] = useState(false);
   const [checkingPurchase, setCheckingPurchase] = useState(false);
+  const [featuredTutors, setFeaturedTutors] = useState<Tutor[]>([]);
+  const [loadingTutors, setLoadingTutors] = useState(false);
 
   useCustomPageTitle(course?.title || undefined);
 
@@ -45,6 +46,39 @@ const CourseDetails = () => {
       dispatch(clearCurrentCourse());
     };
   }, [courseId, dispatch]);
+
+  // Fetch featured tutors when course data is available
+  useEffect(() => {
+    const fetchFeaturedTutors = async () => {
+      if (course?.category) {
+        setLoadingTutors(true);
+        try {
+          const response = await tutorAPI.getAllTutors({
+            category: course.category,
+            limit: 4,
+            verified: true,
+          });
+
+          if (
+            response.data &&
+            response.data.tutors &&
+            response.data.tutors.length > 0
+          ) {
+            setFeaturedTutors(response.data.tutors);
+          } else {
+            setFeaturedTutors([]);
+          }
+        } catch (error) {
+          console.error("Error fetching featured tutors:", error);
+          setFeaturedTutors([]);
+        } finally {
+          setLoadingTutors(false);
+        }
+      }
+    };
+
+    fetchFeaturedTutors();
+  }, [course?.category]);
 
   useEffect(() => {
     const checkPurchaseStatus = async () => {
@@ -271,57 +305,75 @@ const CourseDetails = () => {
         </div>
 
         <div className="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-            Featured tutors
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            {course.category} Tutors
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {allTutors.slice(0, 2).map((tutor) => (
-              <div
-                key={tutor.id}
-                className="rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-5 flex gap-4 items-start"
-              >
-                <div className="w-14 h-14 rounded-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-3xl">
-                  <FaUserCircle />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-gray-100 leading-tight">
-                        {tutor.name}
-                      </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                        {tutor.headline}
-                      </p>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            Expert tutors who can help you with {course.category} courses
+          </p>
+          {loadingTutors ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          ) : featuredTutors.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {featuredTutors.slice(0, 2).map((tutor) => (
+                  <div
+                    key={tutor.id}
+                    className="rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-5 flex gap-4 items-start"
+                  >
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-3xl">
+                      <FaUserCircle />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <div>
+                          <h3 className="font-semibold text-gray-900 dark:text-gray-100 leading-tight">
+                            {tutor.first_name} {tutor.last_name}
+                          </h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                            {tutor.bio}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="mt-3 text-sm text-gray-600 dark:text-gray-400">
+                        <span className="mr-3">
+                          {tutor.totalLessons || 0} lessons
+                        </span>
+                        <span>Available for consultation</span>
+                      </div>
+                      <div className="mt-4 flex gap-3">
+                        <Link to={`/tutors/${tutor.id}`}>
+                          <Button size="sm">View Profile</Button>
+                        </Link>
+                      </div>
                     </div>
                   </div>
-                  <div className="mt-3 text-sm text-gray-600 dark:text-gray-400">
-                    <span className="mr-3">{tutor.lessons} lessons</span>
-
-                    <span>Available for consultation</span>
-                  </div>
-                  <div className="mt-4 flex gap-3">
-                    <Link to={`/tutors/${toTutorSlug(tutor.name)}`}>
-                      <Button size="sm">View Profile</Button>
-                    </Link>
-                    <Link
-                      to="/checkout"
-                      state={{
-                        type: "tutor",
-                        tutor: {
-                          name: tutor.name,
-                        },
-                        booking: { duration: 1 },
-                      }}
-                    >
-                      <Button size="sm" variant="secondary">
-                        Book Trial
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
+              {featuredTutors.length > 2 && (
+                <div className="mt-6 text-center">
+                  <Link to="/tutors">
+                    <Button variant="outline">View All Tutors</Button>
+                  </Link>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              <p>No tutors available for {course.category} courses.</p>
+              <p className="text-sm mt-2">
+                Tutors will appear here when they create courses in this
+                category.
+              </p>
+              <Link to="/tutors" className="mt-3 inline-block">
+                <Button size="sm" variant="outline">
+                  Browse All Tutors
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

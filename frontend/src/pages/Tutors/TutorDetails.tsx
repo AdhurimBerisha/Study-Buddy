@@ -1,11 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import {
-  FaArrowLeft,
-  FaUserCircle,
-  FaStar,
-  FaChalkboardTeacher,
-} from "react-icons/fa";
+import { FaArrowLeft, FaUserCircle, FaChalkboardTeacher } from "react-icons/fa";
 import Button from "../../components/Button";
 import { tutorAPI } from "../../services/api";
 import type { Tutor } from "../../types/tutor";
@@ -164,7 +159,7 @@ const TutorDetails = () => {
                 {tutor.last_name}
               </p>
               <div className="space-y-2">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 mb-2 dark:text-gray-400">
                   <strong>Total Students:</strong>{" "}
                   <span className="text-gray-700 dark:text-gray-300">
                     {tutor.totalStudents}

@@ -73,31 +73,131 @@ const getAllTutors = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { category, verified, limit = 20, offset = 0 } = req.query;
 
-    const whereClause: any = {};
-    if (category) whereClause.expertise = { [Op.like]: `%${category}%` };
-    if (verified !== undefined) whereClause.isVerified = verified === "true";
+    let whereClause: any = {};
 
-    const tutors = await Tutor.findAndCountAll({
-      where: whereClause,
-      include: [
-        {
-          model: Course,
-          as: "courses",
-          attributes: ["id", "title", "category", "level"],
-        },
-      ],
-      limit: Number(limit),
-      offset: Number(offset),
-      order: [["createdAt", "DESC"]],
-    });
+    if (category) {
+      console.log(
+        `Searching for tutors who have courses in category: ${category}`
+      );
 
-    res.json({
-      tutors: tutors.rows,
-      total: tutors.count,
-      limit: Number(limit),
-      offset: Number(offset),
-    });
+      // First, find courses in this category
+      const coursesInCategory = await Course.findAll({
+        where: { category: category as string },
+        attributes: ["tutorId"],
+        raw: true,
+      });
+
+      // Debug: check the actual field names returned
+      console.log("Sample course data:", coursesInCategory[0]);
+      console.log("All course data:", coursesInCategory);
+
+      if (coursesInCategory.length > 0) {
+        // Debug: log the raw course data
+        console.log(
+          "Raw courses data:",
+          JSON.stringify(coursesInCategory, null, 2)
+        );
+
+        // Check what fields are actually available
+        if (coursesInCategory.length > 0) {
+          const firstCourse = coursesInCategory[0] as any;
+          console.log("Available fields in course:", Object.keys(firstCourse));
+          console.log("tutorId value:", firstCourse.tutorId);
+          console.log("tutor_id value:", firstCourse.tutor_id);
+        }
+
+        // Get unique tutor IDs from courses
+        // Try both field names since raw queries might return different field names
+        const tutorIds = [
+          ...new Set(
+            coursesInCategory.map((c: any) => c.tutorId || c.tutor_id)
+          ),
+        ];
+        console.log(
+          `Found ${tutorIds.length} tutors with courses in category: ${category}`
+        );
+        console.log("Tutor IDs extracted:", tutorIds);
+
+        // Check if tutorIds array is valid
+        if (tutorIds.length === 0 || tutorIds.some((id) => !id)) {
+          console.log("Warning: No valid tutor IDs found in courses");
+          return res.json({
+            tutors: [],
+            total: 0,
+            limit: Number(limit),
+            offset: Number(offset),
+          });
+        }
+
+        // Find tutors by their userId (which is the tutorId in courses)
+        console.log("Op.in value:", Op.in);
+        console.log("tutorIds array:", tutorIds);
+
+        // Use Sequelize with proper associations instead of raw SQL
+        console.log("Using Sequelize with associations...");
+
+        // Build the where clause without verification filter
+        const whereClause: any = {
+          userId: { [Op.in]: tutorIds },
+        };
+
+        console.log(
+          "Sequelize where clause:",
+          JSON.stringify(whereClause, null, 2)
+        );
+
+        // Find tutors using Sequelize with proper where clause
+        const tutors = await Tutor.findAndCountAll({
+          where: whereClause,
+          limit: Number(limit),
+          offset: Number(offset),
+          order: [["createdAt", "DESC"]],
+        });
+
+        console.log(`Found ${tutors.count} tutors using Sequelize`);
+
+        return res.json({
+          tutors: tutors.rows,
+          total: tutors.count,
+          limit: Number(limit),
+          offset: Number(offset),
+        });
+      } else {
+        console.log(`No courses found in category: ${category}`);
+        return res.json({
+          tutors: [],
+          total: 0,
+          limit: Number(limit),
+          offset: Number(offset),
+        });
+      }
+    }
+
+    // If no category search, use regular Sequelize query
+    if (!category) {
+      console.log(
+        "Searching tutors with where clause:",
+        JSON.stringify(whereClause, null, 2)
+      );
+
+      const tutors = await Tutor.findAndCountAll({
+        where: whereClause,
+        limit: Number(limit),
+        offset: Number(offset),
+        order: [["createdAt", "DESC"]],
+      });
+
+      console.log(`Found ${tutors.count} tutors`);
+
+      return res.json({
+        tutors: tutors.rows,
+        total: tutors.count,
+        limit: Number(limit),
+        offset: Number(offset),
+      });
+    }
   } catch (error) {
+    console.error("Error in getAllTutors:", error);
     handleError(res, error);
   }
 };
@@ -174,8 +274,7 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
 
     if (!title || !description || !category || !level) {
       return res.status(400).json({
-        message:
-          "Title, description, category, and level are required",
+        message: "Title, description, category, and level are required",
       });
     }
 
