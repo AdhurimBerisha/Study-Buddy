@@ -140,23 +140,23 @@ const TutorsTable = () => {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200/50 dark:divide-gray-700/50">
+      <div className="w-full">
+        <table className="w-full divide-y divide-gray-200/50 dark:divide-gray-700/50">
           <thead className="bg-gradient-to-r from-gray-50/80 to-gray-100/80 dark:from-gray-700/80 dark:to-gray-800/80">
             <tr>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/4">
                 Tutor
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/5">
                 Contact
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/4">
                 Expertise
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/6">
                 Rate & Status
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/12">
                 Actions
               </th>
             </tr>
@@ -167,7 +167,7 @@ const TutorsTable = () => {
                 key={tutor.id}
                 className="hover:bg-gray-50/80 dark:hover:bg-gray-700/80 transition-colors duration-200"
               >
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-12 w-12">
                       {tutor.avatar ? (
@@ -187,8 +187,8 @@ const TutorsTable = () => {
                         </div>
                       )}
                     </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                    <div className="ml-4 min-w-0 flex-1">
+                      <div className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                         {tutor.first_name || "Unknown"}{" "}
                         {tutor.last_name || "Name"}
                       </div>
