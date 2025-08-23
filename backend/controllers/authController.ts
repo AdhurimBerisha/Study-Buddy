@@ -202,7 +202,6 @@ const googleAuth = async (req: Request, res: Response) => {
     let user = await User.findOne({ where: { email } });
 
     if (!user) {
-      console.log("Creating new user with Google avatar:", picture);
       user = await User.create({
         email,
         firstName,
