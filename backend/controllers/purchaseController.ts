@@ -74,7 +74,6 @@ const getUserPurchases = async (req: AuthenticatedRequest, res: Response) => {
             "id",
             "title",
             "description",
-            "language",
             "thumbnail",
             "duration",
           ],

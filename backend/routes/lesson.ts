@@ -1,27 +1,10 @@
-import { Router } from "express";
-import {
-  getCourseLessons,
-  getLesson,
-  createLesson,
-  updateLesson,
-  deleteLesson,
-  updateLessonProgress,
-  getCourseProgress,
-} from "../controllers/lessonController";
+import express from "express";
 import { requireAuth } from "../middlewares/requireAuth";
+import { editLesson, deleteLesson } from "../controllers/lessonController";
 
-const router = Router();
+const router = express.Router();
 
-router.get("/course/:courseId", getCourseLessons);
-router.get("/:lessonId", getLesson);
-
-router.use(requireAuth);
-
-router.post("/course/:courseId", createLesson);
-router.put("/:lessonId", updateLesson);
-router.delete("/:lessonId", deleteLesson);
-
-router.put("/:lessonId/progress", updateLessonProgress);
-router.get("/course/:courseId/progress", getCourseProgress);
+router.put("/:id", requireAuth, editLesson);
+router.delete("/:id", requireAuth, deleteLesson);
 
 export default router;

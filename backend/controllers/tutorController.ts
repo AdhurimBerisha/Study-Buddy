@@ -165,7 +165,6 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
       title,
       description,
       category,
-      language,
       level,
       price,
       thumbnail,
@@ -173,10 +172,10 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
       lessons,
     } = req.body;
 
-    if (!title || !description || !category || !language || !level) {
+    if (!title || !description || !category || !level) {
       return res.status(400).json({
         message:
-          "Title, description, category, language, and level are required",
+          "Title, description, category, and level are required",
       });
     }
 
@@ -186,7 +185,6 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
           title,
           description,
           category,
-          language,
           level,
           price: price || 0,
           thumbnail,

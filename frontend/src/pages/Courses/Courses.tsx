@@ -36,7 +36,6 @@ const Courses = () => {
       const q = query.toLowerCase();
       list = list.filter(
         (c) =>
-          c.language.toLowerCase().includes(q) ||
           c.category.toLowerCase().includes(q) ||
           c.title.toLowerCase().includes(q)
       );

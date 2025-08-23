@@ -136,18 +136,7 @@ const EditCourseForm = ({
             ))}
           </SelectField>
 
-          <SelectField
-            label="Language *"
-            error={errors.language?.message as string}
-            {...register("language", { required: "Language is required" })}
-          >
-            <option value="">Select Language</option>
-            {languages.map((l) => (
-              <option key={l} value={l}>
-                {l}
-              </option>
-            ))}
-          </SelectField>
+
 
           <SelectField
             label="Level *"

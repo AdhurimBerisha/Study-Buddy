@@ -88,7 +88,6 @@ const getCourseLessons = async (req: AuthenticatedRequest, res: Response) => {
         course: {
           id: course.getDataValue("id"),
           title: course.getDataValue("title"),
-          language: course.getDataValue("language"),
         },
         lessons: lessonsWithProgress,
         totalLessons: lessons.length,
@@ -115,7 +114,7 @@ const getLesson = async (req: AuthenticatedRequest, res: Response) => {
         {
           model: Course,
           as: "course",
-          attributes: ["id", "title", "language"],
+          attributes: ["id", "title"],
         },
       ],
     });
@@ -202,7 +201,7 @@ const updateLesson = async (req: AuthenticatedRequest, res: Response) => {
     const userId = checkAuth(req, res);
     if (!userId) return;
 
-    const { lessonId } = req.params;
+    const { id: lessonId } = req.params;
     const updateData = req.body;
 
     const lesson = await Lesson.findByPk(lessonId, {
@@ -210,7 +209,7 @@ const updateLesson = async (req: AuthenticatedRequest, res: Response) => {
         {
           model: Course,
           as: "course",
-          attributes: ["id", "createdBy"],
+          attributes: ["id", "tutorId"],
         },
       ],
     });
@@ -220,7 +219,7 @@ const updateLesson = async (req: AuthenticatedRequest, res: Response) => {
     }
 
     const courseData = (lesson as any).course;
-    if (courseData.createdBy !== userId) {
+    if (courseData.tutorId !== userId) {
       return res.status(403).json({
         message: "Only the instructor can update this lesson",
       });
@@ -246,14 +245,14 @@ const deleteLesson = async (req: AuthenticatedRequest, res: Response) => {
     const userId = checkAuth(req, res);
     if (!userId) return;
 
-    const { lessonId } = req.params;
+    const { id: lessonId } = req.params;
 
     const lesson = await Lesson.findByPk(lessonId, {
       include: [
         {
           model: Course,
           as: "course",
-          attributes: ["id", "createdBy"],
+          attributes: ["id", "tutorId"],
         },
       ],
     });
@@ -263,13 +262,29 @@ const deleteLesson = async (req: AuthenticatedRequest, res: Response) => {
     }
 
     const courseData = (lesson as any).course;
-    if (courseData.createdBy !== userId) {
+    if (courseData.tutorId !== userId) {
       return res.status(403).json({
         message: "Only the instructor can delete this lesson",
       });
     }
 
-    await lesson.update({ isActive: false });
+    const courseId = lesson.getDataValue("courseId");
+
+    // Delete lesson progress first
+    await LessonProgress.destroy({ where: { lessonId } });
+
+    // Delete the lesson
+    await lesson.destroy();
+
+    // Update order of remaining lessons
+    const remainingLessons = await Lesson.findAll({
+      where: { courseId },
+      order: [["order", "ASC"]],
+    });
+
+    for (let i = 0; i < remainingLessons.length; i++) {
+      await remainingLessons[i].update({ order: i + 1 });
+    }
 
     res.json({
       success: true,
@@ -387,7 +402,6 @@ const getCourseProgress = async (req: AuthenticatedRequest, res: Response) => {
         course: {
           id: course.getDataValue("id"),
           title: course.getDataValue("title"),
-          language: course.getDataValue("language"),
         },
         lessons: lessonsWithProgress,
         progress: {
@@ -399,6 +413,49 @@ const getCourseProgress = async (req: AuthenticatedRequest, res: Response) => {
     });
   } catch (error) {
     handleError(res, error);
+  }
+};
+
+export const editLesson = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { title, content, duration, resources } = req.body;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const lesson = await Lesson.findByPk(id, {
+      include: [
+        {
+          model: Course,
+          as: "course",
+          where: { tutorId: userId },
+        },
+      ],
+    });
+
+    if (!lesson) {
+      return res
+        .status(404)
+        .json({ message: "Lesson not found or access denied" });
+    }
+
+    await lesson.update({
+      title,
+      content,
+      duration,
+      resources,
+    });
+
+    res.json({
+      success: true,
+      data: lesson,
+      message: "Lesson updated successfully",
+    });
+  } catch (error) {
+    handleError(res, error, "Error updating lesson");
   }
 };
 

@@ -118,7 +118,7 @@ export const getLessonIncludeOptions = () => [
   {
     model: Course,
     as: "course",
-    attributes: ["id", "title", "language"],
+    attributes: ["id", "title"],
   },
 ];
 

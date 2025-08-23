@@ -15,7 +15,7 @@ interface Course {
   description: string;
   category: string;
   level: string;
-  language?: string;
+
   thumbnail?: string;
   totalLessons?: number;
   tutorId?: string;
