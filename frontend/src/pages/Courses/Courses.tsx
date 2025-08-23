@@ -60,6 +60,7 @@ const Courses = () => {
   const visible = filtered.slice(0, visibleCount);
   const canShowMore = visibleCount < filtered.length;
   const canShowLess = visibleCount > 8;
+  const shouldShowPagination = filtered.length > 8; // Only show pagination if more than 8 items
 
   if (loading) {
     return (
@@ -114,7 +115,7 @@ const Courses = () => {
         showExtras={false}
         items={visible}
         footer={
-          canShowMore || canShowLess ? (
+          shouldShowPagination && (canShowMore || canShowLess) ? (
             <div className="flex justify-center gap-3">
               {canShowLess && (
                 <Button

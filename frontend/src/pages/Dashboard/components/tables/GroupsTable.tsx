@@ -311,7 +311,6 @@ const GroupsTable = () => {
         </table>
       </div>
 
-      {/* Groups Summary */}
       <div className="px-6 py-4 bg-gradient-to-r from-gray-50/80 to-gray-100/80 dark:from-gray-700/80 dark:to-gray-800/80 border-t border-gray-200/50 dark:border-gray-700/50">
         <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
           <div className="flex items-center space-x-6">
@@ -378,14 +377,15 @@ const GroupsTable = () => {
         </div>
       </div>
 
-      {/* Pagination */}
-      <Pagination
-        currentPage={groupsPagination.currentPage}
-        totalPages={groupsPagination.totalPages}
-        totalItems={groupsPagination.totalItems}
-        itemsPerPage={groupsPagination.itemsPerPage}
-        onPageChange={handlePageChange}
-      />
+      {groupsPagination.totalPages > 1 && (
+        <Pagination
+          currentPage={groupsPagination.currentPage}
+          totalPages={groupsPagination.totalPages}
+          totalItems={groupsPagination.totalItems}
+          itemsPerPage={groupsPagination.itemsPerPage}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 };

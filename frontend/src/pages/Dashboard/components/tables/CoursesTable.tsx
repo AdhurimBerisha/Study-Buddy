@@ -346,13 +346,15 @@ const CoursesTable = () => {
         </table>
       </div>
 
-      <Pagination
-        currentPage={coursesPagination.currentPage}
-        totalPages={coursesPagination.totalPages}
-        totalItems={coursesPagination.totalItems}
-        itemsPerPage={coursesPagination.itemsPerPage}
-        onPageChange={handlePageChange}
-      />
+      {coursesPagination.totalPages > 1 && (
+        <Pagination
+          currentPage={coursesPagination.currentPage}
+          totalPages={coursesPagination.totalPages}
+          totalItems={coursesPagination.totalItems}
+          itemsPerPage={coursesPagination.itemsPerPage}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 };

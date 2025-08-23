@@ -289,13 +289,15 @@ const UsersTable = () => {
         </table>
       </div>
 
-      <Pagination
-        currentPage={usersPagination.currentPage}
-        totalPages={usersPagination.totalPages}
-        totalItems={usersPagination.totalItems}
-        itemsPerPage={usersPagination.itemsPerPage}
-        onPageChange={handlePageChange}
-      />
+      {usersPagination.totalPages > 1 && (
+        <Pagination
+          currentPage={usersPagination.currentPage}
+          totalPages={usersPagination.totalPages}
+          totalItems={usersPagination.totalItems}
+          itemsPerPage={usersPagination.itemsPerPage}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 };

@@ -395,13 +395,15 @@ const TutorsTable = () => {
         </table>
       </div>
 
-      <Pagination
-        currentPage={tutorsPagination.currentPage}
-        totalPages={tutorsPagination.totalPages}
-        totalItems={tutorsPagination.totalItems}
-        itemsPerPage={tutorsPagination.itemsPerPage}
-        onPageChange={handlePageChange}
-      />
+      {tutorsPagination.totalPages > 1 && (
+        <Pagination
+          currentPage={tutorsPagination.currentPage}
+          totalPages={tutorsPagination.totalPages}
+          totalItems={tutorsPagination.totalItems}
+          itemsPerPage={tutorsPagination.itemsPerPage}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 };

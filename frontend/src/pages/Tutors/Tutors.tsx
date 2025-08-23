@@ -56,6 +56,7 @@ const Tutors = () => {
   const visible = filtered.slice(0, visibleCount);
   const canShowMore = visibleCount < filtered.length;
   const canShowLess = visibleCount > 4;
+  const shouldShowPagination = filtered.length > 4;
 
   return (
     <div>
@@ -65,6 +66,8 @@ const Tutors = () => {
         onQueryChange={setQuery}
         category={category}
         onCategoryChange={setCategory}
+        sort={null}
+        onSortChange={() => {}}
         searchPlaceholder="Search by tutor or category"
         containerClassName="mt-6 mb-6"
       />
@@ -86,7 +89,7 @@ const Tutors = () => {
         <TutorsGrid
           items={visible}
           footer={
-            canShowMore || canShowLess ? (
+            shouldShowPagination && (canShowMore || canShowLess) ? (
               <div className="flex justify-center gap-3">
                 {canShowLess && (
                   <Button onClick={() => setVisibleCount(4)}>Show less</Button>

@@ -336,7 +336,6 @@ const TutorCoursesTable = ({
                   {formatDate(course.createdAt)}
                 </td>
               </tr>
-              {/* Expanded Lessons Row */}
               {expandedCourse === course.id &&
                 course.lessons &&
                 course.lessons.length > 0 && (
@@ -705,13 +704,24 @@ const TutorCoursesTable = ({
         </tbody>
       </table>
 
-      <Pagination
-        currentPage={pagination.currentPage}
-        totalPages={pagination.totalPages}
-        totalItems={pagination.totalItems}
-        itemsPerPage={pagination.itemsPerPage}
-        onPageChange={handlePageChange}
-      />
+      {(() => {
+        const hasMultiplePages = pagination.totalPages > 1;
+        const hasMultipleItems =
+          pagination.totalItems > pagination.itemsPerPage;
+        const hasEnoughData = courses.length >= pagination.itemsPerPage;
+        const shouldShowPagination =
+          hasMultiplePages && hasMultipleItems && hasEnoughData;
+
+        return shouldShowPagination ? (
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            totalItems={pagination.totalItems}
+            itemsPerPage={pagination.itemsPerPage}
+            onPageChange={handlePageChange}
+          />
+        ) : null;
+      })()}
     </div>
   );
 };
