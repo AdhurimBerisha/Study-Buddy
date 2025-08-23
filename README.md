@@ -20,6 +20,7 @@ StudyBuddy is a modern e-learning platform built for aspiring tech professionals
 - Redux for global state management
 - Tailwind CSS for UI styling
 - Google OAuth for third-party authentication
+- Stripe integration for payments
 
 **Backend:**
 - Node.js with Express.js
