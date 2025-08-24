@@ -21,7 +21,18 @@ const app = express();
 const server = createServer(app);
 const PORT = process.env.PORT || 8080;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "https://study-buddy-phi-six.vercel.app",
+      "http://localhost:3000", // for local development
+      "http://localhost:5173", // for local development
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
