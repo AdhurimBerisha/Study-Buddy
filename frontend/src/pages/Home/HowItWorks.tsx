@@ -4,21 +4,21 @@ import LazyImage from "../../components/LazyImage";
 const steps = [
   {
     number: 1,
-    title: "Find the perfect tutor",
+    title: "Browse Courses & Find Tutors",
     description:
-      "Elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo. Nam varius consectetur.",
+      "Explore our curated selection of courses across various subjects and connect with verified, experienced tutors who specialize in your area of interest.",
   },
   {
     number: 2,
-    title: "Schedule your lesson",
+    title: "Join Study Groups & Start Learning",
     description:
-      "Elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo. Nam varius elementum.",
+      "Join collaborative study groups with peers worldwide, participate in interactive sessions, and practice coding with our real-time code editor.",
   },
   {
     number: 3,
-    title: "Start the journey",
+    title: "Track Progress & Achieve Goals",
     description:
-      "Elit tellus, luctus nec mattis, pulvinar dapibus leo. Nam varius consectetur elementum.",
+      "Monitor your learning journey with progress tracking, complete lessons at your own pace, and earn certificates as you master new skills.",
   },
 ];
 
@@ -31,7 +31,8 @@ const HowItWorks = () => {
             How it all works
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Donec sagittis sagittis vestibulum. Morbi vestibulum neque.
+            StudyBuddy makes online learning simple, interactive, and effective.
+            Follow these three easy steps to begin your educational journey.
           </p>
           <div className="w-10 h-0.5 bg-gray-400 dark:bg-gray-500" />
         </div>

@@ -2,9 +2,8 @@ import { NavLink } from "react-router-dom";
 import {
   FaFacebookF,
   FaTwitter,
-  FaYoutube,
+  FaLinkedin,
   FaInstagram,
-  FaWeibo,
   FaPhone,
   FaEnvelope,
   FaMapMarkerAlt,
@@ -84,14 +83,7 @@ const Footer = () => {
                   How tutoring works
                 </NavLink>
               </li>
-              <li>
-                <NavLink
-                  to="/contact"
-                  className="hover:text-blue-400 transition-colors duration-200 text-sm sm:text-base"
-                >
-                  Become a tutor
-                </NavLink>
-              </li>
+
               <li>
                 <NavLink
                   to="/groups"
@@ -118,11 +110,11 @@ const Footer = () => {
             <div className="space-y-3">
               <p className="text-sm sm:text-base font-medium">Need any Help?</p>
               <a
-                href="mailto:contact@studybuddy.com"
+                href="mailto:studybuddy@gmail.com"
                 className="flex items-center gap-2 hover:text-blue-400 transition-colors duration-200 text-sm sm:text-base"
               >
                 <FaEnvelope className="text-blue-400" />
-                contact@studybuddy.com
+                studybuddy@gmail.com
               </a>
             </div>
           </div>
@@ -155,10 +147,11 @@ const Footer = () => {
                   href="#"
                   className="flex items-center gap-2 hover:text-blue-400 transition-colors duration-200 text-sm sm:text-base"
                 >
-                  <FaYoutube className="text-blue-400" />
-                  YouTube
+                  <FaLinkedin className="text-blue-400" />
+                  Linkedin
                 </a>
               </li>
+
               <li>
                 <a
                   href="#"
@@ -166,15 +159,6 @@ const Footer = () => {
                 >
                   <FaInstagram className="text-blue-400" />
                   Instagram
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center gap-2 hover:text-blue-400 transition-colors duration-200 text-sm sm:text-base"
-                >
-                  <FaWeibo className="text-blue-400" />
-                  Weibo
                 </a>
               </li>
             </ul>
@@ -187,7 +171,7 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm sm:text-base">
                 <FaPhone className="text-blue-400" />
-                <span>123-456-7890</span>
+                <span>+383 44 123 456</span>
               </div>
               <div className="flex items-start gap-2 text-sm sm:text-base">
                 <FaMapMarkerAlt className="text-blue-400 mt-1 flex-shrink-0" />

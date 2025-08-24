@@ -156,6 +156,12 @@ const GroupCard = ({
                   You are already a member
                 </span>
               </div>
+            ) : group.maxMembers && group.memberCount >= group.maxMembers ? (
+              <div className="text-center py-2 px-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
+                <span className="text-red-700 dark:text-red-300 font-medium">
+                  Group is at max capacity
+                </span>
+              </div>
             ) : (
               <Button variant="primary" className="w-full" onClick={onJoin}>
                 Join Group

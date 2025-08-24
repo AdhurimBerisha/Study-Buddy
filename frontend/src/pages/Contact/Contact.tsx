@@ -35,10 +35,10 @@ const Contact = () => {
                   Email
                 </div>
                 <a
-                  href="mailto:contact@info.com"
+                  href="mailto:studybuddy@gmail.com"
                   className="text-blue-600 dark:text-blue-400 hover:underline"
                 >
-                  contact@info.com
+                  studybuddy@gmail.com
                 </a>
               </div>
             </li>
@@ -50,7 +50,7 @@ const Contact = () => {
                 <div className="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
                   Phone
                 </div>
-                <div>+1 (555) 123-4567</div>
+                <div>+383 44 123 456</div>
               </div>
             </li>
             <li className="flex items-start gap-3">
@@ -61,7 +61,7 @@ const Contact = () => {
                 <div className="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
                   Office
                 </div>
-                <div>500 Learning Ave, Suite 200, San Francisco, CA</div>
+                <div>Rruga B, Pristina Pristina Kosovo, 10000</div>
               </div>
             </li>
             <li className="flex items-start gap-3">

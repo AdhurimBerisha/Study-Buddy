@@ -17,8 +17,7 @@ const WhyUs = () => {
             </h1>
             <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base lg:text-lg leading-relaxed">
               Experience the future of learning with our comprehensive online
-              platform designed to help you master programming skills at your
-              own pace.
+              platform designed to help you master tech skills at your own pace.
             </p>
           </div>
 

@@ -9,9 +9,9 @@ const AboutHero = () => {
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight text-black dark:text-white max-w-4xl mx-auto">
           We connect students and teachers
           <br />
-          lorem ipsum dolor sit amet,
+          in a modern learning environment
           <br />
-          consectetur.
+          that empowers growth.
         </h1>
 
         <div className="mt-8 mb-10 flex justify-center">
@@ -19,13 +19,13 @@ const AboutHero = () => {
         </div>
 
         <p className="max-w-3xl mx-auto text-gray-500 dark:text-gray-400 text-sm md:text-base leading-relaxed">
-          Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-          officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde
-          omnis iste natus error sit voluptatem accusantium doloremque
-          laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
-          veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
-          enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
-          sed quia consequuntur magni dolores eos qui.
+          StudyBuddy is a comprehensive online learning platform designed to
+          bridge the gap between students seeking knowledge and experienced
+          tutors passionate about teaching. We believe that quality education
+          should be accessible, interactive, and personalized to meet individual
+          learning needs. Our platform combines cutting-edge technology with
+          proven educational methodologies to create an engaging learning
+          experience.
         </p>
       </div>
 
@@ -37,11 +37,13 @@ const AboutHero = () => {
             Our Vision
           </div>
           <h3 className="text-2xl md:text-3xl font-extrabold mb-4 leading-snug max-w-sm text-black dark:text-white">
-            Consectetur adipisicing elit, sed do eiusmod tempor incididunt.
+            To democratize education by making quality learning accessible to
+            everyone, everywhere.
           </h3>
           <p className="text-gray-500 dark:text-gray-400 text-sm">
-            A short supporting paragraph describing the vision in one or two
-            sentences so readers understand the goal and why it matters.
+            We envision a world where geographical boundaries don't limit
+            educational opportunities, and every student can connect with the
+            perfect tutor to achieve their learning goals.
           </p>
         </div>
 
@@ -50,13 +52,14 @@ const AboutHero = () => {
             Our Mission
           </div>
           <h3 className="text-2xl md:text-3xl font-extrabold mb-4 leading-snug max-w-sm text-black dark:text-white">
-            Adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-            dolore.
+            To provide innovative learning tools and connect learners with
+            expert tutors through technology.
           </h3>
           <p className="text-gray-500 dark:text-gray-400 text-sm">
-            A short supporting paragraph describing the mission and the
-            practical steps you take to achieve the vision. Keep it concise and
-            focused.
+            We're committed to building the most effective online learning
+            ecosystem, combining interactive features like our code editor,
+            study groups, and personalized tutoring to create meaningful
+            learning experiences.
           </p>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import Button from "./Button";
 import LazyImage from "./LazyImage";
+import { useNavigate } from "react-router-dom";
 
 interface BannerProps {
   imageSrc: string;
@@ -18,9 +19,23 @@ const Banner = ({
   buttonLink,
   variant = "dark",
 }: BannerProps) => {
+  const navigate = useNavigate();
   const overlayClass =
     variant === "dark" ? "bg-black bg-opacity-50" : "bg-white bg-opacity-20";
   const textClass = variant === "dark" ? "text-white" : "text-white";
+
+  const handleButtonClick = () => {
+    if (buttonLink) {
+      // If buttonLink is provided, use it (for external links)
+      window.open(buttonLink, "_blank");
+    } else if (buttonText === "Sign Up") {
+      // If it's the Sign Up button, navigate to register page
+      navigate("/register");
+    } else if (buttonText === "Browse Groups") {
+      // If it's the Browse Groups button, scroll to top of page
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   return (
     <section className="px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
@@ -52,9 +67,7 @@ const Banner = ({
                 <Button
                   variant={variant === "dark" ? "primary" : "outline"}
                   size="lg"
-                  onClick={() =>
-                    buttonLink && window.open(buttonLink, "_blank")
-                  }
+                  onClick={handleButtonClick}
                 >
                   {buttonText}
                 </Button>
