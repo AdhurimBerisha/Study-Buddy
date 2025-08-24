@@ -21,7 +21,6 @@ export interface CourseWithLessons {
   title: string;
   description: string;
   category: string;
-  language: string;
   level: "beginner" | "intermediate" | "advanced";
   price: number;
   imageUrl: string;

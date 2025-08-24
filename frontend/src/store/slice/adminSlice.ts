@@ -33,7 +33,6 @@ interface Course {
   description: string;
   category: string;
   level: string;
-  language?: string;
   thumbnail?: string;
   totalLessons?: number;
   tutorId?: string;
@@ -437,7 +436,6 @@ export const updateCourse = createAsyncThunk(
         title: string;
         description: string;
         category: string;
-        language: string;
         level: string;
         price: number;
         thumbnail: string;

@@ -49,14 +49,12 @@ export const validateCourseForm = (form: {
   title: string;
   description: string;
   category: string;
-  language: string;
   level: string;
   tutorId: string;
 }): string | null => {
   if (!form.title.trim()) return "Title is required";
   if (!form.description.trim()) return "Description is required";
   if (!form.category.trim()) return "Category is required";
-  if (!form.language.trim()) return "Language is required";
   if (!form.level) return "Level is required";
   if (!form.tutorId) return "Tutor is required";
   return null;
@@ -82,7 +80,6 @@ export const resetCourseForm = (
       title: string;
       description: string;
       category: string;
-      language: string;
       level: string;
       price: number;
       thumbnail: string;
@@ -95,7 +92,6 @@ export const resetCourseForm = (
     title: "",
     description: "",
     category: "",
-    language: "",
     level: "",
     price: 0,
     thumbnail: "",

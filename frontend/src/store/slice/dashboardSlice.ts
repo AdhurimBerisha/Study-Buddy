@@ -5,7 +5,6 @@ interface CourseData {
   title: string;
   description: string;
   category: string;
-  language: string;
   level: "beginner" | "intermediate" | "advanced";
   price: number;
   thumbnail?: string;

@@ -6,7 +6,6 @@ export interface Course {
   title: string;
   description: string;
   category: string;
-  language: string;
   level: "beginner" | "intermediate" | "advanced";
   price: number;
   thumbnail?: string;
@@ -78,7 +77,6 @@ export const createCourse = createAsyncThunk(
     title: string;
     description: string;
     category: string;
-    language: string;
     level: "beginner" | "intermediate" | "advanced";
     price?: number;
     thumbnail?: string;
