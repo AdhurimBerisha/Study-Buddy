@@ -40,7 +40,6 @@ interface CreateCourseData {
   title: string;
   description: string;
   category: string;
-  language: string;
   level: string;
   price?: number;
   thumbnail?: string;
