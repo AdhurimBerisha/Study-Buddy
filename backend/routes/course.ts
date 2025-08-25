@@ -6,12 +6,14 @@ import {
   updateCourse,
   deleteCourse,
 } from "../controllers/courseController";
+import { getCourseLessons } from "../controllers/adminCourseController";
 import { requireAuth } from "../middlewares/requireAuth";
 
 const router = express.Router();
 
 router.get("/", listCourses);
 router.get("/:id", getCourse);
+router.get("/:courseId/lessons", getCourseLessons);
 
 router.post("/", requireAuth, createCourse);
 router.put("/:id", requireAuth, updateCourse);
