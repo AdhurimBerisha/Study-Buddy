@@ -84,7 +84,12 @@ const createUser = async (req: AuthenticatedRequest, res: Response) => {
       return sendErrorResponse(res, existingUser.message, 409);
 
     const hashedPassword = await bcrypt.hash(req.body.password, 12);
-    const userData = { ...req.body, password: hashedPassword };
+    const avatarUrl = (req as any).file?.path || req.body.avatar || undefined;
+    const userData = {
+      ...req.body,
+      password: hashedPassword,
+      avatar: avatarUrl,
+    };
 
     const user = await User.create(userData);
     const userPlain = sanitizeUserData(user);
@@ -99,7 +104,7 @@ const createUser = async (req: AuthenticatedRequest, res: Response) => {
           bio: "",
           expertise: [],
           isVerified: false,
-          avatar: req.body.avatar || undefined,
+          avatar: avatarUrl,
         });
       } catch (tutorError) {
         console.error("Error creating tutor profile:", tutorError);

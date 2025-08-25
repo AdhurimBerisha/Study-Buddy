@@ -16,7 +16,7 @@ interface CreateUserFormValues {
   email: string;
   password: string;
   phone: string;
-  avatar?: string;
+  avatar?: FileList;
   role: Role;
 }
 
@@ -26,7 +26,7 @@ const defaultValues: CreateUserFormValues = {
   firstName: "",
   lastName: "",
   phone: "",
-  avatar: "",
+  avatar: undefined,
   role: "user",
 };
 
@@ -42,7 +42,17 @@ const CreateUserForm = () => {
 
   const onSubmit = async (data: CreateUserFormValues) => {
     try {
-      const payload = { ...data, phone: data.phone ?? "" };
+      const file =
+        data.avatar && data.avatar.length > 0 ? data.avatar[0] : null;
+      const payload = {
+        email: data.email,
+        password: data.password,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phone: data.phone ?? "",
+        role: data.role,
+        avatar: file,
+      };
       await dispatch(createUser(payload)).unwrap();
     } catch (error) {
       console.error("Failed to create user:", error);
@@ -123,13 +133,17 @@ const CreateUserForm = () => {
               {...register("phone")}
             />
 
-            <InputField
-              label="Avatar URL"
-              type="url"
-              placeholder="https://example.com/avatar.jpg"
-              error={errors.avatar?.message as string}
-              {...register("avatar")}
-            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Avatar
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                {...register("avatar")}
+                className="block w-full text-sm text-gray-900 dark:text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-200"
+              />
+            </div>
 
             <SelectField
               label="Role *"

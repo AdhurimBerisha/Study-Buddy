@@ -375,13 +375,24 @@ export const createUser = createAsyncThunk(
       firstName: string;
       lastName: string;
       phone: string;
-      avatar?: string;
+      avatar?: File | null;
       role: "user" | "tutor" | "admin";
     },
     { rejectWithValue }
   ) => {
     try {
-      const response = await api.post("/api/admin/users", userData);
+      const form = new FormData();
+      form.append("email", userData.email);
+      form.append("password", userData.password);
+      form.append("firstName", userData.firstName);
+      form.append("lastName", userData.lastName);
+      form.append("phone", userData.phone || "");
+      form.append("role", userData.role);
+      if (userData.avatar) form.append("avatar", userData.avatar);
+
+      const response = await api.post("/api/admin/users", form, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       return response.data.data;
     } catch (error: unknown) {
       const apiError = error as ApiError;
@@ -490,14 +501,26 @@ export const createTutor = createAsyncThunk(
       firstName: string;
       lastName: string;
       phone?: string;
-      avatar?: string;
+      avatar?: File | null;
       bio?: string;
       expertise: string[];
     },
     { rejectWithValue }
   ) => {
     try {
-      const response = await api.post("/api/admin/tutors", tutorData);
+      const form = new FormData();
+      form.append("email", tutorData.email);
+      form.append("password", tutorData.password);
+      form.append("firstName", tutorData.firstName);
+      form.append("lastName", tutorData.lastName);
+      if (tutorData.phone) form.append("phone", tutorData.phone);
+      if (tutorData.bio) form.append("bio", tutorData.bio);
+      tutorData.expertise.forEach((e) => form.append("expertise", e));
+      if (tutorData.avatar) form.append("avatar", tutorData.avatar);
+
+      const response = await api.post("/api/admin/tutors", form, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       return response.data.data;
     } catch (error: unknown) {
       const apiError = error as ApiError;

@@ -100,10 +100,12 @@ const createTutor = async (req: AuthenticatedRequest, res: Response) => {
       return sendErrorResponse(res, existingTutor.message, 409);
 
     const hashedPassword = await bcrypt.hash(req.body.password, 12);
+    const avatarUrl = (req as any).file?.path || req.body.avatar || null;
     const user = await User.create({
       ...req.body,
       password: hashedPassword,
       role: "tutor",
+      avatar: avatarUrl || undefined,
     });
     const userData = sanitizeUserData(user);
 
@@ -117,7 +119,7 @@ const createTutor = async (req: AuthenticatedRequest, res: Response) => {
         ? req.body.expertise
         : [req.body.expertise],
       isVerified: false,
-      avatar: req.body.avatar || null,
+      avatar: avatarUrl,
     });
 
     sendSuccessResponse(

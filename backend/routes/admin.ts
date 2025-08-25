@@ -34,6 +34,7 @@ import {
 } from "../controllers/adminTutorController";
 
 import { getDashboardStats } from "../controllers/adminController";
+import { uploadAvatar, handleUploadError } from "../middlewares/upload";
 
 const router = Router();
 
@@ -43,7 +44,7 @@ router.get("/dashboard/stats", getDashboardStats);
 
 router.get("/users", getAllUsers);
 router.get("/users/:id", getUserById);
-router.post("/users", createUser);
+router.post("/users", uploadAvatar, handleUploadError, createUser);
 router.put("/users/:id", updateUser);
 router.delete("/users/:id", deleteUser);
 router.put("/users/:id/role", changeUserRole);
@@ -64,7 +65,7 @@ router.delete("/lessons/:lessonId", deleteLesson);
 
 router.get("/tutors", getAllTutors);
 router.get("/tutors/:id", getTutorById);
-router.post("/tutors", createTutor);
+router.post("/tutors", uploadAvatar, handleUploadError, createTutor);
 router.put("/tutors/:id", updateTutor);
 router.delete("/tutors/:id", deleteTutor);
 
