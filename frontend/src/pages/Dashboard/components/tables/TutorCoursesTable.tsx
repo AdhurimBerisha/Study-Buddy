@@ -9,6 +9,7 @@ import {
 } from "../../../../store/slice/tutorSlice";
 import Pagination from "../../../../components/Pagination";
 import LazyImage from "../../../../components/LazyImage";
+import { lessonAPI } from "../../../../services/api";
 
 interface Course {
   id: string;
@@ -91,19 +92,9 @@ const TutorCoursesTable = ({
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(
-        `http://localhost:8080/api/lessons/${editingLesson}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
+      await lessonAPI.editLesson(editingLesson, data);
 
-      if (response.ok) {
+      {
         setEditingLesson(null);
         reset();
         // Refresh courses to get updated lesson data
@@ -113,8 +104,6 @@ const TutorCoursesTable = ({
             limit: pagination.itemsPerPage,
           })
         );
-      } else {
-        alert("Failed to update lesson");
       }
     } catch (error) {
       console.error("Error updating lesson:", error);
@@ -127,18 +116,9 @@ const TutorCoursesTable = ({
   const handleDeleteLesson = async (lessonId: string) => {
     if (window.confirm("Are you sure you want to delete this lesson?")) {
       try {
-        const response = await fetch(
-          `http://localhost:8080/api/lessons/${lessonId}`,
-          {
-            method: "DELETE",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        await lessonAPI.deleteLesson(lessonId);
 
-        if (response.ok) {
+        {
           // Refresh courses to get updated lesson data
           dispatch(
             fetchTutorCourses({
@@ -146,8 +126,6 @@ const TutorCoursesTable = ({
               limit: pagination.itemsPerPage,
             })
           );
-        } else {
-          alert("Failed to delete lesson");
         }
       } catch (error) {
         console.error("Error deleting lesson:", error);
