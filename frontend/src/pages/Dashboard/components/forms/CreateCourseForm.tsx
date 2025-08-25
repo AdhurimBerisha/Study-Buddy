@@ -88,9 +88,23 @@ const CreateCourseForm = ({
     }
 
     try {
+      // Extract file or fallback to string URL
+      let thumbnailFile: File | string | null = null;
+      if (data.thumbnail && typeof data.thumbnail !== "string") {
+        const list = data.thumbnail as FileList;
+        if (list.length > 0) thumbnailFile = list[0];
+      } else if (typeof data.thumbnail === "string" && data.thumbnail) {
+        thumbnailFile = data.thumbnail;
+      }
+
       await dispatch(
         createTutorCourse({
-          ...data,
+          title: data.title,
+          description: data.description,
+          category: data.category,
+          level: data.level,
+          price: data.price,
+          thumbnail: thumbnailFile,
           totalLessons: validLessons.length,
           lessons: validLessons,
         })
@@ -176,12 +190,21 @@ const CreateCourseForm = ({
                 })}
               />
 
-              <InputField
-                label="Thumbnail URL"
-                type="url"
-                placeholder="https://example.com/image.jpg"
-                {...register("thumbnail")}
-              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Course Thumbnail
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  {...register("thumbnail")}
+                  className="block w-full text-sm text-gray-900 dark:text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-200"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Optional: choose an image to upload. You can still paste a URL
+                  in the lessons/resources.
+                </p>
+              </div>
             </div>
 
             <TextAreaField

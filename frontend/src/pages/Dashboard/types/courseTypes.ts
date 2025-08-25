@@ -12,6 +12,6 @@ export interface CourseFormData {
   category: string;
   level: "beginner" | "intermediate" | "advanced";
   price: number;
-  thumbnail?: string;
+  thumbnail?: FileList | string;
   lessons: Lesson[];
 }
