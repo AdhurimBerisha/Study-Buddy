@@ -24,7 +24,7 @@ const PORT = process.env.PORT || 40012;
 app.use(
   cors({
     origin: [
-      "https://study-buddy-phi-six.vercel.app",
+      "https://studybuddy-project.vercel.app",
       "http://localhost:3000", // for local development
       "http://localhost:5173", // for local development
     ],
