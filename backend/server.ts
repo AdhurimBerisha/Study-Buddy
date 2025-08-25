@@ -62,6 +62,7 @@ const connectDatabase = async () => {
     await sequelize.authenticate();
     console.log("✅ Database connected successfully");
 
+    // Force redeploy to fix foreign key issues
     await sequelize.sync({ force: false, alter: false });
     console.log("✅ Database tables synchronized successfully");
   } catch (err: any) {
