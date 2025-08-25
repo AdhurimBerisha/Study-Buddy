@@ -98,7 +98,7 @@ export const fetchTutorDashboardStats = createAsyncThunk(
   "tutor/fetchDashboardStats",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get("/tutors/dashboard/stats");
+      const response = await api.get("/api/tutors/dashboard/stats");
       return response.data.data;
     } catch (error) {
       const apiError = error as ApiError;
@@ -122,7 +122,7 @@ export const fetchTutorCourses = createAsyncThunk(
       queryParams.append("limit", limit.toString());
 
       const response = await api.get(
-        `/tutors/dashboard/courses?${queryParams.toString()}`
+        `/api/tutors/dashboard/courses?${queryParams.toString()}`
       );
       return {
         data: response.data.data,
