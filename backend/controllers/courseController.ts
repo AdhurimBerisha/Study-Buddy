@@ -88,10 +88,12 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
       category,
       level,
       price,
-      thumbnail,
       totalLessons,
       tutorId,
-    } = req.body;
+    } = req.body as any;
+
+    const uploadedThumbnail =
+      (req as any).file?.path || (req.body as any).thumbnail || undefined;
 
     if (!title || !description || !category || !level || !tutorId) {
       return res.status(400).json({
@@ -113,7 +115,7 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
       category,
       level,
       price: price || 0,
-      thumbnail,
+      thumbnail: uploadedThumbnail,
       totalLessons,
       tutorId,
     });

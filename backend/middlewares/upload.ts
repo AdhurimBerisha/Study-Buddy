@@ -16,6 +16,7 @@ export const upload = multer({
 });
 
 export const uploadAvatar = upload.single("avatar");
+export const uploadThumbnail = upload.single("thumbnail");
 
 export const handleUploadError = (
   error: any,

@@ -10,6 +10,7 @@ import {
   getTutorDashboardStats,
 } from "../controllers/tutorController";
 import { requireAuth } from "../middlewares/requireAuth";
+import { uploadThumbnail, handleUploadError } from "../middlewares/upload";
 
 const router = express.Router();
 
@@ -21,7 +22,13 @@ router.get("/dashboard/stats", requireAuth, getTutorDashboardStats);
 router.get("/:id", getTutor);
 
 router.post("/", requireAuth, createTutor);
-router.post("/courses", requireAuth, createCourse);
+router.post(
+  "/courses",
+  requireAuth,
+  uploadThumbnail,
+  handleUploadError,
+  createCourse
+);
 router.put("/:id", requireAuth, updateTutor);
 router.delete("/:id", requireAuth, deleteTutor);
 

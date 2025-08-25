@@ -210,16 +210,21 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
         .json({ message: "Only tutors can create courses" });
     }
 
-    const {
-      title,
-      description,
-      category,
-      level,
-      price,
-      thumbnail,
-      totalLessons,
-      lessons,
-    } = req.body;
+    const { title, description, category, level, price, totalLessons } =
+      req.body as any;
+
+    const uploadedThumbnail =
+      (req as any).file?.path || (req.body as any).thumbnail || undefined;
+
+    // Lessons may arrive as JSON string in multipart/form-data
+    let lessons: any = (req.body as any).lessons;
+    if (typeof lessons === "string") {
+      try {
+        lessons = JSON.parse(lessons);
+      } catch (_) {
+        // ignore parse error; validation below will handle
+      }
+    }
 
     if (!title || !description || !category || !level) {
       return res.status(400).json({
@@ -235,7 +240,7 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
           category,
           level,
           price: price || 0,
-          thumbnail,
+          thumbnail: uploadedThumbnail,
           totalLessons,
           tutorId: userId,
         },

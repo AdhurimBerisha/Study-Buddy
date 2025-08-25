@@ -41,7 +41,7 @@ interface CreateCourseData {
   category: string;
   level: string;
   price?: number;
-  thumbnail?: string;
+  thumbnail?: File | string | null;
   totalLessons?: number;
   lessons?: Array<{
     title: string;
@@ -141,7 +141,32 @@ export const createTutorCourse = createAsyncThunk(
   "tutor/createCourse",
   async (courseData: CreateCourseData, { rejectWithValue }) => {
     try {
-      const response = await api.post("/tutors/courses", courseData);
+      const form = new FormData();
+      form.append("title", courseData.title);
+      form.append("description", courseData.description);
+      form.append("category", courseData.category);
+      form.append("level", courseData.level);
+      if (typeof courseData.price === "number") {
+        form.append("price", String(courseData.price));
+      }
+      if (courseData.thumbnail && courseData.thumbnail instanceof File) {
+        form.append("thumbnail", courseData.thumbnail);
+      } else if (
+        typeof courseData.thumbnail === "string" &&
+        courseData.thumbnail
+      ) {
+        form.append("thumbnail", courseData.thumbnail);
+      }
+      if (typeof courseData.totalLessons === "number") {
+        form.append("totalLessons", String(courseData.totalLessons));
+      }
+      if (courseData.lessons) {
+        form.append("lessons", JSON.stringify(courseData.lessons));
+      }
+
+      const response = await api.post("/api/tutors/courses", form, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       return response.data.data;
     } catch (error) {
       const apiError = error as ApiError;
