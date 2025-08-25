@@ -19,7 +19,7 @@ import socketManager from "./config/socket";
 
 const app = express();
 const server = createServer(app);
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 40012;
 
 app.use(
   cors({
@@ -48,6 +48,16 @@ app.use("/api/admin", adminRoutes);
 
 app.get("/", (_req, res) => {
   res.send("Server is running! REST API at /api");
+});
+
+// Health check endpoint for Railway
+app.get("/health", (_req, res) => {
+  res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
+});
+
+// Keep-alive endpoint to prevent container from being stopped
+app.get("/ping", (_req, res) => {
+  res.send("pong");
 });
 
 app.get("/api/test", (_req, res) => {
