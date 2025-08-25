@@ -52,7 +52,7 @@ const EmailVerification = () => {
           return;
         }
 
-        const response = await api.get(`/auth/verify-email/${token}`);
+        const response = await api.get(`/api/auth/verify-email/${token}`);
 
         if (response.data.success) {
           setStatus("success");

@@ -38,7 +38,7 @@ const login = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await api.post("/auth/login", { email, password });
+      const response = await api.post("/api/auth/login", { email, password });
       const { token, user, redirectTo } = response.data;
       localStorage.setItem("token", token);
       return { token, user, redirectTo };
@@ -62,7 +62,9 @@ const googleLogin = createAsyncThunk(
   "auth/googleLogin",
   async (googleToken: string, { rejectWithValue }) => {
     try {
-      const response = await api.post("/auth/google", { token: googleToken });
+      const response = await api.post("/api/auth/google", {
+        token: googleToken,
+      });
       const { token, user, redirectTo } = response.data;
       localStorage.setItem("token", token);
       return { token, user, redirectTo };
@@ -95,7 +97,7 @@ const register = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await api.post("/auth/register", {
+      const response = await api.post("/api/auth/register", {
         email,
         password,
         firstName,
@@ -151,7 +153,7 @@ const resendVerificationEmail = createAsyncThunk(
   "auth/resendVerificationEmail",
   async (email: string, { rejectWithValue }) => {
     try {
-      const response = await api.post("/auth/resend-verification-email", {
+      const response = await api.post("/api/auth/resend-verification-email", {
         email,
       });
       return response.data;

@@ -33,7 +33,7 @@ const ForgotPassword = () => {
     setMessage("");
 
     try {
-      const response = await api.post("/auth/forgot-password", data);
+      const response = await api.post("/api/auth/forgot-password", data);
       setIsSuccess(true);
       setMessage(response.data.message);
     } catch (error: unknown) {
