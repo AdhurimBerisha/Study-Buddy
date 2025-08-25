@@ -80,6 +80,17 @@ export const lessonAPI = {
     lessonId: string,
     data: { isCompleted?: boolean; timeSpent?: number }
   ) => api.put(`/api/lessons/${lessonId}/progress`, data),
+
+  deleteLesson: (lessonId: string) => api.delete(`/api/lessons/${lessonId}`),
+  editLesson: (
+    lessonId: string,
+    data: {
+      title?: string;
+      content?: string;
+      duration?: number;
+      resources?: string;
+    }
+  ) => api.put(`/api/lessons/${lessonId}`, data),
 };
 
 export const courseAPI = {
