@@ -136,14 +136,14 @@ const updateProfile = createAsyncThunk(
       }
       formData.append("avatar", avatarFile);
 
-  const response = await api.put("/api/users/me", formData, {
+      const response = await api.put("/api/users/me", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
       return response.data.data || response.data;
     } else {
-  const response = await api.put("/api/users/me", profileData || {});
+      const response = await api.put("/api/users/me", profileData || {});
       return response.data.data || response.data;
     }
   }

@@ -69,7 +69,7 @@ export const groupAPI = {
 
 export const lessonAPI = {
   getCourseLessons: (courseId: string) =>
-    api.get(`/api/lessons/course/${courseId}`),
+    api.get(`/api/courses/${courseId}/lessons`),
 
   getLesson: (lessonId: string) => api.get(`/api/lessons/${lessonId}`),
 
