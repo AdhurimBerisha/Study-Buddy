@@ -230,7 +230,7 @@ export const fetchDashboardStats = createAsyncThunk(
   "admin/fetchDashboardStats",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get("/admin/dashboard/stats");
+      const response = await api.get("/api/admin/dashboard/stats");
       return response.data.data;
     } catch (error: unknown) {
       const apiError = error as ApiError;
@@ -254,7 +254,9 @@ export const fetchUsers = createAsyncThunk(
       queryParams.append("limit", limit.toString());
       if (search) queryParams.append("search", search);
 
-      const response = await api.get(`/admin/users?${queryParams.toString()}`);
+      const response = await api.get(
+        `/api/admin/users?${queryParams.toString()}`
+      );
 
       return {
         data: response.data.data,
@@ -319,7 +321,9 @@ export const fetchTutors = createAsyncThunk(
       queryParams.append("limit", limit.toString());
       if (search) queryParams.append("search", search);
 
-      const response = await api.get(`/admin/tutors?${queryParams.toString()}`);
+      const response = await api.get(
+        `/api/admin/tutors?${queryParams.toString()}`
+      );
       return {
         data: response.data.data || [],
         pagination: response.data.pagination,
@@ -346,7 +350,9 @@ export const fetchGroups = createAsyncThunk(
       queryParams.append("limit", limit.toString());
       if (search) queryParams.append("search", search);
 
-      const response = await api.get(`/admin/groups?${queryParams.toString()}`);
+      const response = await api.get(
+        `/api/admin/groups?${queryParams.toString()}`
+      );
       return {
         data: response.data.data || [],
         pagination: response.data.pagination,
@@ -375,7 +381,7 @@ export const createUser = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await api.post("/admin/users", userData);
+      const response = await api.post("/api/admin/users", userData);
       return response.data.data;
     } catch (error: unknown) {
       const apiError = error as ApiError;
@@ -398,7 +404,7 @@ export const changeUserRole = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      await api.put(`/admin/users/${userId}/role`, { role });
+      await api.put(`/api/admin/users/${userId}/role`, { role });
       return { userId, role };
     } catch (error: unknown) {
       const apiError = error as ApiError;
@@ -413,7 +419,7 @@ export const deleteUser = createAsyncThunk(
   "admin/deleteUser",
   async (userId: string, { rejectWithValue }) => {
     try {
-      await api.delete(`/admin/users/${userId}`);
+      await api.delete(`/api/admin/users/${userId}`);
       return userId;
     } catch (error: unknown) {
       const apiError = error as ApiError;
@@ -446,7 +452,10 @@ export const updateCourse = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await api.put(`/admin/courses/${courseId}`, courseData);
+      const response = await api.put(
+        `/api/admin/courses/${courseId}`,
+        courseData
+      );
       return response.data.data;
     } catch (error: unknown) {
       const apiError = error as ApiError;
@@ -461,7 +470,7 @@ export const deleteCourse = createAsyncThunk(
   "admin/deleteCourse",
   async (courseId: string, { rejectWithValue }) => {
     try {
-      await api.delete(`/admin/courses/${courseId}`);
+      await api.delete(`/api/admin/courses/${courseId}`);
       return courseId;
     } catch (error: unknown) {
       const apiError = error as ApiError;
@@ -488,7 +497,7 @@ export const createTutor = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await api.post("/admin/tutors", tutorData);
+      const response = await api.post("/api/admin/tutors", tutorData);
       return response.data.data;
     } catch (error: unknown) {
       const apiError = error as ApiError;
@@ -524,7 +533,7 @@ export const updateTutor = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await api.put(`/admin/tutors/${tutorId}`, tutorData);
+      const response = await api.put(`/api/admin/tutors/${tutorId}`, tutorData);
       return response.data.data;
     } catch (error: unknown) {
       const apiError = error as ApiError;
@@ -539,7 +548,7 @@ export const deleteTutor = createAsyncThunk(
   "admin/deleteTutor",
   async (tutorId: string, { rejectWithValue }) => {
     try {
-      await api.delete(`/admin/tutors/${tutorId}`);
+      await api.delete(`/api/admin/tutors/${tutorId}`);
       return tutorId;
     } catch (error: unknown) {
       const apiError = error as ApiError;

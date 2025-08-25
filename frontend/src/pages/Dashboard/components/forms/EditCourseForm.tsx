@@ -67,7 +67,7 @@ const EditCourseForm = ({
     const fetchCourse = async () => {
       try {
         setLoading(true);
-        const response = await api.get(`/admin/courses/${courseId}`);
+        const response = await api.get(`/api/admin/courses/${courseId}`);
         const course = response.data.data;
         const values: EditCourseFormValues = {
           title: course.title || "",
@@ -135,8 +135,6 @@ const EditCourseForm = ({
               </option>
             ))}
           </SelectField>
-
-
 
           <SelectField
             label="Level *"

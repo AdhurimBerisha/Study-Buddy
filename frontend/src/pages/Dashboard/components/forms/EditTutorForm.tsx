@@ -55,7 +55,7 @@ const EditTutorForm = ({ tutorId }: EditTutorFormProps) => {
     const fetchTutor = async () => {
       try {
         setLoading(true);
-        const response = await api.get(`/admin/tutors/${tutorId}`);
+        const response = await api.get(`/api/admin/tutors/${tutorId}`);
         const tutor = response.data.data;
         const values: EditTutorFormValues = {
           firstName: tutor.first_name || "",
