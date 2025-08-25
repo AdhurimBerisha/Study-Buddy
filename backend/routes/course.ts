@@ -6,7 +6,7 @@ import {
   updateCourse,
   deleteCourse,
 } from "../controllers/courseController";
-import { getCourseLessons } from "../controllers/adminCourseController";
+import { getCourseLessons } from "../controllers/lessonController";
 import { requireAuth } from "../middlewares/requireAuth";
 
 const router = express.Router();
