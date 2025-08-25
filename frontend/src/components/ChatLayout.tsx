@@ -268,8 +268,8 @@ const ChatLayout = () => {
                   if (selectedGroupId) {
                     socketService.leaveGroup(selectedGroupId);
                   }
-
                   dispatch(selectGroup(group.id));
+                  dispatch(markGroupAsRead(group.id));
                   socketService.joinGroup(group.id);
                   toast.success(`Joined group: ${group.name}`);
                 }}
