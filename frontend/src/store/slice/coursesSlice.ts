@@ -58,7 +58,7 @@ export const fetchCourses = createAsyncThunk(
     if (filters?.level) params.append("level", filters.level);
     if (filters?.search) params.append("search", filters.search);
 
-    const response = await api.get(`/courses?${params.toString()}`);
+    const response = await api.get(`/api/courses?${params.toString()}`);
     return response.data;
   }
 );
@@ -66,7 +66,7 @@ export const fetchCourses = createAsyncThunk(
 export const fetchCourse = createAsyncThunk(
   "courses/fetchCourse",
   async (courseId: string) => {
-    const response = await api.get(`/courses/${courseId}`);
+    const response = await api.get(`/api/courses/${courseId}`);
     return response.data;
   }
 );
@@ -83,7 +83,7 @@ export const createCourse = createAsyncThunk(
     totalLessons?: number;
     tutorId: string;
   }) => {
-    const response = await api.post("/courses", courseData);
+    const response = await api.post("/api/courses", courseData);
     return response.data;
   }
 );
@@ -97,7 +97,7 @@ export const updateCourse = createAsyncThunk(
     courseId: string;
     courseData: Partial<Course>;
   }) => {
-    const response = await api.put(`/courses/${courseId}`, courseData);
+    const response = await api.put(`/api/courses/${courseId}`, courseData);
     return response.data;
   }
 );
@@ -105,7 +105,7 @@ export const updateCourse = createAsyncThunk(
 export const deleteCourse = createAsyncThunk(
   "courses/deleteCourse",
   async (courseId: string) => {
-    await api.delete(`/courses/${courseId}`);
+    await api.delete(`/api/courses/${courseId}`);
     return courseId;
   }
 );
@@ -113,7 +113,7 @@ export const deleteCourse = createAsyncThunk(
 export const enrollInCourse = createAsyncThunk(
   "courses/enrollInCourse",
   async (courseId: string) => {
-    await api.post(`/courses/${courseId}/enroll`);
+    await api.post(`/api/courses/${courseId}/enroll`);
     return courseId;
   }
 );
@@ -121,7 +121,7 @@ export const enrollInCourse = createAsyncThunk(
 export const unenrollFromCourse = createAsyncThunk(
   "courses/unenrollFromCourse",
   async (courseId: string) => {
-    await api.delete(`/courses/${courseId}/enroll`);
+    await api.delete(`/api/courses/${courseId}/enroll`);
     return courseId;
   }
 );
@@ -129,7 +129,7 @@ export const unenrollFromCourse = createAsyncThunk(
 export const fetchMyCourses = createAsyncThunk(
   "courses/fetchMyCourses",
   async () => {
-    const response = await api.get("/courses/my/enrolled");
+    const response = await api.get("/api/courses/my/enrolled");
     return response.data;
   }
 );
@@ -137,7 +137,7 @@ export const fetchMyCourses = createAsyncThunk(
 export const updateCourseProgress = createAsyncThunk(
   "courses/updateCourseProgress",
   async ({ courseId, progress }: { courseId: string; progress: number }) => {
-    await api.put(`/courses/${courseId}/progress`, { progress });
+    await api.put(`/api/courses/${courseId}/progress`, { progress });
     return { courseId, progress };
   }
 );

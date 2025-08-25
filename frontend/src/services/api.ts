@@ -82,19 +82,20 @@ export const lessonAPI = {
 };
 
 export const courseAPI = {
-  getAllCourses: () => api.get("/courses"),
+  getAllCourses: () => api.get("/api/courses"),
 
-  getCourse: (courseId: string) => api.get(`/courses/${courseId}`),
+  getCourse: (courseId: string) => api.get(`/api/courses/${courseId}`),
 
-  getMyEnrolledCourses: () => api.get("/courses/my/enrolled"),
+  getMyEnrolledCourses: () => api.get("/api/courses/my/enrolled"),
 
-  enrollInCourse: (courseId: string) => api.post(`/courses/${courseId}/enroll`),
+  enrollInCourse: (courseId: string) =>
+    api.post(`/api/courses/${courseId}/enroll`),
 
   purchaseCourse: (courseId: string) =>
-    api.post(`/courses/${courseId}/purchase`),
+    api.post(`/api/courses/${courseId}/purchase`),
 
   unenrollFromCourse: (courseId: string) =>
-    api.delete(`/courses/${courseId}/enroll`),
+    api.delete(`/api/courses/${courseId}/enroll`),
 };
 
 export const purchaseAPI = {
