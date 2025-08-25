@@ -62,7 +62,7 @@ const StripePaymentForm = ({
       const response = await fetch(
         `${
           import.meta.env.VITE_API_URL || "http://localhost:8080/api"
-        }/payments/create-payment-intent`,
+        }/api/payments/create-payment-intent`,
         {
           method: "POST",
           headers: {
@@ -100,7 +100,7 @@ const StripePaymentForm = ({
         const confirmResponse = await fetch(
           `${
             import.meta.env.VITE_API_URL || "http://localhost:8080/api"
-          }/payments/confirm-payment`,
+          }/api/payments/confirm-payment`,
           {
             method: "POST",
             headers: {
