@@ -32,9 +32,9 @@ api.interceptors.response.use(
 );
 
 export const groupAPI = {
-  getAllGroups: () => api.get("/groups"),
+  getAllGroups: () => api.get("/api/groups"),
 
-  getGroup: (id: string) => api.get(`/groups/${id}`),
+  getGroup: (id: string) => api.get(`/api/groups/${id}`),
 
   createGroup: (data: {
     name: string;
@@ -42,7 +42,7 @@ export const groupAPI = {
     category: string;
     level: string;
     maxMembers?: number;
-  }) => api.post("/groups", data),
+  }) => api.post("/api/groups", data),
 
   updateGroup: (
     id: string,
@@ -53,32 +53,33 @@ export const groupAPI = {
       level?: string;
       maxMembers?: number;
     }
-  ) => api.put(`/groups/${id}`, data),
+  ) => api.put(`/api/groups/${id}`, data),
 
-  deleteGroup: (id: string) => api.delete(`/groups/${id}`),
+  deleteGroup: (id: string) => api.delete(`/api/groups/${id}`),
 
-  joinGroup: (id: string) => api.post(`/groups/${id}/join`),
+  joinGroup: (id: string) => api.post(`/api/groups/${id}/join`),
 
-  leaveGroup: (id: string) => api.post(`/groups/${id}/leave`),
+  leaveGroup: (id: string) => api.post(`/api/groups/${id}/leave`),
 
-  getMyGroups: () => api.get("/groups/user/my"),
+  getMyGroups: () => api.get("/api/groups/user/my"),
 
-  getGroupMessages: (groupId: string) => api.get(`/groups/${groupId}/messages`),
+  getGroupMessages: (groupId: string) =>
+    api.get(`/api/groups/${groupId}/messages`),
 };
 
 export const lessonAPI = {
   getCourseLessons: (courseId: string) =>
-    api.get(`/lessons/course/${courseId}`),
+    api.get(`/api/lessons/course/${courseId}`),
 
-  getLesson: (lessonId: string) => api.get(`/lessons/${lessonId}`),
+  getLesson: (lessonId: string) => api.get(`/api/lessons/${lessonId}`),
 
   getCourseProgress: (courseId: string) =>
-    api.get(`/lessons/course/${courseId}/progress`),
+    api.get(`/api/lessons/course/${courseId}/progress`),
 
   updateLessonProgress: (
     lessonId: string,
     data: { isCompleted?: boolean; timeSpent?: number }
-  ) => api.put(`/lessons/${lessonId}/progress`, data),
+  ) => api.put(`/api/lessons/${lessonId}/progress`, data),
 };
 
 export const courseAPI = {
@@ -99,10 +100,10 @@ export const courseAPI = {
 };
 
 export const purchaseAPI = {
-  getLearningDashboard: () => api.get("/purchases/dashboard"),
-  getUserPurchases: () => api.get("/purchases/history"),
+  getLearningDashboard: () => api.get("/api/purchases/dashboard"),
+  getUserPurchases: () => api.get("/api/purchases/history"),
   checkCoursePurchase: (courseId: string) =>
-    api.get(`/purchases/check/${courseId}`),
+    api.get(`/api/purchases/check/${courseId}`),
 };
 
 export const tutorAPI = {
@@ -111,11 +112,11 @@ export const tutorAPI = {
     verified?: boolean;
     limit?: number;
     offset?: number;
-  }) => api.get("/tutors", { params }),
+  }) => api.get("/api/tutors", { params }),
 
-  getTutor: (id: string) => api.get(`/tutors/${id}`),
+  getTutor: (id: string) => api.get(`/api/tutors/${id}`),
 
-  getTutorByUserId: (userId: string) => api.get(`/tutors/user/${userId}`),
+  getTutorByUserId: (userId: string) => api.get(`/api/tutors/user/${userId}`),
 
   createTutor: (data: {
     bio: string;
@@ -123,7 +124,7 @@ export const tutorAPI = {
     first_name: string;
     last_name: string;
     email: string;
-  }) => api.post("/tutors", data),
+  }) => api.post("/api/tutors", data),
 
   updateTutor: (
     id: string,
@@ -134,23 +135,23 @@ export const tutorAPI = {
       last_name?: string;
       email?: string;
     }
-  ) => api.put(`/tutors/${id}`, data),
+  ) => api.put(`/api/tutors/${id}`, data),
 
-  deleteTutor: (id: string) => api.delete(`/tutors/${id}`),
+  deleteTutor: (id: string) => api.delete(`/api/tutors/${id}`),
 };
 
 export const userAPI = {
-  getProfile: () => api.get("/users/me"),
+  getProfile: () => api.get("/api/users/me"),
 
   updateProfile: (data: {
     firstName?: string;
     lastName?: string;
     email?: string;
     phone?: string;
-  }) => api.put("/users/me", data),
+  }) => api.put("/api/users/me", data),
 
   changePassword: (data: { currentPassword: string; newPassword: string }) =>
-    api.put("/users/change-password", data),
+    api.put("/api/users/change-password", data),
 };
 
 export default api;
