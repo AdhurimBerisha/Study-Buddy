@@ -89,3 +89,17 @@ server.listen(PORT, () => {
   console.log(`📡 REST base: http://localhost:${PORT}/api`);
   console.log(`🔌 Socket.io ready for real-time communication`);
 });
+
+// Handle graceful shutdown
+process.on("SIGTERM", () => {
+  console.log("Received SIGTERM, shutting down gracefully...");
+  server.close(() => {
+    console.log("Server closed");
+    process.exit(0);
+  });
+});
+
+// Keep the process alive and log activity
+setInterval(() => {
+  console.log("Keep-alive ping:", new Date().toISOString());
+}, 30000); // Log every 30 seconds
