@@ -293,7 +293,7 @@ export const fetchCourses = createAsyncThunk(
       if (level) queryParams.append("level", level);
 
       const response = await api.get(
-        `/admin/courses?${queryParams.toString()}`
+        `/api/admin/courses?${queryParams.toString()}`
       );
       return {
         data: response.data.data,
