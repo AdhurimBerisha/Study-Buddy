@@ -270,13 +270,10 @@ const deleteLesson = async (req: AuthenticatedRequest, res: Response) => {
 
     const courseId = lesson.getDataValue("courseId");
 
-    // Delete lesson progress first
     await LessonProgress.destroy({ where: { lessonId } });
 
-    // Delete the lesson
     await lesson.destroy();
 
-    // Update order of remaining lessons
     const remainingLessons = await Lesson.findAll({
       where: { courseId },
       order: [["order", "ASC"]],

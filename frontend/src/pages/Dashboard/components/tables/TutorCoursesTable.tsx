@@ -97,7 +97,7 @@ const TutorCoursesTable = ({
       {
         setEditingLesson(null);
         reset();
-        // Refresh courses to get updated lesson data
+
         dispatch(
           fetchTutorCourses({
             page: pagination.currentPage,
@@ -119,7 +119,6 @@ const TutorCoursesTable = ({
         await lessonAPI.deleteLesson(lessonId);
 
         {
-          // Refresh courses to get updated lesson data
           dispatch(
             fetchTutorCourses({
               page: pagination.currentPage,
@@ -330,7 +329,6 @@ const TutorCoursesTable = ({
                           {course.lessons.map((lesson) => (
                             <div key={lesson.id}>
                               {editingLesson === lesson.id ? (
-                                // Edit Form
                                 <form
                                   onSubmit={handleSubmit(onSubmitEdit)}
                                   className="p-5 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-xl border-2 border-blue-200 dark:border-blue-700 shadow-lg space-y-4"
@@ -592,7 +590,6 @@ const TutorCoursesTable = ({
                                   </div>
                                 </form>
                               ) : (
-                                // Lesson Display
                                 <div className="flex items-center justify-between p-4 bg-gradient-to-r from-white to-gray-50 dark:from-gray-700 dark:to-gray-800 rounded-xl border border-gray-200 dark:border-gray-600 hover:shadow-md transition-all duration-200">
                                   <div className="flex-1">
                                     <div className="flex items-center space-x-4">

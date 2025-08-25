@@ -76,7 +76,6 @@ const getAllTutors = async (req: AuthenticatedRequest, res: Response) => {
     let whereClause: any = {};
 
     if (category) {
-      // First, find courses in this category
       const coursesInCategory = await Course.findAll({
         where: { category: category as string },
         attributes: ["tutorId"],
@@ -84,14 +83,12 @@ const getAllTutors = async (req: AuthenticatedRequest, res: Response) => {
       });
 
       if (coursesInCategory.length > 0) {
-        // Get unique tutor IDs from courses
         const tutorIds = [
           ...new Set(
             coursesInCategory.map((c: any) => c.tutorId || c.tutor_id)
           ),
         ];
 
-        // Check if tutorIds array is valid
         if (tutorIds.length === 0 || tutorIds.some((id) => !id)) {
           return res.json({
             tutors: [],
@@ -101,12 +98,10 @@ const getAllTutors = async (req: AuthenticatedRequest, res: Response) => {
           });
         }
 
-        // Build the where clause without verification filter
         const whereClause: any = {
           userId: { [Op.in]: tutorIds },
         };
 
-        // Find tutors using Sequelize with proper where clause
         const tutors = await Tutor.findAndCountAll({
           where: whereClause,
           limit: Number(limit),
@@ -130,7 +125,6 @@ const getAllTutors = async (req: AuthenticatedRequest, res: Response) => {
       }
     }
 
-    // If no category search, use regular Sequelize query
     if (!category) {
       const tutors = await Tutor.findAndCountAll({
         where: whereClause,
@@ -216,14 +210,11 @@ const createCourse = async (req: AuthenticatedRequest, res: Response) => {
     const uploadedThumbnail =
       (req as any).file?.path || (req.body as any).thumbnail || undefined;
 
-    // Lessons may arrive as JSON string in multipart/form-data
     let lessons: any = (req.body as any).lessons;
     if (typeof lessons === "string") {
       try {
         lessons = JSON.parse(lessons);
-      } catch (_) {
-        // ignore parse error; validation below will handle
-      }
+      } catch (_) {}
     }
 
     if (!title || !description || !category || !level) {

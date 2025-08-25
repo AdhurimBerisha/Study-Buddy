@@ -47,7 +47,6 @@ const CourseDetails = () => {
     };
   }, [courseId, dispatch]);
 
-  // Fetch featured tutors when course data is available
   useEffect(() => {
     const fetchFeaturedTutors = async () => {
       if (course?.category) {

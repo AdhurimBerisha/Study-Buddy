@@ -3,7 +3,6 @@ import { Sequelize } from "sequelize";
 let sequelize: Sequelize;
 
 if (process.env.MYSQL_URL) {
-  // Use Railway internal connection string if available
   sequelize = new Sequelize(process.env.MYSQL_URL, {
     dialect: "mysql",
     logging: false,
@@ -12,7 +11,6 @@ if (process.env.MYSQL_URL) {
     },
   });
 } else {
-  // Fallback for local development or manual env vars
   sequelize = new Sequelize(
     process.env.MYSQLDATABASE ||
       process.env.DB_NAME ||

@@ -133,11 +133,22 @@ const AllGroups = () => {
       toast.success("Successfully joined the group!");
       socketService.joinGroup(id);
       dispatch(refreshGroupData(id));
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to join group:", error);
-      // Handle specific error messages from the backend
-      if (error?.data?.message === "Group is full") {
-        toast.error("Group is at max capacity. Cannot join this group.");
+
+      if (
+        error &&
+        typeof error === "object" &&
+        "data" in error &&
+        error.data &&
+        typeof error.data === "object" &&
+        "message" in error.data
+      ) {
+        if (error.data.message === "Group is full") {
+          toast.error("Group is at max capacity. Cannot join this group.");
+        } else {
+          toast.error("Failed to join group. Please try again.");
+        }
       } else {
         toast.error("Failed to join group. Please try again.");
       }

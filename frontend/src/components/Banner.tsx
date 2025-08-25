@@ -26,13 +26,10 @@ const Banner = ({
 
   const handleButtonClick = () => {
     if (buttonLink) {
-      // If buttonLink is provided, use it (for external links)
       window.open(buttonLink, "_blank");
     } else if (buttonText === "Sign Up") {
-      // If it's the Sign Up button, navigate to register page
       navigate("/register");
     } else if (buttonText === "Browse Groups") {
-      // If it's the Browse Groups button, scroll to top of page
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };

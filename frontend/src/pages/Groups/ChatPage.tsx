@@ -20,8 +20,6 @@ import {
 import { fetchMyGroups } from "../../store/slice/groupsSlice";
 import socketService from "../../services/socket";
 import { groupAPI } from "../../services/api";
-import { useUnreadCount } from "../../hooks/useUnreadCount";
-import { requestNotificationPermission } from "../../utils/notifications";
 
 interface ApiMessage {
   id: string;

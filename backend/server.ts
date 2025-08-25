@@ -25,8 +25,8 @@ app.use(
   cors({
     origin: [
       "https://studybuddy-project.vercel.app",
-      "http://localhost:3000", // for local development
-      "http://localhost:5173", // for local development
+      "http://localhost:3000",
+      "http://localhost:5173",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -50,12 +50,10 @@ app.get("/", (_req, res) => {
   res.send("Server is running! REST API at /api");
 });
 
-// Health check endpoint for Railway
 app.get("/health", (_req, res) => {
   res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
-// Keep-alive endpoint to prevent container from being stopped
 app.get("/ping", (_req, res) => {
   res.send("pong");
 });
@@ -72,7 +70,6 @@ const connectDatabase = async () => {
     await sequelize.authenticate();
     console.log("✅ Database connected successfully");
 
-    // Force redeploy to fix foreign key issues
     await sequelize.sync({ force: false, alter: false });
     console.log("✅ Database tables synchronized successfully");
   } catch (err: any) {
@@ -90,7 +87,6 @@ server.listen(PORT, () => {
   console.log(`🔌 Socket.io ready for real-time communication`);
 });
 
-// Handle graceful shutdown
 process.on("SIGTERM", () => {
   console.log("Received SIGTERM, shutting down gracefully...");
   server.close(() => {
@@ -99,7 +95,6 @@ process.on("SIGTERM", () => {
   });
 });
 
-// Keep the process alive and log activity
 setInterval(() => {
   console.log("Keep-alive ping:", new Date().toISOString());
-}, 30000); // Log every 30 seconds
+}, 30000);

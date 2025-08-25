@@ -88,7 +88,6 @@ const CreateCourseForm = ({
     }
 
     try {
-      // Extract file or fallback to string URL
       let thumbnailFile: File | string | null = null;
       if (data.thumbnail && typeof data.thumbnail !== "string") {
         const list = data.thumbnail as FileList;
