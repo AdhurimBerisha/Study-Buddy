@@ -60,7 +60,9 @@ const StripePaymentForm = ({
 
     try {
       const response = await fetch(
-        "http://localhost:8080/api/payments/create-payment-intent",
+        `${
+          import.meta.env.VITE_API_URL || "http://localhost:8080/api"
+        }/payments/create-payment-intent`,
         {
           method: "POST",
           headers: {
@@ -96,7 +98,9 @@ const StripePaymentForm = ({
 
       if (paymentIntent.status === "succeeded") {
         const confirmResponse = await fetch(
-          "http://localhost:8080/api/payments/confirm-payment",
+          `${
+            import.meta.env.VITE_API_URL || "http://localhost:8080/api"
+          }/payments/confirm-payment`,
           {
             method: "POST",
             headers: {
