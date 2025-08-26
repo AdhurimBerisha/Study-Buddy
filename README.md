@@ -26,6 +26,7 @@ StudyBuddy is a modern e-learning platform built for aspiring tech professionals
 - Node.js with Express.js
 - MySQL database with Sequelize ORM
 - Google OAuth verification for validating Google ID tokens
+- Socket.IO for real-time communication
 
 ## Installation
 
@@ -63,7 +64,12 @@ This project requires a few environment variables to run properly.
 - `MYSQL_USER` — your_mysql_user
 - `MYSQL_PASSWORD` — your_mysql_password
 - `MYSQL_DB` — your_mysql_database
-- `GOOGLE_CLIENT_ID` — your_google_client_id_here  
+- `GOOGLE_CLIENT_ID` — your_google_client_id_here
+- `GMAIL_USER` — your_gmail_user
+- `GMAIL_PASSWORD` — your_gmail_app_password
+- `GMAIL_SERVICE` — gmail
+- `STRIPE_SECRET_KEY` — your_stripe_secret_key
+- `STRIPE_PUBLISHABLE_KEY` — your_stripe_publishable_key
 
 ### frontend `.env` variables include:
 - `VITE_API_URL` — http://localhost:8080/api
@@ -71,7 +77,9 @@ This project requires a few environment variables to run properly.
 - `VITE_EMAILJS_SERVICE_ID` — your_service_id_here
 - `VITE_EMAILJS_TEMPLATE_ID` — your_template_id_here
 - `VITE_EMAILJS_PUBLIC_KEY` — your_public_key_here
-- `VITE_GOOGLE_CLIENT_ID` — your_google_client_id_here 
+- `VITE_GOOGLE_CLIENT_ID` — your_google_client_id_here
+- `VITE_EMAIL_USER` — your_email_user
+- `VITE_EMAIL_PASSWORD` — your_gmail_app_password
 
 4. Run the development servers
 
