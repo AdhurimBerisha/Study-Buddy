@@ -24,7 +24,7 @@ const PORT = process.env.PORT || 40012;
 app.use(
   cors({
     origin: [
-      "https://studybuddy-project.vercel.app",
+      "https://studybuddy-learn.vercel.app",
       "http://localhost:3000",
       "http://localhost:5173",
     ],
