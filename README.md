@@ -1,6 +1,6 @@
 # StudyBuddy — Your Pathway to a Tech Career
 
-🚀 **Live Demo:** [https://studybuddy-learn.vercel.app/](https://studybuddy-learn.vercel.app/)
+🚀 **Live Demo:** [studybuddy-learn.vercel.app](https://studybuddy-learn.vercel.app/)
 
 ![StudyBuddy Website](./StudyBuddy.png)
 
