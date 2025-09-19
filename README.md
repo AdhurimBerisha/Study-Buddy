@@ -1,5 +1,7 @@
 # StudyBuddy — Your Pathway to a Tech Career
 
+🚀 **Live Demo:** [https://studybuddy-learn.vercel.app/](https://studybuddy-learn.vercel.app/)
+
 ![StudyBuddy Website](./StudyBuddy.png)
 
 StudyBuddy is a modern e-learning platform built for aspiring tech professionals. It offers expert-led courses, collaborative group learning, personalized study paths, real-time support, and career-focused resources, making it easier than ever to gain skills, connect with peers, and launch your tech career with confidence.
