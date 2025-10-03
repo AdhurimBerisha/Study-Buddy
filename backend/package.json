@@ -1,14 +1,14 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "src/server.ts",
+  "main": "server.ts",
   "type": "module",
   "scripts": {
     "dev": "tsx watch server.ts",
     "start": "tsx server.ts",
+    "build": "tsc",
     "sync-db": "tsx syncDb.js",
     "seed": "tsx seed.ts"
-
   },
   "author": "",
   "license": "ISC",
