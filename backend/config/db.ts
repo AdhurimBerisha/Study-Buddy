@@ -3,6 +3,7 @@ import { Sequelize } from "sequelize";
 let sequelize: Sequelize;
 
 if (process.env.MYSQL_URL) {
+  // If you provide a full connection string
   sequelize = new Sequelize(process.env.MYSQL_URL, {
     dialect: "mysql",
     logging: false,
@@ -11,23 +12,14 @@ if (process.env.MYSQL_URL) {
     },
   });
 } else {
+  // Using separate env vars from .env
   sequelize = new Sequelize(
-    process.env.MYSQLDATABASE ||
-      process.env.DB_NAME ||
-      process.env.NAME ||
-      "railway",
-    process.env.MYSQLUSER || process.env.DB_USER || process.env.USER || "root",
-    process.env.MYSQLPASSWORD ||
-      process.env.DB_PASSWORD ||
-      process.env.PASSWORD ||
-      "",
+    process.env.MYSQL_DB || "studybuddy", // database name
+    process.env.MYSQL_USER || "root", // username
+    process.env.MYSQL_PASSWORD || "", // password
     {
-      host:
-        process.env.MYSQLHOST ||
-        process.env.DB_HOST ||
-        process.env.HOST ||
-        "localhost",
-      port: parseInt(process.env.MYSQLPORT || process.env.DB_PORT || "3306"),
+      host: process.env.MYSQL_HOST || "localhost",
+      port: parseInt(process.env.MYSQL_PORT || "3306"), // default MySQL port
       dialect: "mysql",
       logging: false,
       define: {
