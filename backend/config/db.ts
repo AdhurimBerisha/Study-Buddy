@@ -7,6 +7,15 @@ if (process.env.MYSQL_URL) {
   sequelize = new Sequelize(process.env.MYSQL_URL, {
     dialect: "mysql",
     logging: false,
+    ...(process.env.MYSQL_SSL === "true"
+      ? {
+          dialectOptions: {
+            ssl: {
+              rejectUnauthorized: true,
+            },
+          },
+        }
+      : {}),
     define: {
       timestamps: true,
     },
@@ -22,6 +31,15 @@ if (process.env.MYSQL_URL) {
       port: parseInt(process.env.MYSQL_PORT || "3306"), // default MySQL port
       dialect: "mysql",
       logging: false,
+      ...(process.env.MYSQL_SSL === "true"
+        ? {
+            dialectOptions: {
+              ssl: {
+                rejectUnauthorized: true,
+              },
+            },
+          }
+        : {}),
       define: {
         timestamps: true,
       },
